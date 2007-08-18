@@ -304,12 +304,12 @@
 #  You are not forced to give these types the names given below.      #
 #  You can create your own named types, if you want, in fact that     #
 #  is the whole idea of this system!                                  #
-#                                                                     #
-
-<type name="NetAdmin" classes="OperChat BanControl HostCloak Shutdown ServerLink" host="netadmin.omega.org.za">
-<type name="GlobalOp" classes="OperChat BanControl HostCloak ServerLink" host="ircop.omega.org.za">
-<type name="Helper" classes="HostCloak" host="helper.omega.org.za">
-
+#
+# eFNet note:
+#  Leave these lines 'as is'                                                                     #
+#
+<type name="Server_Administrator" classes="OperChat BanControl HostCloak Shutdown ServerLink" host="omega.org.za" modes="+Wwsn +gcqkKloxtf" level="10">
+<type name="IRC_Operator" classes="OperChat BanControl HostCloak ServerLink" host="omega.org.za" modes="+Wwsn +gcqkKloxtf" level="5">
 
 #-#-#-#-#-#-#-#-#-#-#-  OPERATOR CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -358,7 +358,7 @@
 <oper name="Brain"
       password="s3cret"
       host="ident@dialup15.isp.com *@localhost *@server.com *@3ffe::0/16"
-      type="NetAdmin">
+      type="Server_Administrator">
 
 
 #-#-#-#-#-#-#-#-#-#-#-  SERVER LINK CONFIGURATION  -#-#-#-#-#-#-#-#-#-#

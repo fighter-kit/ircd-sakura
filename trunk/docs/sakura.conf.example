@@ -869,7 +869,7 @@
          netbuffersize="10240"
          maxwho="128"
          noservices="no"
-         qaprefixes="no"
+         qaprefixes="yes"
          deprotectself="yes"
          deprotectothers="yes"
          somaxconn="128"
@@ -1743,7 +1743,11 @@
 # NAMESX module: Provides support for the NAMESX extension which allows
 # clients to see all the prefixes set on a user without getting confused.
 # This is supported by mIRC, x-chat, klient, and maybe more.
-#<module name="m_namesx.so">
+#
+# eFNet note:
+#  You need this
+#
+<module name="m_namesx.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Nicklock module: Let opers change a user's nick and then stop that

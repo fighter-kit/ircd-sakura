@@ -790,6 +790,8 @@ if ($config{USE_GNUTLS} eq "y") {
 * coffee, or something.                                     *
 *************************************************************\n\n";
 			make_openssl_cert();
+			# May be, this could be stupid, but.. generating dhparams.pem here!
+			system("openssl dhparam -out dhparams.pem 1024");
 			print "\nCertificate generation complete, copying to config directory... ";
 			system("mv key.pem $config{CONFIG_DIR}/key.pem");
 			system("mv cert.pem $config{CONFIG_DIR}/cert.pem");

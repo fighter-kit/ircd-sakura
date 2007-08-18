@@ -1945,10 +1945,7 @@
 # Provide /LIST throttling (to prevent flooding) and /LIST safety to
 # prevent excess flood when the list is large.
 #
-# eFNet note:
-#  You need this
-#
-<module name="m_safelist.so">
+#<module name="m_safelist.so">
 #
 #-#-#-#-#-#-#-#-#-#-# SAFELIST CONFIGURATION -#-#-#-#-#-#-#-#-#-#-#-#-#
 #
@@ -1964,7 +1961,7 @@
 # this value, as increasing it too high can make your network vulnerable
 # to floodbots which waste your bandwidth and CPU time with LIST requests.
 #
-<safelist throttle="60" maxlisters="50">
+#<safelist throttle="60" maxlisters="50">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # SAJOIN module: Adds the /SAJOIN command

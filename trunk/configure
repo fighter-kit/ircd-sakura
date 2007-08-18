@@ -1016,7 +1016,7 @@ sub writefiles {
 #define CoreExport /**/
 #define DllExport /**/
 
-#define CONFIG_FILE "$config{CONFIG_DIR}/inspircd.conf"
+#define CONFIG_FILE "$config{CONFIG_DIR}/sakura.conf"
 #define MOD_PATH "$config{MODULE_DIR}"
 #define VERSION "$version"
 #define REVISION "$revision2"

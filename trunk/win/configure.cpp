@@ -314,7 +314,7 @@ void Run()
 	if(use_iocp)
 		fprintf(f, "#define CONFIG_USE_IOCP 1\n\n");
 
-	fprintf(f, "#define CONFIG_FILE \"%s/inspircd.conf\"\n", config_file);
+	fprintf(f, "#define CONFIG_FILE \"%s/sakura.conf\"\n", config_file);
 	fprintf(f, "#define MOD_PATH \"%s\"\n", mod_path);
 	fprintf(f, "#define MAX_DESCRIPTORS %u\n", max_fd);
 	fprintf(f, "#define MAXCLIENTS %u\n", max_clients);

@@ -1374,6 +1374,22 @@
 			</Filter>
 		</Filter>
 		<Filter
+			Name="eFNet"
+			>
+			<File
+				RelativePath="..\docs\networks\russia\eFNet\About"
+				>
+			</File>
+			<File
+				RelativePath="..\docs\networks\russia\eFNet\MOTD"
+				>
+			</File>
+			<File
+				RelativePath="..\docs\networks\russia\eFNet\Rules"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="modes"
 			>
 			<Filter
@@ -1751,31 +1767,25 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Config Files"
-				Filter="h;hpp;hxx;hm;inl;inc;xsd"
-				UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+				Name="Documentation Files"
 				>
 				<File
-					RelativePath=".\inspircd_config.h"
+					RelativePath="..\docs\inspircd.conf.example"
 					>
 				</File>
 				<File
-					RelativePath=".\inspircd_memory_functions.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\inspircd_se_config.h"
-					>
-				</File>
-				<File
-					RelativePath=".\inspircd_win32wrapper.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\inspircd_win32wrapper.h"
+					RelativePath="..\docs\Sakura-team"
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="gnu"
+			>
+			<File
+				RelativePath="..\configure"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -2246,7 +2246,11 @@
 # this module is not widely supported yet. If a client does not support
 # UHNAMES it will not enable it, this will not break incompatible
 # clients.
-#<module name="m_uhnames.so">
+#
+# eFNet note:
+#  You need this
+#
+<module name="m_uhnames.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Uninvite module: Adds the /UNINVITE command which lets users remove

@@ -274,7 +274,7 @@
 
 <class name="Shutdown" commands="DIE RESTART REHASH LOADMODULE UNLOADMODULE RELOAD">
 <class name="ServerLink" commands="CONNECT SQUIT RCONNECT MKPASSWD MKSHA256">
-<class name="BanControl" commands="KILL GLINE KLINE ZLINE QLINE ELINE">
+<class name="BanControl" commands="KILL GLINE KLINE ZLINE QLINE ELINE SHUN">
 <class name="OperChat" commands="WALLOPS GLOBOPS SETIDLE SPYLIST SPYNAMES">
 <class name="HostCloak" commands="SETHOST SETIDENT SETNAME CHGHOST CHGIDENT">
 
@@ -2049,6 +2049,15 @@
 #  You need this
 #
 <module name="m_showwhois.so">
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Shun module: This helps make users quiet with /shun, they could
+# only execute PING PONG.
+#
+# eFNet note:
+#  You need this
+#
+<module name="m_shun.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Spy module: Adds the commands SPYLIST and SPYNAMES that let opers

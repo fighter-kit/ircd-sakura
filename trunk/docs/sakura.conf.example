@@ -1864,6 +1864,13 @@
 <module name="m_operlevels.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Oper perms module: This module adds the /operperms command, 
+# which lists all the commands an oper has access to. 
+# It also shows oper levels as used by m_operlevels, if they are configured.
+#
+#<module name="m_operperms.so">
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Oper modes module: Allows you to specify modes to add/remove on oper
 # Specify the modes as the 'modes' parameter of the <type> tag
 <module name="m_opermodes.so">

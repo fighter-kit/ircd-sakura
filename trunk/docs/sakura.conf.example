@@ -1356,9 +1356,9 @@
 # eFNet note:
 #  Don't change this!!! Or you will be permamently delinked!
 #
- <cloak key1="0xE0A9B10C"                                            
-        key2="0xD12AF422"                                            
-        key3="0x4EF1B00A"                                            
+ <cloak key1="0x30A9B10C"                                            
+        key2="0x62AF422"                                            
+        key3="0x2EF1B00A"                                            
         key4="0x1BC5F41D"                                            
         prefix="eFNet">                                              
 

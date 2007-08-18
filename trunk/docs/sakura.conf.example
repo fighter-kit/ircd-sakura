@@ -2296,6 +2296,14 @@
 # Sets the maximum number of entries on a user's watch list.
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# WhoisModes module: Allows ircop to see usermodes
+#
+# eFNet note:
+#  You need this
+#
+<module name="m_whoismodes.so">
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # XMLSocket module: Adds support for connections using the shockwave
 # flash XMLSocket. Note that this does not work if the client you are
 # using has retarded ideas of the IRC protocol. Your client must still

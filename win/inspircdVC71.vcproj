@@ -182,6 +182,9 @@
 				RelativePath="..\src\timer.cpp">
 			</File>
 			<File
+				RelativePath="..\src\unrealconfig.cpp">
+			</File>
+			<File
 				RelativePath="..\src\userprocess.cpp">
 			</File>
 			<File
@@ -297,6 +300,9 @@
 			</File>
 			<File
 				RelativePath="..\include\u_listmode.h">
+			</File>
+			<File
+				RelativePath="..\include\unrealconfig.h">
 			</File>
 			<File
 				RelativePath="..\include\users.h">

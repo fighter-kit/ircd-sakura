@@ -1,8 +1,10 @@
 package make::gnutlscert;
 
+use strict qw(vars subs);
+use warnings qw(all);
 use Exporter 'import';
 use make::configure;
-@EXPORT = qw(make_gnutls_cert);
+our @EXPORT = qw(make_gnutls_cert);
 
 
 sub make_gnutls_cert()
@@ -113,4 +115,3 @@ return 0;
 }
 
 1;
-

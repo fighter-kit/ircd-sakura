@@ -11,16 +11,19 @@
 # ---------------------------------------------------
 
 package make::configure;
+use strict qw(vars subs);
+use warnings qw(all);
 use Exporter 'import';
 use POSIX;
 use make::utilities;
-@EXPORT = qw(promptnumeric dumphash is_dir getmodules getrevision getcompilerflags getlinkerflags getdependencies resolve_directory yesno showhelp promptstring_s);
+our @EXPORT = qw(promptnumeric promptboolean dumphash is_dir getmodules getrevision getcompilerflags getlinkerflags getdependencies resolve_directory yesno showhelp promptstring_s);
 
 my $no_svn = 0;
 
 sub yesno {
 	my ($flag,$prompt) = @_;
 	print "$prompt [\033[1;32m$main::config{$flag}\033[0m] -> ";
+	my $tmp;
 	chomp($tmp = <STDIN>);
 	if ($tmp eq "") { $tmp = $main::config{$flag} }
 	if (($tmp eq "") || ($tmp =~ /^y/i))
@@ -54,8 +57,7 @@ sub getrevision {
 	if ($data eq "")
 	{
 		$no_svn = 1;
-		$rev = "0";
-		return $rev;
+		return "0";
 	}
 	$data =~ /Revision: (\d+)/;
 	my $rev = $1;
@@ -76,7 +78,7 @@ sub getcompilerflags {
 		}
 	}
 	close(FLAGS);
-	return undef;
+	return "";
 }
 
 sub getlinkerflags {
@@ -89,7 +91,7 @@ sub getlinkerflags {
 		}
 	}
 	close(FLAGS);
-	return undef;
+	return "";
 }
 
 sub getdependencies {
@@ -102,7 +104,7 @@ sub getdependencies {
 		}
 	}
 	close(FLAGS);
-	return undef;
+	return "";
 }
 
 
@@ -111,11 +113,11 @@ sub getmodules
 	my $i = 0;
 	print "Detecting modules ";
 	opendir(DIRHANDLE, "src/modules");
-	foreach $name (sort readdir(DIRHANDLE))
+	foreach my $name (sort readdir(DIRHANDLE))
 	{
 		if ($name =~ /^m_(.+)\.cpp$/)
 		{
-			$mod = $1;
+			my $mod = $1;
 			if ($mod !~ /_static$/)
 			{
 				$main::modlist[$i++] = $mod;
@@ -135,6 +137,7 @@ sub promptnumeric($$)
 	{
 		print "Please enter the maximum $prompt?\n";
 		print "[\033[1;32m$main::config{$configitem}\033[0m] -> ";
+		my $var;
 		chomp($var = <STDIN>);
 		if ($var eq "")
 		{
@@ -147,6 +150,27 @@ sub promptnumeric($$)
 			print "\n";
 		} else {
 			print "You must enter a number in this field. Please try again.\n\n";
+		}
+	}
+}
+
+sub promptboolean($$)
+{
+	my $var;
+	my $continue = 0;
+	my ($prompt, $default) = @_;
+	while (!$continue)
+	{
+		print "$prompt\n";
+		print "[\033[1;32m$default\033[0m] -> ";
+		chomp ($var = <STDIN>);
+		if ($var =~ "y")
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
 		}
 	}
 }
@@ -207,7 +231,9 @@ sub is_dir
 
 sub showhelp
 {
-	chomp($PWD = `pwd`);
+	my $PWD;
+	use Cwd;
+	chomp($PWD = cwd());
 	print "Usage: configure [options]
 
 *** NOTE: NON-INTERACTIVE CONFIGURE IS *NOT* SUPPORTED BY THE ***
@@ -227,6 +253,7 @@ InspIRCd 1.0.x, are also allowed.
 
   --disable-interactive        Sets no options intself, but
                                will disable any interactive prompting.
+  --advanced                   Extends the configuration options.
   --update                     Update makefiles and dependencies
   --modupdate                  Detect new modules and write makefiles
   --svnupdate {--rebuild}      Update working copy via subversion
@@ -282,4 +309,3 @@ InspIRCd 1.0.x, are also allowed.
 }
 
 1;
-

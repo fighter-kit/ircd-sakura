@@ -42,6 +42,7 @@ using irc::sockets::insp_inaddr;
 using irc::sockets::insp_ntoa;
 using irc::sockets::insp_aton;
 using irc::sockets::OpenTCPSocket;
+using irc::sockets::NonBlocking;
 
 /** Masks to mask off the responses we get from the DNSRequest methods
  */
@@ -359,6 +360,7 @@ void DNS::Rehash()
 	/* Initialize mastersocket */
 	int s = OpenTCPSocket(ServerInstance->Config->DNSServer, SOCK_DGRAM);
 	this->SetFd(s);
+	NonBlocking(s);
 
 	/* Have we got a socket and is it nonblocking? */
 	if (this->GetFd() != -1)
@@ -1148,7 +1150,6 @@ void DNS::CleanResolvers(Module* module)
 /** Generate pseudo-random number */
 unsigned long DNS::PRNG()
 {
-#ifndef WIN32
 	unsigned long val = 0;
 	timeval n;
 	serverstats* s = ServerInstance->stats;
@@ -1157,13 +1158,5 @@ unsigned long DNS::PRNG()
 	val = val + s->statsCollisions ^ s->statsDnsGood - s->statsDnsBad;
 	val += (s->statsConnects ^ (unsigned long)s->statsSent ^ (unsigned long)s->statsRecv) - ServerInstance->Config->ports.size();
 	return val;
-#else
-	unsigned long val = 0;
-	serverstats* s = ServerInstance->stats;
-	val = (time(NULL) ^ GetCurrentProcessId() ^ GetCurrentThreadId() ^ (this->currid++)) ^ s->statsAccept + time(NULL);
-	val = val + s->statsCollisions ^ s->statsDnsGood - s->statsDnsBad;
-	val += (s->statsConnects ^ (unsigned long)s->statsSent ^ (unsigned long)s->statsRecv);
-	return val;
-#endif
 }
 

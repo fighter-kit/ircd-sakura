@@ -364,7 +364,7 @@ void InspSocket::Close()
 		shutdown(this->fd,2);
 		if (close(this->fd) != -1)
 			this->OnClose();
-
+		this->fd = -1;
 		if (Instance->SocketCull.find(this) == Instance->SocketCull.end())
 			Instance->SocketCull[this] = this;
 	}

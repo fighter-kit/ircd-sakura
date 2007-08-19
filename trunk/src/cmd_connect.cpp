@@ -28,6 +28,6 @@ extern "C" DllExport command_t* init_command(InspIRCd* Instance)
  */
 CmdResult cmd_connect::Handle (const char** parameters, int pcnt, userrec *user)
 {
-	user->WriteServ( "NOTICE %s :Look into loading a linking module (like m_spanningtree) if you want this to do anything useful.", user->nick);
+	user->WriteServ( "NOTICE %s :*** CONNECT can't happen without a linking module being loaded (suggestion: m_spanningtree)", user->nick);
 	return CMD_SUCCESS;
 }

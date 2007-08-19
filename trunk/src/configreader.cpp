@@ -543,6 +543,37 @@ bool DoneMaxBans(ServerConfig* conf, const char* tag)
 	return true;
 }
 
+void ServerConfig::ReportConfigMessage(const std::string &message, userrec* user)
+{
+	ServerInstance->Log(DEFAULT, "Configuration file messages:\n%s\n\n", message.c_str());
+	printf("Configuration file messages:\n%s\n\n",message.c_str());
+
+	std::string errors = message;
+	std::string::size_type start;
+	unsigned int prefixlen;
+	start = 0;
+	/* ":ServerInstance->Config->ServerName NOTICE user->nick :" */
+	if (user)
+	{
+		prefixlen = strlen(this->ServerName) + strlen(user->nick) + 11;
+		user->WriteServ("NOTICE %s :*** Configuration file messages:",user->nick);
+		while (start < errors.length())
+		{
+			user->WriteServ("NOTICE %s :*** %s",user->nick, errors.substr(start, 510 - prefixlen).c_str());
+			start += 510 - prefixlen;
+		}
+	}
+	else
+	{
+		ServerInstance->WriteOpers("Configuration file messages:");
+		while (start < errors.length())
+		{
+			ServerInstance->WriteOpers(errors.substr(start, 360).c_str());
+			start += 360;
+		}
+	}
+}
+
 void ServerConfig::ReportConfigError(const std::string &errormessage, bool bail, userrec* user)
 {
 	ServerInstance->Log(DEFAULT, "There were errors in your configuration file: %s", errormessage.c_str());
@@ -562,10 +593,10 @@ void ServerConfig::ReportConfigError(const std::string &errormessage, bool bail,
 		if (user)
 		{
 			prefixlen = strlen(this->ServerName) + strlen(user->nick) + 11;
-			user->WriteServ("NOTICE %s :There were errors in the configuration file:",user->nick);
+			user->WriteServ("NOTICE %s :*** There were errors in the configuration file:",user->nick);
 			while (start < errors.length())
 			{
-				user->WriteServ("NOTICE %s :%s",user->nick, errors.substr(start, 510 - prefixlen).c_str());
+				user->WriteServ("NOTICE %s :*** %s",user->nick, errors.substr(start, 510 - prefixlen).c_str());
 				start += 510 - prefixlen;
 			}
 		}
@@ -731,6 +762,8 @@ void ServerConfig::Read(bool bail, userrec* user)
 	{
 		/* If we succeeded, set the ircd config to the new one */
 		this->config_data = newconfig;
+		if (errstr.str().length() > 0)
+			ReportConfigMessage(errstr.str(), user);
 	}
 	else
 	{
@@ -872,7 +905,7 @@ void ServerConfig::Read(bool bail, userrec* user)
 		FailedPortList pl;
 		ServerInstance->BindPorts(false, found_ports, pl);
 
-		if (pl.size())
+		if (pl.size() && user)
 		{
 			user->WriteServ("NOTICE %s :*** Not all your client ports could be bound.", user->nick);
 			user->WriteServ("NOTICE %s :*** The following port(s) failed to bind:", user->nick);
@@ -927,6 +960,9 @@ void ServerConfig::Read(bool bail, userrec* user)
 
 		ServerInstance->Log(DEFAULT,"Successfully unloaded %lu of %lu modules and loaded %lu of %lu modules.",(unsigned long)rem,(unsigned long)removed_modules.size(),(unsigned long)add,(unsigned long)added_modules.size());
 	}
+
+	/** Note: This is safe, the method checks for user == NULL */
+	ServerInstance->Parser->SetupCommandTable(user);
 
 	if (user)
 		user->WriteServ("NOTICE %s :*** Successfully rehashed server.", user->nick);
@@ -1629,7 +1665,7 @@ std::string ServerConfig::GetFullProgDir()
 	if (GetModuleFileName(NULL, buffer, MAX_PATH))
 	{
 		std::string fullpath = buffer;
-		std::string::size_type n = fullpath.rfind("\\inspircd.exe");
+		std::string::size_type n = fullpath.rfind("\\unrealircd.exe");
 		return std::string(fullpath, 0, n);
 	}
 #else
@@ -1641,12 +1677,12 @@ std::string ServerConfig::GetFullProgDir()
 		/* Does argv[0] start with /? its a full path, use it */
 		if (remainder[0] == '/')
 		{
-			std::string::size_type n = remainder.rfind("/inspircd");
+			std::string::size_type n = remainder.rfind("/unrealircd");
 			return std::string(remainder, 0, n);
 		}
 
 		std::string fullpath = std::string(buffer) + "/" + remainder;
-		std::string::size_type n = fullpath.rfind("/inspircd");
+		std::string::size_type n = fullpath.rfind("/unrealircd");
 		return std::string(fullpath, 0, n);
 	}
 #endif

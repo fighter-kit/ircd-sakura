@@ -46,7 +46,7 @@ bool InspIRCd::HostMatchesEveryone(const std::string &mask, userrec* user)
 	float percent = ((float)matches / (float)clientlist->size()) * 100;
 	if (percent > (float)atof(itrigger))
 	{
-		WriteOpers("*** \2WARNING\2: %s tried to set a G/K/E line mask of %s, which covers %.2f%% of the network!",user->nick,mask.c_str(),percent);
+		WriteOpers("*** WARNING: %s tried to set a G/K/E line mask of %s, which covers %.2f%% of the network!",user->nick,mask.c_str(),percent);
 		return true;
 	}
 	return false;
@@ -75,7 +75,7 @@ bool InspIRCd::IPMatchesEveryone(const std::string &ip, userrec* user)
 	float percent = ((float)matches / (float)clientlist->size()) * 100;
 	if (percent > (float)atof(itrigger))
 	{
-		WriteOpers("*** \2WARNING\2: %s tried to set a Z line mask of %s, which covers %.2f%% of the network!",user->nick,ip.c_str(),percent);
+		WriteOpers("*** WARNING: %s tried to set a Z line mask of %s, which covers %.2f%% of the network!",user->nick,ip.c_str(),percent);
 		return true;
 	}
 	return false;
@@ -104,7 +104,7 @@ bool InspIRCd::NickMatchesEveryone(const std::string &nick, userrec* user)
 	float percent = ((float)matches / (float)clientlist->size()) * 100;
 	if (percent > (float)atof(itrigger))
 	{
-		WriteOpers("*** \2WARNING\2: %s tried to set a Q line mask of %s, which covers %.2f%% of the network!",user->nick,nick.c_str(),percent);
+		WriteOpers("*** WARNING: %s tried to set a Q line mask of %s, which covers %.2f%% of the network!",user->nick,nick.c_str(),percent);
 		return true;
 	}
 	return false;

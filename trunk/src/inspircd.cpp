@@ -41,6 +41,42 @@
 #include "command_parse.h"
 #include "exitcodes.h"
 
+char unreallogo[] =
+{
+32,95,32,32,32,95,32,32,32,32,32,
+32,32,32,32,32,32,32,32,32,32,32,
+32,32,32,32,32,32,95,32,95,95,95,
+95,95,95,95,95,95,95,95,32,32,95,
+95,95,95,95,32,32,32,32,32,95,32,
+10,124,32,124,32,124,32,124,32,32,32,
+32,32,32,32,32,32,32,32,32,32,32,
+32,32,32,32,32,32,124,32,124,95,32,
+32,32,95,124,32,95,95,95,32,92,47,
+32,32,95,95,32,92,32,32,32,124,32,
+124,10,124,32,124,32,124,32,124,95,32,
+95,95,32,32,95,32,95,95,32,95,95,
+95,32,32,95,95,32,95,124,32,124,32,
+124,32,124,32,124,32,124,95,47,32,47,
+124,32,47,32,32,92,47,32,95,95,124,
+32,124,10,124,32,124,32,124,32,124,32,
+39,95,32,92,124,32,39,95,95,47,32,
+95,32,92,47,32,95,96,32,124,32,124,
+32,124,32,124,32,124,32,32,32,32,47,
+32,124,32,124,32,32,32,32,47,32,95,
+96,32,124,10,124,32,124,95,124,32,124,
+32,124,32,124,32,124,32,124,32,124,32,
+32,95,95,47,32,40,95,124,32,124,32,
+124,95,124,32,124,95,124,32,124,92,32,
+92,32,124,32,92,95,95,47,92,32,40,
+95,124,32,124,10,32,92,95,95,95,47,
+124,95,124,32,124,95,124,95,124,32,32,
+92,95,95,95,124,92,95,95,44,95,124,
+95,124,92,95,95,95,47,92,95,124,32,
+92,95,124,32,92,95,95,95,95,47,92,
+95,95,44,95,124,10,0,85,110,114,
+101,97,108,0};
+
+
 #ifdef WIN32
 
 /* This MUST remain static and delcared outside the class, so that WriteProcessMemory can reference it properly */
@@ -286,7 +322,7 @@ void InspIRCd::Restart(const std::string &reason)
 	if (GetModuleFileName(NULL, module, MAX_PATH))
 		me = module;
 #else
-	me = Config->MyDir + "/inspircd";
+	me = Config->MyDir + "/unrealircd";
 #endif
 
 	if (execv(me.c_str(), Config->argv) == -1)
@@ -298,10 +334,9 @@ void InspIRCd::Restart(const std::string &reason)
 
 void InspIRCd::Start()
 {
-	printf_c("\033[1;32mInspire Internet Relay Chat Server, compiled %s at %s\n",__DATE__,__TIME__);
-	printf_c("(C) InspIRCd Development Team.\033[0m\n\n");
-	printf_c("Developers:\t\t\033[1;32mBrain, FrostyCoolSlug, w00t, Om, Special, pippijn, peavey, Burlex\033[0m\n");
-	printf_c("Others:\t\t\t\033[1;32mSee /INFO Output\033[0m\n");
+	printf_c("%s\n", unreallogo);
+	printf_c("                      version \033[1;32m%s\033[0m\n", VERSION);
+	printf_c("                      based on \033[1;32mInspIRCd\033[0m Technology\n");
 }
 
 void InspIRCd::Rehash(int status)
@@ -359,12 +394,25 @@ void InspIRCd::CloseLog()
 void InspIRCd::SetSignals()
 {
 #ifndef WIN32
-	signal(SIGALRM, SIG_IGN);
-	signal(SIGHUP, InspIRCd::Rehash);
-	signal(SIGPIPE, SIG_IGN);
-	signal(SIGCHLD, SIG_IGN);
-#endif
+	struct sigaction act;
+        act.sa_handler = SIG_IGN;
+        act.sa_flags = 0;
+        sigemptyset(&act.sa_mask);
+        sigaddset(&act.sa_mask, SIGPIPE);
+        sigaddset(&act.sa_mask, SIGALRM);
+        sigaction(SIGPIPE, &act, NULL);
+        sigaction(SIGALRM, &act, NULL);
+        sigaction(SIGCHLD, &act, NULL);
+        act.sa_handler = InspIRCd::Rehash;
+        sigemptyset(&act.sa_mask);
+        sigaddset(&act.sa_mask, SIGHUP);
+        sigaction(SIGHUP, &act, NULL);
+        act.sa_handler = InspIRCd::Exit;
+        sigaddset(&act.sa_mask, SIGTERM);
+        sigaction(SIGTERM, &act, NULL);
+#else
 	signal(SIGTERM, InspIRCd::Exit);
+#endif
 }
 
 void InspIRCd::QuickExit(int status)
@@ -398,7 +446,7 @@ bool InspIRCd::DaemonSeed()
 	}
 	setsid ();
 	umask (007);
-	printf("InspIRCd Process ID: \033[1;32m%lu\033[0m\n",(unsigned long)getpid());
+	printf("Process ID: \033[1;32m%lu\033[0m\n",(unsigned long)getpid());
 
 	signal(SIGTERM, InspIRCd::Exit);
 
@@ -421,7 +469,7 @@ bool InspIRCd::DaemonSeed()
 
 void InspIRCd::WritePID(const std::string &filename)
 {
-	std::string fname = (filename.empty() ? "inspircd.pid" : filename);
+	std::string fname = (filename.empty() ? "unrealircd.pid" : filename);
 	if (*(fname.begin()) != '/')
 	{
 		std::string::size_type pos;
@@ -469,7 +517,11 @@ InspIRCd::InspIRCd(int argc, char** argv)
 	this->clientlist = new user_hash();
 	this->chanlist = new chan_hash();
 
+#ifdef USEINSPCONFIG
 	this->Config = new ServerConfig(this);
+#else 
+	this->Config = new U4ServerConfig(this);
+#endif
 
 	this->Config->argv = argv;
 	this->Config->argc = argc;
@@ -680,7 +732,7 @@ InspIRCd::InspIRCd(int argc, char** argv)
 #endif
 	printf("\nInspIRCd is now running!\n");
 	Log(DEFAULT,"Startup complete.");
-
+	
 	this->WritePID(Config->PID);
 }
 

@@ -1074,3 +1074,23 @@ void chanrec::RemoveAllPrefixes(userrec* user)
 	}
 }
 
+char* chanrec::U4_ChanModesNoParams()
+{
+	static char scratch[MAXBUF];
+	char* offset = scratch;
+
+	*scratch = '\0';
+
+	/* This was still iterating up to 190, chanrec::modes is only 64 elements -- Om */
+	for(int n = 0; n < 64; n++)
+	{
+		if(this->modes[n])
+		{
+			*offset++ = n + 65;
+		}
+	}
+
+	/* Null terminate scratch */
+	*offset = '\0';
+	return scratch;
+}

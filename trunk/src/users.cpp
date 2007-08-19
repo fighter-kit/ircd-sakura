@@ -375,7 +375,7 @@ userrec::~userrec()
 		free(operquit);
 	if (ip)
 	{
-		this->RemoveCloneCounts();
+ 		this->RemoveCloneCounts();
 
 		if (this->GetProtocolFamily() == AF_INET)
 		{
@@ -923,15 +923,11 @@ void userrec::AddClient(InspIRCd* Instance, int socket, int port, bool iscached,
 		return;
 	}
 
+	/*
+	 * Check connect class settings and initialise settings into userrec.
+	 * This will be done again after DNS resolution. -- w00t
+	 */
 	New->CheckClass();
-
-	New->pingmax = i->GetPingTime();
-	New->nping = Instance->Time() + i->GetPingTime() + Instance->Config->dns_timeout;
-	New->timeout = Instance->Time() + i->GetRegTimeout();
-	New->flood = i->GetFlood();
-	New->threshold = i->GetThreshold();
-	New->sendqmax = i->GetSendqMax();
-	New->recvqmax = i->GetRecvqMax();
 
 	Instance->local_users.push_back(New);
 
@@ -969,7 +965,7 @@ void userrec::AddClient(InspIRCd* Instance, int socket, int port, bool iscached,
 			char reason[MAXBUF];
 			if (*Instance->Config->MoronBanner)
 				New->WriteServ("NOTICE %s :*** %s", New->nick, Instance->Config->MoronBanner);
-			snprintf(reason,MAXBUF,"Z-Lined: %s",r->reason);
+			snprintf(reason,MAXBUF,"Z:Lined (%s)",r->reason);
 			userrec::QuitUser(Instance, New, reason);
 			return;
 		}
@@ -1032,6 +1028,14 @@ void userrec::CheckClass()
 		ServerInstance->WriteOpers("*** WARNING: maximum GLOBAL connections (%ld) exceeded for IP %s", a->GetMaxGlobal(), this->GetIPString());
 		return;
 	}
+
+	this->pingmax = a->GetPingTime();
+	this->nping = ServerInstance->Time() + a->GetPingTime() + ServerInstance->Config->dns_timeout;
+	this->timeout = ServerInstance->Time() + a->GetRegTimeout();
+	this->flood = a->GetFlood();
+	this->threshold = a->GetThreshold();
+	this->sendqmax = a->GetSendqMax();
+	this->recvqmax = a->GetRecvqMax();
 }
 
 void userrec::FullConnect()
@@ -1066,7 +1070,7 @@ void userrec::FullConnect()
 			char reason[MAXBUF];
 			if (*ServerInstance->Config->MoronBanner)
 				this->WriteServ("NOTICE %s :*** %s", this->nick, ServerInstance->Config->MoronBanner);
-			snprintf(reason,MAXBUF,"G-Lined: %s",r->reason);
+			snprintf(reason,MAXBUF,"User has been banned from %s (%s)", ServerInstance->Config->Network, r->reason);
 			userrec::QuitUser(ServerInstance, this, reason);
 			return;
 		}
@@ -1079,13 +1083,13 @@ void userrec::FullConnect()
 			char reason[MAXBUF];
 			if (*ServerInstance->Config->MoronBanner)
 				this->WriteServ("NOTICE %s :*** %s", this, ServerInstance->Config->MoronBanner);
-			snprintf(reason,MAXBUF,"K-Lined: %s",n->reason);
+			snprintf(reason,MAXBUF,"User is banned (%s)",n->reason);
 			userrec::QuitUser(ServerInstance, this, reason);
 			return;
 		}
 	}
 
-	this->WriteServ("NOTICE Auth :Welcome to \002%s\002!",ServerInstance->Config->Network);
+	//this->WriteServ("NOTICE Auth :Welcome to \002%s\002!",ServerInstance->Config->Network);
 	this->WriteServ("001 %s :Welcome to the %s IRC Network %s!%s@%s",this->nick, ServerInstance->Config->Network, this->nick, this->ident, this->host);
 	this->WriteServ("002 %s :Your host is %s, running version %s",this->nick,ServerInstance->Config->ServerName,VERSION);
 	this->WriteServ("003 %s :This server was created %s %s", this->nick, __TIME__, __DATE__);
@@ -1917,30 +1921,30 @@ void userrec::ShowMOTD()
 {
 	if (!ServerInstance->Config->MOTD.size())
 	{
-		this->WriteServ("422 %s :Message of the day file is missing.",this->nick);
+		this->WriteServ("422 %s :MOTD File is missing",this->nick);
 		return;
 	}
-	this->WriteServ("375 %s :%s message of the day", this->nick, ServerInstance->Config->ServerName);
+	this->WriteServ("375 %s :- %s Message of the Day -", this->nick, ServerInstance->Config->ServerName);
 
 	for (file_cache::iterator i = ServerInstance->Config->MOTD.begin(); i != ServerInstance->Config->MOTD.end(); i++)
 		this->WriteServ("372 %s :- %s",this->nick,i->c_str());
 
-	this->WriteServ("376 %s :End of message of the day.", this->nick);
+	this->WriteServ("376 %s :End of /MOTD command.", this->nick);
 }
 
 void userrec::ShowRULES()
 {
 	if (!ServerInstance->Config->RULES.size())
 	{
-		this->WriteServ("NOTICE %s :Rules file is missing.",this->nick);
+		this->WriteServ("434 %s :RULES File is missing",this->nick);
 		return;
 	}
-	this->WriteServ("NOTICE %s :%s rules",this->nick,ServerInstance->Config->ServerName);
+	this->WriteServ("308 %s :- %s Server Rules -",this->nick,ServerInstance->Config->ServerName);
 
 	for (file_cache::iterator i = ServerInstance->Config->RULES.begin(); i != ServerInstance->Config->RULES.end(); i++)
-		this->WriteServ("NOTICE %s :%s",this->nick,i->c_str());
+		this->WriteServ("232 %s :- %s",this->nick,i->c_str());
 
-	this->WriteServ("NOTICE %s :End of %s rules.",this->nick,ServerInstance->Config->ServerName);
+	this->WriteServ("309 %s :End of RULES command.",this->nick);
 }
 
 void userrec::HandleEvent(EventType et, int errornum)

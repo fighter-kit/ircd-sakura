@@ -1,2 +1,2 @@
 #!sh
-echo "ircd-sakura-2.0.0"
+echo "Sakura2.0-devel"

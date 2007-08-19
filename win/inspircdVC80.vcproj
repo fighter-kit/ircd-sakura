@@ -1770,11 +1770,11 @@
 				Name="Documentation Files"
 				>
 				<File
-					RelativePath="..\docs\inspircd.conf.example"
+					RelativePath="..\docs\Sakura-team"
 					>
 				</File>
 				<File
-					RelativePath="..\docs\Sakura-team"
+					RelativePath="..\docs\sakura.conf.example"
 					>
 				</File>
 			</Filter>

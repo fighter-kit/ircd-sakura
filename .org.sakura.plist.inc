@@ -5,7 +5,7 @@
 	<key>Iterations</key>
 	<integer>3</integer>
 	<key>Label</key>
-	<string>org.inspircd</string>
+	<string>org.sakura</string>
 	<key>LowPriorityIO</key>
 	<true/>
 	<key>Nice</key>
@@ -13,10 +13,10 @@
 	<key>OnDemand</key>
 	<false/>
 	<key>Program</key>
-	<string>@BINARY_DIR@/inspircd</string>
+	<string>@BINARY_DIR@/sakura</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>inspircd</string>
+		<string>sakura</string>
 		<string>-nofork</string>
 	</array>
 	<key>ServiceIPC</key>

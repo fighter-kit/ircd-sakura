@@ -441,7 +441,8 @@ enum Implementation {	I_OnUserConnect, I_OnUserQuit, I_OnUserDisconnect, I_OnUse
 			I_OnPostLocalTopicChange, I_OnEvent, I_OnRequest, I_OnOperCompre, I_OnGlobalOper, I_OnPostConnect, I_OnAddBan, I_OnDelBan,
 			I_OnRawSocketAccept, I_OnRawSocketClose, I_OnRawSocketWrite, I_OnRawSocketRead, I_OnChangeLocalUserGECOS, I_OnUserRegister,
 			I_OnOperCompare, I_OnChannelDelete, I_OnPostOper, I_OnSyncOtherMetaData, I_OnSetAway, I_OnCancelAway, I_OnUserList,
-			I_OnPostCommand, I_OnPostJoin, I_OnWhoisLine, I_OnBuildExemptList, I_OnRawSocketConnect, I_OnGarbageCollect, I_OnBufferFlushed };
+			I_OnPostCommand, I_OnPostJoin, I_OnWhoisLine, I_OnBuildExemptList, I_OnRawSocketConnect, I_OnGarbageCollect, I_OnBufferFlushed,
+			I_OnEncapReceived, I_OnChannelList, I_OnDownloadFileAsync, I_OnDownloadFileCompleted, I_OnDownloadFileFailure, I_OnDownloadFile };
 
 /** Base class for all InspIRCd modules
  *  This class is the base class for InspIRCd modules. All modules must inherit from this class,
@@ -1433,6 +1434,66 @@ class CoreExport Module : public Extensible
 	 * @param user The user who's buffer is now empty.
 	 */
 	virtual void OnBufferFlushed(userrec* user);
+	
+	/** Called whenever the server retrieves a server-to-server query (ENCAP)
+	 * This will not get triggered when destination of ENCAP is for a user
+	 * (where the protocol acts like PUSH does currently). Nor will it get
+	 * triggered if destination is not us. There is -always- a second parameter, 
+	 * which determines the type of the query. First is the pattern that you 
+	 * reached the server through
+	 * @param from The name of the server sending the query
+	 * @param parameters An deque of std::string containing
+	 *                   the parameters for the command. 
+	 * @return 1 if you have handled the query type and 0 if you haven't
+	 */
+	virtual int OnEncapReceived(const std::string& from, std::deque<std::string>& parameters);
+
+	/** Called whenever a user requests a channel list (/LIST), also SAFELIST
+	 * This is called before other channels are sent but after the initial header
+	 * @param user the user who did the /LIST
+	 * @param parameters parameters given to the /LIST
+	 * @param pcnt amount of parameters in the /LIST command
+	 * @param minusers minimum users in the channel (0 means there was no parameter)
+	 * @param maxusers maximum users in the channel (0 means there was no parameter)
+	 */
+	virtual void OnChannelList(userrec* user, const char** parameters, int pcnt, int minusers, int maxusers);
+
+	/** Called when a download is requested, asynchronously
+	 * The receiver will, if handled, run the OnDownloadFileCompleted or OnDownloadFileFailure
+	 * The receiver must stop downloading if OnCancelDownloadFileAsync is called
+	 * The receiver must handle caching by itself
+	 * @param url URL that is to be downloaded
+	 * @return 1 if you handled the download, 0 else
+	 */
+	virtual int OnDownloadFileAsync(const std::string&url);
+
+	/** Called when a download has finished
+	 * @param url The URL that has finished downloading
+	 * @param contents Contents of the download
+	 * @return 1 if you handled the request, 0 if you didn't
+	 */
+	virtual int OnDownloadFileCompleted(const std::string& url, std::string &contents);
+
+	/** Called when a download failed to download
+	 * @param url The URL that failed to download
+	 * @param error The error that happened
+	 * @return 1 if you handled the request, 0 if you didn't
+	 */
+	virtual int OnDownloadFileFailure(const std::string& url, std::string &error);
+	
+	/** Called when an async download is supposed to be cancelled
+	 * @param url The download that should be cancelled
+	 * @return 1 if you handled the request, 0 if you didn't
+	 */	
+	virtual int OnCancelDownloadFileAsync(const std::string& url);
+
+	/** Called when a download is requested, synchronously 
+	  * @param url URL to be downloaded
+	  * @param contents Contents if the download succeeded
+	  * @param error The error that happened if an error happened
+	  * @return 0 if you didn't handle the request, -1 if you did and it failed, 1 if it succeded
+	 */
+	virtual int OnDownloadFile(std::string& url, std::string& contents, std::string& error);
 };
 
 

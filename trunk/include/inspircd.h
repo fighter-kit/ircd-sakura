@@ -38,6 +38,8 @@
 #include "snomasks.h"
 #include "cull_list.h"
 
+class U4ServerConfig;
+
 /** Returned by some functions to indicate failure.
  */
 #define ERROR -1
@@ -482,7 +484,11 @@ class CoreExport InspIRCd : public classbase
 
 	/**  Server Config class, holds configuration file data
 	 */
+#ifdef USEINSPCONFIG
 	ServerConfig* Config;
+#else
+	U4ServerConfig* Config;
+#endif
 
 	/** Snomask manager - handles routing of snomask messages
 	 * to opers.

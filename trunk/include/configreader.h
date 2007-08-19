@@ -631,15 +631,21 @@ class CoreExport ServerConfig : public Extensible
 	 */
 	void ReportConfigError(const std::string &errormessage, bool bail, userrec* user);
 
-	/** Load 'filename' into 'target', with the new config parser everything is parsed into
-	 * tag/key/value at load-time rather than at read-value time.
+	/** Report a configuration message given in message.
+	 * @param user If this is set to a non-null value, the errors are spooled to this user as SNOTICEs.
+	 * If the parameter is NULL, the messages are spooled to all users via WriteOpers as SNOTICEs.
 	 */
-	bool LoadConf(ConfigDataHash &target, const char* filename, std::ostringstream &errorstream);
+	void ReportConfigMessage(const std::string &message, userrec* user);
 
 	/** Load 'filename' into 'target', with the new config parser everything is parsed into
 	 * tag/key/value at load-time rather than at read-value time.
 	 */
-	bool LoadConf(ConfigDataHash &target, const std::string &filename, std::ostringstream &errorstream);
+	virtual bool LoadConf(ConfigDataHash &target, const char* filename, std::ostringstream &errorstream);
+
+	/** Load 'filename' into 'target', with the new config parser everything is parsed into
+	 * tag/key/value at load-time rather than at read-value time.
+	 */
+	virtual bool LoadConf(ConfigDataHash &target, const std::string &filename, std::ostringstream &errorstream);
 	
 	/* Both these return true if the value existed or false otherwise */
 	
@@ -760,6 +766,7 @@ class CoreExport ServerConfig : public Extensible
 	 */
 	static bool FileExists(const char* file);
 	
+	virtual ~ServerConfig() {}
 };
 
 /** Initialize the disabled commands list
@@ -786,5 +793,6 @@ bool DoClass(ServerConfig* conf, const char* tag, char** entries, ValueList &val
  */
 bool DoneClassesAndTypes(ServerConfig* conf, const char* tag);
 
-#endif
+#include "unrealconfig.h"
 
+#endif

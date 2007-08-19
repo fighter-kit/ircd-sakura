@@ -457,6 +457,10 @@ class CoreExport chanrec : public Extensible
 	 */
 	char* ChanModes(bool showkey);
 
+	/** Returns the channel's modes without parameters
+	 * @return the channel modes without parameters
+	 */
+	char *U4_ChanModesNoParams();
 	/** Spool the NAMES list for this channel to the given user
 	 * @param user The user to spool the NAMES list to
 	 * @param ulist The user list to send, NULL to use the

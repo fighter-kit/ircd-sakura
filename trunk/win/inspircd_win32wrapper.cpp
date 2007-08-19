@@ -22,6 +22,8 @@ using namespace std;
 #define INADDR_NONE 0xffffffff
 #endif
 
+#pragma comment(lib, "winmm.lib")
+
 HANDLE hIPCPipe;
 
 int inet_aton(const char *cp, struct in_addr *addr)
@@ -511,3 +513,15 @@ void ClearConsole()
 	}
 	return;
 }
+
+int gettimeofday(struct timeval * tv, void * tz)
+{
+	if (tv == NULL)
+		return -1;
+
+	DWORD mstime = timeGetTime();
+	tv->tv_sec   = time(NULL);
+	tv->tv_usec  = (mstime - (tv->tv_sec * 1000)) * 1000;
+	return 0;
+}
+

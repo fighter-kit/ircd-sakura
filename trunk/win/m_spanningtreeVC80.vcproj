@@ -229,7 +229,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib inspircd.lib cmd_whois.lib cmd_stats.lib"
+				AdditionalDependencies="ws2_32.lib unrealircd.lib cmd_whois.lib cmd_stats.lib"
 				OutputFile="$(OutDir)/m_spanningtree.so"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\bin\release\bin;..\bin\release\lib"

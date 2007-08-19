@@ -56,7 +56,7 @@ bool get_bool_option(const char * text, bool def)
 {
 	static char buffer[500];
 	char ret[100];
-	printf_c("%s [\033[1;32m%c\033[0m] -> ", text, def ? 'y' : 'n');
+	printf_c("%s\n[\033[1;32m%c\033[0m] -> ", text, def ? 'y' : 'n');
 	fgets(buffer, 500, stdin);
 	if(sscanf(buffer, "%s", ret) != 1)
 		strcpy(ret, def ? "y" : "n");
@@ -192,6 +192,7 @@ void Run()
 	char base_path[MAX_PATH];
 	char bin_dir[MAX_PATH];
 	char revision_text[MAX_PATH];
+	bool use_InspIRCd_Config = false;
 
 	int max_clients = 1024;
 	int nicklen = 31;
@@ -262,7 +263,7 @@ void Run()
 		"of the 'maximum number of clients' setting which may be different on\n"
 		"different servers on the network.\n\n");
 
-    
+    use_InspIRCd_Config = get_bool_option("Use InspIRCd-style config files (Default Unreal4)?", false);
 	max_clients = get_int_option("Please enter the maximum number of clients at any one time?", 1024);
 	nicklen = get_int_option("Please enter the maximum length of nicknames?", 31);
 	chanlen = get_int_option("Please enter the maximum length of channel names?", 64);
@@ -293,6 +294,7 @@ void Run()
 	printf_c("\033[0mMax kick length:\033[1;32m          %u\n", kicklen);
 	printf_c("\033[0mMax name length:\033[1;32m          %u\n", rllen);
 	printf_c("\033[0mMax away length:\033[1;32m          %u\n", awaylen);
+	printf_c("\033[0mConfig file style:\033[1;32m        %s\n", use_InspIRCd_Config ? "InspIRCd" : "Unreal 4");
 	printf("\n"); sc(TNORMAL);
 	if(get_bool_option("Are these settings correct?", true) == false)
 	{
@@ -314,7 +316,7 @@ void Run()
 	if(use_iocp)
 		fprintf(f, "#define CONFIG_USE_IOCP 1\n\n");
 
-	fprintf(f, "#define CONFIG_FILE \"%s/sakura.conf\"\n", config_file);
+	fprintf(f, "#define CONFIG_FILE \"%s/unrealircd.conf\"\n", config_file);
 	fprintf(f, "#define MOD_PATH \"%s\"\n", mod_path);
 	fprintf(f, "#define MAX_DESCRIPTORS %u\n", max_fd);
 	fprintf(f, "#define MAXCLIENTS %u\n", max_clients);
@@ -334,6 +336,8 @@ void Run()
 	fprintf(f, "#define REVISION \"%s\"\n", revision_text);
 	if(support_ip6links)
 		fprintf(f, "#define SUPPORT_IP6LINKS 1\n");
+	if (use_InspIRCd_Config)
+		fprintf(f, "#define USEINSPCONFIG\n");
 
 	OSVERSIONINFO vi;
 	vi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
@@ -407,28 +411,28 @@ void WriteCompileCommands()
 #ifdef WIN64
 	// /MACHINE:X64
 	#ifdef _DEBUG
-		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../include\" /I \"../include/modes\" /I \"../include/commands\" /I \"../win\" /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /Gm /EHsc /Gm /RTC1 /MTd /Fo\"Debug/\" /Fd\"Debug/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\win\\inspircd_memory_functions.cpp /link ..\\bin\\debug_x64\\bin\\inspircd.lib /OUT:\"..\\bin\\debug_x64\\lib\\$*.so\" /PDB:\"..\\bin\\debug_x64\\lib\\$*.pdb\" /MACHINE:X64 /IMPLIB:\"..\\bin\\debug_x64\\lib\\$*.lib\"\n\n");
-		CreateDirectory("..\\src\\debug", NULL);
+		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../include\" /I \"../include/modes\" /I \"../include/commands\" /I \"../win\" /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /Gm /EHsc /Gm /RTC1 /MTd /Fo\"Debug/\" /Fd\"Debug/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\win\\inspircd_memory_functions.cpp /link ..\\bin\\debug_x64\\bin\\unrealircd.lib /OUT:\"..\\bin\\debug_x64\\lib\\$*.so\" /PDB:\"..\\bin\\debug_x64\\lib\\$*.pdb\" /MACHINE:X64 /IMPLIB:\"..\\bin\\debug_x64\\lib\\$*.lib\"\n\n");
+		CreateDirectory("..\\bin\\debug", NULL);
 		CreateDirectory("..\\bin\\debug\\bin", NULL);
 		CreateDirectory("..\\bin\\debug\\lib", NULL);
 		CreateDirectory("..\\bin\\debug\\modules", NULL);
 	#else
-		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../include\" /I \"../include/modes\" /I \"../include/commands\" /I \"../win\" /D \"WIN32\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /EHsc /Gm /MT /Fo\"Release/\" /Fd\"Release/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\win\\inspircd_memory_functions.cpp /link ..\\bin\\release_x64\\bin\\inspircd.lib /OUT:\"..\\bin\\release_x64\\lib\\$*.so\" /PDB:\"..\\bin\\release_x64\\lib\\$*.pdb\" /MACHINE:X64 /IMPLIB:\"..\\bin\\release_x64\\lib\\$*.lib\"\n\n");
-		CreateDirectory("..\\src\\release", NULL);
+		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../include\" /I \"../include/modes\" /I \"../include/commands\" /I \"../win\" /D \"WIN32\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /EHsc /Gm /MT /Fo\"Release/\" /Fd\"Release/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\win\\inspircd_memory_functions.cpp /link ..\\bin\\release_x64\\bin\\unrealircd.lib /OUT:\"..\\bin\\release_x64\\lib\\$*.so\" /PDB:\"..\\bin\\release_x64\\lib\\$*.pdb\" /MACHINE:X64 /IMPLIB:\"..\\bin\\release_x64\\lib\\$*.lib\"\n\n");
+		CreateDirectory("..\\bin\\release", NULL);
 		CreateDirectory("..\\bin\\release\\bin", NULL);
 		CreateDirectory("..\\bin\\release\\lib", NULL);
 		CreateDirectory("..\\bin\\release\\modules", NULL);
 	#endif
 #else
 	#ifdef _DEBUG
-		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../include\" /I \"../include/modes\" /I \"../include/commands\" /I \"../win\" /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /Gm /EHsc /Gm /RTC1 /MTd /Fo\"Debug/\" /Fd\"Debug/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\win\\inspircd_memory_functions.cpp /link ..\\bin\\debug\\bin\\inspircd.lib /OUT:\"..\\bin\\debug\\lib\\$*.so\" /PDB:\"..\\bin\\debug\\lib\\$*.pdb\" /IMPLIB:\"..\\bin\\debug\\lib\\$*.lib\"\n\n");
-		CreateDirectory("..\\src\\debug", NULL);
+		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../include\" /I \"../include/modes\" /I \"../include/commands\" /I \"../win\" /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /Gm /EHsc /Gm /RTC1 /MTd /Fo\"Debug/\" /Fd\"Debug/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\win\\inspircd_memory_functions.cpp /link ..\\bin\\debug\\bin\\unrealircd.lib /OUT:\"..\\bin\\debug\\lib\\$*.so\" /PDB:\"..\\bin\\debug\\lib\\$*.pdb\" /IMPLIB:\"..\\bin\\debug\\lib\\$*.lib\"\n\n");
+		CreateDirectory("..\\bin\\debug", NULL);
 		CreateDirectory("..\\bin\\debug\\bin", NULL);
 		CreateDirectory("..\\bin\\debug\\lib", NULL);
 		CreateDirectory("..\\bin\\debug\\modules", NULL);
 	#else
-		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../include\" /I \"../include/modes\" /I \"../include/commands\" /I \"../win\" /D \"WIN32\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /EHsc /Gm /MT /Fo\"Release/\" /Fd\"Release/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\win\\inspircd_memory_functions.cpp /link ..\\bin\\release\\bin\\inspircd.lib /OUT:\"..\\bin\\release\\lib\\$*.so\" /PDB:\"..\\bin\\release\\lib\\$*.pdb\" /IMPLIB:\"..\\bin\\release\\lib\\$*.lib\"\n\n");
-		CreateDirectory("..\\src\\release", NULL);
+		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../include\" /I \"../include/modes\" /I \"../include/commands\" /I \"../win\" /D \"WIN32\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /EHsc /Gm /MT /Fo\"Release/\" /Fd\"Release/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\win\\inspircd_memory_functions.cpp /link ..\\bin\\release\\bin\\unrealircd.lib /OUT:\"..\\bin\\release\\lib\\$*.so\" /PDB:\"..\\bin\\release\\lib\\$*.pdb\" /IMPLIB:\"..\\bin\\release\\lib\\$*.lib\"\n\n");
+		CreateDirectory("..\\bin\\release", NULL);
 		CreateDirectory("..\\bin\\release\\bin", NULL);
 		CreateDirectory("..\\bin\\release\\lib", NULL);
 		CreateDirectory("..\\bin\\release\\modules", NULL);
@@ -484,18 +488,18 @@ void WriteCompileModules()
 #ifdef WIN64
 	// /MACHINE:X64
 	#ifdef _DEBUG
-		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../../include\" /I \"../../include/modes\" /I \"../../include/modules\" /I \"../../win\" /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /Gm /EHsc /Gm /RTC1 /MTd /Fo\"Debug/\" /Fd\"Debug/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\..\\win\\inspircd_memory_functions.cpp /link ..\\..\\bin\\debug_x64\\bin\\inspircd.lib ws2_32.lib /OUT:\"..\\..\\bin\\debug_x64\\modules\\$*.so\" /PDB:\"..\\..\\bin\\debug_x64\\modules\\$*.pdb\" /MACHINE:X64 /IMPLIB:\"..\\..\\bin\\debug_x64\\modules\\$*.lib\"\n\n");
+		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../../include\" /I \"../../include/modes\" /I \"../../include/modules\" /I \"../../win\" /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /Gm /EHsc /Gm /RTC1 /MTd /Fo\"Debug/\" /Fd\"Debug/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\..\\win\\inspircd_memory_functions.cpp /link ..\\..\\bin\\debug_x64\\bin\\unrealircd.lib ws2_32.lib /OUT:\"..\\..\\bin\\debug_x64\\modules\\$*.so\" /PDB:\"..\\..\\bin\\debug_x64\\modules\\$*.pdb\" /MACHINE:X64 /IMPLIB:\"..\\..\\bin\\debug_x64\\modules\\$*.lib\"\n\n");
 		CreateDirectory("..\\src\\modules\\debug_x64", NULL);
 	#else
-		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../../include\" /I \"../../include/modes\" /I \"../../include/modules\" /I \"../../win\" /D \"WIN32\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /EHsc /Gm /MT /Fo\"Release/\" /Fd\"Release/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\..\\win\\inspircd_memory_functions.cpp /link ..\\..\\bin\\release_x64\\bin\\inspircd.lib ws2_32.lib /OUT:\"..\\..\\bin\\release_x64\\modules\\$*.so\" /PDB:\"..\\..\\bin\\release_x64\\modules\\$*.pdb\" /MACHINE:X64 /IMPLIB:\"..\\..\\bin\\release_x64\\modules\\$*.lib\"\n\n");
+		fprintf(f, "  cl /nologo /LD /Od /I \".\" /I \"../../include\" /I \"../../include/modes\" /I \"../../include/modules\" /I \"../../win\" /D \"WIN32\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /EHsc /Gm /MT /Fo\"Release/\" /Fd\"Release/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\..\\win\\inspircd_memory_functions.cpp /link ..\\..\\bin\\release_x64\\bin\\unrealircd.lib ws2_32.lib /OUT:\"..\\..\\bin\\release_x64\\modules\\$*.so\" /PDB:\"..\\..\\bin\\release_x64\\modules\\$*.pdb\" /MACHINE:X64 /IMPLIB:\"..\\..\\bin\\release_x64\\modules\\$*.lib\"\n\n");
 		CreateDirectory("..\\src\\modules\\release_x64", NULL);
 	#endif
 #else
 	#ifdef _DEBUG
-		fprintf(f, "  cl /nologo -Dssize_t=long /LD /Od /I \".\" /I \"../../include\" /I \"../../include/modes\" /I \"../../include/modules\" /I \"../../win\" /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /Gm /EHsc /Gm /RTC1 /MTd /Fo\"Debug/\" /Fd\"Debug/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\..\\win\\inspircd_memory_functions.cpp /link ..\\..\\bin\\debug\\bin\\inspircd.lib ws2_32.lib /OUT:\"..\\..\\bin\\debug\\modules\\$*.so\" /PDB:\"..\\..\\bin\\debug\\modules\\$*.pdb\" /IMPLIB:\"..\\..\\bin\\debug\\modules\\$*.lib\"\n\n");
+		fprintf(f, "  cl /nologo -Dssize_t=long /LD /Od /I \".\" /I \"../../include\" /I \"../../include/modes\" /I \"../../include/modules\" /I \"../../win\" /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /Gm /EHsc /Gm /RTC1 /MTd /Fo\"Debug/\" /Fd\"Debug/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\..\\win\\inspircd_memory_functions.cpp /link ..\\..\\bin\\debug\\bin\\unrealircd.lib ws2_32.lib /OUT:\"..\\..\\bin\\debug\\modules\\$*.so\" /PDB:\"..\\..\\bin\\debug\\modules\\$*.pdb\" /IMPLIB:\"..\\..\\bin\\debug\\modules\\$*.lib\"\n\n");
 		CreateDirectory("..\\src\\modules\\debug", NULL);
 	#else
-		fprintf(f, "  cl /nologo -Dssize_t=long /LD /Od /I \".\" /I \"../../include\" /I \"../../include/modes\" /I \"../../include/modules\" /I \"../../win\" /D \"WIN32\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /EHsc /Gm /MT /Fo\"Release/\" /Fd\"Release/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\..\\win\\inspircd_memory_functions.cpp /link ..\\..\\bin\\release\\bin\\inspircd.lib ws2_32.lib /OUT:\"..\\..\\bin\\release\\modules\\$*.so\" /PDB:\"..\\..\\bin\\release\\modules\\$*.pdb\" /IMPLIB:\"..\\..\\bin\\release\\modules\\$*.lib\"\n\n");
+		fprintf(f, "  cl /nologo -Dssize_t=long /LD /Od /I \".\" /I \"../../include\" /I \"../../include/modes\" /I \"../../include/modules\" /I \"../../win\" /D \"WIN32\" /D \"_CONSOLE\" /D \"_MBCS\" /D \"DLL_BUILD\" /EHsc /Gm /MT /Fo\"Release/\" /Fd\"Release/vc70.pdb\" /W2 /Wp64 /Zi /TP $*.cpp ..\\..\\win\\inspircd_memory_functions.cpp /link ..\\..\\bin\\release\\bin\\unrealircd.lib ws2_32.lib /OUT:\"..\\..\\bin\\release\\modules\\$*.so\" /PDB:\"..\\..\\bin\\release\\modules\\$*.pdb\" /IMPLIB:\"..\\..\\bin\\release\\modules\\$*.lib\"\n\n");
 		CreateDirectory("..\\src\\modules\\release", NULL);
 	#endif
 #endif

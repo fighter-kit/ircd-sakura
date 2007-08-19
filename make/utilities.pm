@@ -12,10 +12,13 @@
 
 
 package make::utilities;
+use strict qw(vars subs);
+use warnings qw(all);
 use Exporter 'import';
 use POSIX;
+use Fcntl;
 use Getopt::Long;
-@EXPORT = qw(make_rpath pkgconfig_get_include_dirs pkgconfig_get_lib_dirs pkgconfig_check_version translate_functions promptstring vcheck);
+our @EXPORT = qw(make_rpath pkgconfig_get_include_dirs pkgconfig_get_lib_dirs pkgconfig_check_version translate_functions promptstring vcheck);
 
 # Parse the output of a *_config program,
 # such as pcre_config, take out the -L
@@ -31,7 +34,7 @@ sub promptstring($$$$$)
 	my $var;
 	if (!$main::interactive)
 	{
-		undef $opt_commandlineswitch;
+		my $opt_commandlineswitch;
 		GetOptions ("$commandlineswitch=s" => \$opt_commandlineswitch);
 		if (defined $opt_commandlineswitch)
 		{
@@ -59,11 +62,12 @@ sub promptstring($$$$$)
 sub make_rpath($;$)
 {
 	my ($executable, $module) = @_;
+	my $data;
 	chomp($data = `$executable`);
 	my $output = "";
 	while ($data =~ /-L(\S+)/)
 	{
-		$libpath = $1;
+		my $libpath = $1;
 		if (!exists $already_added{$libpath})
 		{
 			print "Adding extra library path to \033[1;32m$module\033[0m ... \033[1;32m$libpath\033[0m\n";
@@ -90,6 +94,9 @@ sub extend_pkg_path()
 sub pkgconfig_get_include_dirs($$$;$)
 {
 	my ($packagename, $headername, $defaults, $module) = @_;
+	my $ret;
+	my $v;
+	my $foo;
 
 	my $key = "default_includedir_$packagename";
 	if (exists $main::config{$key})
@@ -111,7 +118,7 @@ sub pkgconfig_get_include_dirs($$$;$)
 	{
 		$foo = `locate "$headername" | head -n 1`;
 		$foo =~ /(.+)\Q$headername\E/;
-		$find = $1;
+		my $find = $1;
 		chomp($find);
 		if ((defined $find) && ($find ne "") && ($find ne $packagename))
 		{
@@ -165,19 +172,37 @@ sub pkgconfig_get_include_dirs($$$;$)
 sub vcheck($$)
 {
 	my ($version1, $version2) = @_;
-	$version1 =~ s/\-r(\d+)/\.\1/g; # minor revs/patchlevels
-	$version2 =~ s/\-r(\d+)/\.\1/g;
-	$version1 =~ s/p(\d+)/\.\1/g;
-	$version2 =~ s/p(\d+)/\.\1/g;
-	$version1 =~ s/\-//g;
-	$version2 =~ s/\-//g;
-	$version1 =~ s/a-z//g;
-	$version2 =~ s/a-z//g;
-	my @v1 = split('\.', $version1);
-	my @v2 = split('\.', $version2);
-	for ($curr = 0; $curr < scalar(@v1); $curr++)
+        # Firstly, change all non-letter or digit characters to dots.
+	$version1 =~ s/[^A-Z0-9]/./ig;
+	$version2 =~ s/[^A-Z0-9]/./ig;
+	# Now insert a dot between letter/digit or digit/letter.
+	$version1 =~ s/([A-Z])([0-9])/$1.$2/ig;
+	$version1 =~ s/([0-9])([A-Z])/$1.$2/ig;
+	$version2 =~ s/([A-Z])([0-9])/$1.$2/ig;
+	$version2 =~ s/([0-9])([A-Z])/$1.$2/ig;
+	my @v1 = split('\.+', $version1);
+	my @v2 = split('\.+', $version2);
+	while ($v1[0] eq "") {
+		shift @v1;
+	}
+	while ($v2[0] eq "") {
+		shift @v2;
+	}
+	while ($v1[$#v1] eq "") {
+		pop @v1;
+	}
+	while ($v2[$#v2] eq "") {
+		pop @v2;
+	}
+	for (my $curr = 0; $curr < scalar(@v1) || $curr < scalar(@v2); $curr++)
 	{
-		if ($v1[$curr] < $v2[$curr])
+		# A missing component means the other end is higher.
+		last if (defined($v1[$curr]) && !defined($v2[$curr]));
+		return 0 if (!defined($v1[$curr]) && defined($v2[$curr]));
+		if ($v1[$curr] =~ m/^[a-z]$/i || $v2[$curr] =~ m/^[a-z]$/i) {
+			return 0 if (lc($v1[$curr]) le lc($v2[$curr]));
+		}
+		elsif ($v1[$curr] < $v2[$curr])
 		{
 			return 0;
 		}
@@ -193,7 +218,7 @@ sub pkgconfig_check_version($$;$)
 
 	print "Checking version of package \033[1;32m$packagename\033[0m is >= \033[1;32m$version\033[0m... ";
 
-	$v = `pkg-config --modversion $packagename 2>/dev/null`;
+	my $v = `pkg-config --modversion $packagename 2>/dev/null`;
 	if (defined $v)
 	{
 		chomp($v);
@@ -221,6 +246,9 @@ sub pkgconfig_check_version($$;$)
 sub pkgconfig_get_lib_dirs($$$;$)
 {
 	my ($packagename, $libname, $defaults, $module) = @_;
+	my $ret;
+	my $v;
+	my $foo;
 
 	my $key = "default_libdir_$packagename";
 	if (exists $main::config{$key})
@@ -242,7 +270,7 @@ sub pkgconfig_get_lib_dirs($$$;$)
 	{
 		$foo = `locate "$libname" | head -n 1`;
 		$foo =~ /(.+)\Q$libname\E/;
-		$find = $1;
+		my $find = $1;
 		chomp($find);
 		if ((defined $find) && ($find ne "") && ($find ne $packagename))
 		{
@@ -321,7 +349,7 @@ sub translate_functions($$)
 		}
 		while ($line =~ /execruntime\("(.+?)"\)/)
 		{
-			$line =~ s/execruntime\("(.+?)"\)/`\1`/;
+			$line =~ s/execruntime\("(.+?)"\)/`$1`/;
 		}
 		while ($line =~ /eval\("(.+?)"\)/)
 		{
@@ -376,8 +404,8 @@ sub translate_functions($$)
 	};
 	if ($@)
 	{
-		$err = $@;
-		$err =~ s/at .+? line \d+.*//g;
+		my $err = $@;
+#		$err =~ s/at .+? line \d+.*//g;
 		print "\n\nConfiguration failed. The following error occured:\n\n$err\n";
 		exit;
 	}

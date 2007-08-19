@@ -1,8 +1,10 @@
 package make::opensslcert;
 
+use strict qw(vars subs);
+use warnings qw(all);
 use Exporter 'import';
 use make::configure;
-@EXPORT = qw(make_openssl_cert);
+our @EXPORT = qw(make_openssl_cert);
 
 
 sub make_openssl_cert()

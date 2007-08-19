@@ -1,29 +1,91 @@
 #!/usr/bin/perl
 ###################################################
 # InspIRCd Configuration Script
-#
+# altered for UnrealIRCd
+# altered for Sakura :b
 # Copyright 2002-2007 The InspIRCd Development Team
 #  http://www.inspircd.org/wiki/index.php/Credits
-# Copyright 2007 The Sakura Development Team
-#  http://code.google.com/p/ircd-sakura/
+# Copyright 2007 The UnrealIRCd Team
+# Copyright 2007 The Sakura Team
 #
 # Licensed under GPL, please see the COPYING file
 # for more information
 #
-# $Id: configure 75216 2007-08-19 11:06:10Z darkwire $
+# $Id: configure 7399 2007-06-21 15:51:30Z peavey $
 #
 ###################################################
+BEGIN {
+	eval {
+		require 5.6.0;
+	};
+	if ($@) {
+		# Perl version too old. Try to run with perl5. We have to watch it here: if we just blindly exec perl5, we could create an endless exec cycle.
+		# To prevent this, we run this instead:
+		my $perl5ver = qx'perl5 -e \'printf "%vd", $^V\';';
+		if ($perl5var eq "") {
+			print STDERR "Perl version is too old, and perl5 couldn't be found. This configure script requires perl 5.6.0 or newer.\n";
+			exit 1;
+		}
+		if ($perl5ver lt v5.6.0) {
+			print STDERR "Perl version is too old, and perl5 is also too old. This configure script requires perl 5.6.0 or newer.\n";
+			exit 1;
+		}
+		# perl5 is ok, so exec it.
+		exec "perl5", "--", "$0", @ARGV; # Just like exec(3), doesn't return if it works.
+		die "Failed to start perl5: $!";
+	}
+}
 
-require 5.6.0;
+use strict qw(vars subs);
+use warnings qw(all);
 use Socket;
 use Cwd;
 use Getopt::Long;
+use File::Copy;
+use File::Basename;
+use POSIX ();
 
 # Utility functions for our buildsystem
 use make::utilities;
 use make::configure;
 use make::gnutlscert;
 use make::opensslcert;
+
+our ($opt_library_dir,
+	$opt_base_dir,
+	$opt_config_dir,
+	$opt_module_dir,
+	$opt_binary_dir,
+	$opt_nointeractive,
+	$opt_away,
+	$opt_gecos,
+	$opt_kick,
+	$opt_maxclients,
+	$opt_modes,
+	$opt_topic,
+	$opt_quit,
+	$opt_ident,
+	$opt_cc,
+	$opt_ipv6,
+	$opt_ipv6links,
+	$opt_noipv6links,
+	$opt_kqueue,
+	$opt_epoll,
+	$opt_ports,
+	$opt_maxchans,
+	$opt_opermaxchans,
+	$opt_chan_length,
+	$opt_nick_length,
+	$opt_use_openssl,
+	$opt_nokqueue,
+	$opt_noepoll,
+	$opt_noports,
+	$opt_maxbuf,
+	$opt_use_gnutls,
+	$opt_rebuild,
+	$opt_disable_debug,
+	$opt_advanced);
+
 
 GetOptions (
 	'enable-gnutls' => \$opt_use_gnutls,
@@ -62,6 +124,7 @@ GetOptions (
 	'update' => sub { update(); },
 	'svnupdate' => sub { svnupdate(); },
 	'clean' => sub { clean(); },
+	'advanced' => \$opt_advanced,
 );
 
 my $non_interactive = (
@@ -69,7 +132,6 @@ my $non_interactive = (
 	(defined $opt_base_dir) ||
 	(defined $opt_config_dir) ||
 	(defined $opt_module_dir) ||
-	(defined $opt_base_dir) ||
 	(defined $opt_binary_dir) ||
 	(defined $opt_nointeractive) ||
 	(defined $opt_away) ||
@@ -100,11 +162,11 @@ my $non_interactive = (
 );
 my $interactive = !$non_interactive;
 
-
+our $topdir;
 chomp($topdir = getcwd());
-$this = resolve_directory($topdir);						# PWD, Regardless.
-@modlist = ();							  		# Declare for Module List..
-%config = ();						   			# Initiate Configuration Hash..
+our $this = resolve_directory($topdir);						# PWD, Regardless.
+our @modlist = ();							  		# Declare for Module List..
+our %config = ();						   			# Initiate Configuration Hash..
 $config{ME}		 = resolve_directory($topdir);				# Present Working Directory
 
 $config{BASE_DIR}	   = $config{ME};
@@ -137,6 +199,7 @@ if (defined $opt_library_dir)
 }
 chomp($config{HAS_GNUTLS}   = `libgnutls-config --version 2>/dev/null | cut -c 1,2,3`); # GNUTLS Version.
 chomp($config{HAS_OPENSSL}  = `pkg-config --modversion openssl 2>/dev/null`);		# Openssl version
+our ($gnutls_ver, $openssl_ver);
 chomp($gnutls_ver = $config{HAS_GNUTLS});
 chomp($openssl_ver = $config{HAS_OPENSSL});
 $config{USE_GNUTLS}	    = "n";
@@ -226,13 +289,13 @@ chomp($config{GCCVER}       = `g++ -dumpversion | cut -c 1`);   	# Major GCC Ver
 $config{_SOMAXCONN} = SOMAXCONN;					# Max connections in accept queue
 $config{OSNAME}       	    = $^O;			      		# Operating System Name
 $config{IS_DARWIN}          = "NO";					# Is OSX?
-$config{STARTSCRIPT}          = "inspircd";			# start script?
+$config{STARTSCRIPT}          = "sakura";			# start script?
 $config{DESTINATION}          = "BASE";				# Is target path.
 $config{EXTRA_DIR}          = "";						# Is empty.
 if ($config{OSNAME} =~ /darwin/i)
 {
 	$config{IS_DARWIN} = "YES";
-	$config{STARTSCRIPT}          = "org.sakura.plist";		# start script for OSX.
+	$config{STARTSCRIPT}          = "com.sakura.plist";		# start script for OSX.
 	$config{DESTINATION}          = "LAUNCHDPATH";				# Is OSX target.
 	$config{EXTRA_DIR}            = " launchd_dir";				# Is OSX specific path.
 }
@@ -241,8 +304,10 @@ if (defined $opt_cc)
 {
 	$config{CC} = $opt_cc;
 }
-$exec = $config{CC} . " -dumpversion | cut -c 1";
-chomp($config{GCCVER}		= `$exec`);				# Major GCC Version
+{
+	my $exec = $config{CC} . " -dumpversion | cut -c 1";
+	chomp($config{GCCVER}		= `$exec`);				# Major GCC Version
+}
 $config{MAKEORDER}		= "ircd mods";				# build order
 $config{STATICLIBS}		= "";					# library archive path
 $config{MAX_IDENT}		= "12";					# max ident size
@@ -281,19 +346,11 @@ $config{HAS_OPENSSL} =~ /^([-[:digit:].]+)([a-z])?(\-[a-z][0-9])?$/;
 $config{HAS_OPENSSL} = $1;
 
 if ($config{GCCVER} eq "") {
-	print $config{CC} . " was not found! You require g++ (the GNU C++ compiler, part of GCC) to build InspIRCd!\n";
+	print $config{CC} . " was not found! We require g++ (the GNU C++ compiler, part of GCC) to build.!\n";
 	exit;
 }
 
-# Minihack! Convert Cygwin to 'Cyg-Static' so i can
-# Keep my dynamic module experiments here for later
-# consideration!
-
-if ($config{OSNAME} =~ /CYGWIN/i)
-{
-	$config{OSNAME} = "CYG-STATIC";
-}
-
+our $fd_scan_fail;
 if (!$config{MAX_CLIENT_T}) { 
 	$config{MAX_CLIENT_T} = 1024;				 # Set a reasonable 'Default'
 	$fd_scan_fail = "true";				       # Used Later
@@ -304,8 +361,10 @@ getmodules();
 
 sub clean
 {
-	system("rm -rf .config.cache");
+	unlink '.config.cache' or print STDERR "Can't delete .config.cache: $!\n";
 }
+
+our ($has_epoll, $has_ports, $has_kqueue);
 
 sub update
 {
@@ -322,7 +381,7 @@ sub update
 			# We've Loaded the cache file and all our variables..
 			print "Updating Files..\n";
 			getosflags();
-			if ($opt_disable_debug == 1)
+			if (defined($opt_disable_debug) && $opt_disable_debug == 1)
 			{
 				print "Disabling debug information (-g).\n";
 				$config{OPTIMISATI} = "";
@@ -382,7 +441,7 @@ sub svnupdate
 	my $fail = 0;
 	open(FH,"<.svn/entries") or $fail = 1;
 	if ($fail) {
-		print "This is not an SVN copy of InspIRCd.\n";
+		print "This is not an SVN copy of Sakura.\n";
 		exit;
 	}
 	else
@@ -415,104 +474,131 @@ if (!$config{MAX_CLIENT}) {
 	$config{MAX_CLIENT} = $config{MAX_CLIENT_T};
 }
 
-printf "Checking if stdint.h exists... ";
-$config{HAS_STDINT} = "true";
-my $fail = 0;
-open(STDINT, "</usr/include/stdint.h") or $config{HAS_STDINT} = "false";
-if ($config{HAS_STDINT} eq "true") {
-	close(STDINT);
+
+
+{
+	printf "Checking if stdint.h exists... ";
+	$config{HAS_STDINT} = "true";
+	my $fail = 0;
+	open(STDINT, "</usr/include/stdint.h") or $config{HAS_STDINT} = "false";
+	if ($config{HAS_STDINT} eq "true") {
+		close(STDINT);
+	}
+	print "yes\n" if $config{HAS_STDINT} eq "true";
+	print "no\n" if $config{HAS_STDINT} eq "false";
 }
-print "yes\n" if $config{HAS_STDINT} eq "true";
-print "no\n" if $config{HAS_STDINT} eq "false";
 
-
-printf "Checking if strlcpy exists... ";
-# Perform the strlcpy() test..
-$config{HAS_STRLCPY} = "false";
-my $fail = 0;
-open(STRLCPY, "</usr/include/string.h") or $fail = 1;
-if (!$fail) {
-	while (chomp($line = <STRLCPY>)) {
-		# try and find the delcaration of:
-		# size_t strlcpy(...)
-		if ($line =~ /size_t(\0x9|\s)+strlcpy/)	{
-			$config{HAS_STRLCPY} = "true";
+{
+	printf "Checking if strlcpy exists... ";
+	# Perform the strlcpy() test..
+	$config{HAS_STRLCPY} = "false";
+	my $fail = 0;
+	open(STRLCPY, "</usr/include/string.h") or $fail = 1;
+	if (!$fail) {
+		my $line;
+		while (defined($line = <STRLCPY>)) {
+			chomp($line);
+			# try and find the delcaration of:
+			# size_t strlcpy(...)
+			if ($line =~ /size_t(\0x9|\s)+strlcpy/)	{
+				$config{HAS_STRLCPY} = "true";
+			}
 		}
+		close(STRLCPY);
 	}
-	close(STRLCPY);
+	print "yes\n" if $config{HAS_STRLCPY} eq "true";
+	print "no\n" if $config{HAS_STRLCPY} eq "false";
 }
-print "yes\n" if $config{HAS_STRLCPY} eq "true";
-print "no\n" if $config{HAS_STRLCPY} eq "false";
 
-
-printf "Checking if kqueue exists... ";
-$has_kqueue = 0;
-$fail = 0;
-open(KQUEUE, "</usr/include/sys/event.h") or $fail = 1;
-if (!$fail) {
-	while (chomp($line = <KQUEUE>)) {
-		# try and find the delcaration of:
-		# int kqueue(void);
-		if ($line =~ /int(\0x9|\s)+kqueue/) {
-			$has_kqueue = 1;
+{
+	printf "Checking if kqueue exists... ";
+	$has_kqueue = 0;
+	my $fail = 0;
+	open(KQUEUE, "</usr/include/sys/event.h") or $fail = 1;
+	if (!$fail) {
+		my $line;
+		while (defined($line = <KQUEUE>)) {
+			chomp($line);
+			# try and find the delcaration of:
+			# int kqueue(void);
+			if ($line =~ /int(\0x9|\s)+kqueue/) {
+				$has_kqueue = 1;
+			}
 		}
+		close(KQUEUE);
 	}
-	close(KQUEUE);
+	print "yes\n" if $has_kqueue == 1;
+	print "no\n" if $has_kqueue == 0;
 }
-print "yes\n" if $has_kqueue == 1;
-print "no\n" if $has_kqueue == 0;
 
-printf "Checking if epoll exists... ";
-$has_epoll = 0;
-$fail = 0;
-open(EPOLL, "</usr/include/sys/epoll.h") or $fail = 1;
-if (!$fail) {
-	$has_epoll = 1;
-	close(EPOLL);
-}
-if ($has_epoll) {
-	my $kernel = `uname -r`;
-	chomp($kernel);
-	if (($kernel =~ /^2\.0\./) || ($kernel =~ /^2\.2\./) || ($kernel =~ /^2\.4\./)) {
-		$has_epoll = 0;
+{
+	printf "Checking if epoll exists... ";
+	$has_epoll = 0;
+	my $fail = 0;
+	open(EPOLL, "</usr/include/sys/epoll.h") or $fail = 1;
+	if (!$fail) {
+		$has_epoll = 1;
+		close(EPOLL);
 	}
-	else
-	{
-		# Suggestion from nenolod, weed out odd systems which have glibc built
-		# against 2.4 kernels (ick)
-
-		$libcv = 0.0;
-		$kernelv = 0.0;
-		open (FH,"/lib/libc.so.6|") or $has_epoll = 0;
-		if ($has_epoll)
+	if ($has_epoll) {
+		my $kernel = `uname -r`;
+		chomp($kernel);
+		if (($kernel =~ /^2\.0\./) || ($kernel =~ /^2\.2\./) || ($kernel =~ /^2\.4\./)) {
+			$has_epoll = 0;
+		}
+		else
 		{
-			while (chomp($line = <FH>))
-			{
-				if ($line =~ /GNU C Library .* version (.*?) /)
-				{
-					$libcv = $1;
-				}
-				elsif ($line =~ /Compiled on a Linux (.*?\..*?)\.* system/)
-				{
-					$kernelv = $1;
-				}
+			# Suggestion from nenolod, weed out odd systems which have glibc built
+			# against 2.4 kernels (ick)
+			my $kernel_arch = `uname -p`;
+			chomp($kernel_arch);
+			my $libcv = 0.0;
+			my $kernelv = 0.0;
+ 			if ($kernel_arch =~ /x86_64/) {
+	 			open (FH,"/lib64/libc.so.6|") or $has_epoll = 0;
+	 		}
+	 		else {
+				open (FH,"/lib/libc.so.6|") or $has_epoll = 0;
 			}
-			close FH;
-			if ($libcv < 2.3)
+
+			open (FH,"/lib/libc.so.6|") or $has_epoll = 0;
+			if ($has_epoll)
 			{
-				$has_epoll = 0;
-				printf "libc too old: $libcv... ";
-			}
-			if ($kernelv < 2.6)
-			{
-				$has_epoll = 0;
-				printf "libc built against older kernel $kernelv... ";
+				my $line;
+				while (defined($line = <FH>))
+				{
+					chomp($line);
+					if ($line =~ /GNU C Library .* version (.*?), /)
+					{
+						$libcv = $1;
+						$libcv =~  /([0-9\.\-])+/;
+						$libcv = $1;
+					}
+					elsif ($line =~ /Compiled on a Linux (.*?) system/)
+					{
+						$kernelv = $1;
+						# Fix for some retarded libc builds, strip off >> and << etc.
+						$kernelv =~ /([0-9\.\-])+/;
+						$kernelv = $1;
+					}
+				}
+				close FH;
+				if (!vcheck($libcv, "2.3"))
+				{
+					$has_epoll = 0;
+					printf "libc too old: $libcv... ";
+				}
+				if (!vcheck($kernelv, "2.6"))
+				{
+					$has_epoll = 0;
+					printf "libc built against older kernel $kernelv... ";
+				}
 			}
 		}
 	}
+	print "yes\n" if $has_epoll == 1;
+	print "no\n" if $has_epoll == 0;
 }
-print "yes\n" if $has_epoll == 1;
-print "no\n" if $has_epoll == 0;
 
 printf "Checking if Solaris I/O completion ports are available... ";
 $has_ports = 0;
@@ -530,15 +616,11 @@ if ($has_ports) {
 print "yes\n" if $has_ports == 1;
 print "no\n" if $has_ports == 0;
 
-if (($config{OSNAME} =~ /CYGWIN/) || ($config{OSNAME} eq "CYG-STATIC")) {
-	$config{HAS_STRLCPY} = "true";
-}
-
 $config{HAS_EPOLL} = $has_epoll;
 $config{HAS_KQUEUE} = $has_kqueue; 
 
 printf "Checking for libgnutls... ";
-if (($config{HAS_GNUTLS}) && (($config{HAS_GNUTLS} >= 1.2) || ($config{HAS_GNUTLS} eq "y"))) {
+if (($config{HAS_GNUTLS}) && (($config{HAS_GNUTLS} eq "y") || (vcheck($config{HAS_GNUTLS}, "1.2")))) {
 	print "yes\n";
 	$config{HAS_GNUTLS} = "y";
 } else {
@@ -547,7 +629,8 @@ if (($config{HAS_GNUTLS}) && (($config{HAS_GNUTLS} >= 1.2) || ($config{HAS_GNUTL
 }
 
 printf "Checking for openssl... ";
-if (($config{HAS_OPENSSL}) && (($config{HAS_OPENSSL} >= 0.8) || ($config{HAS_OPENSSL} eq "y"))) {
+# This doesn't really do a proper check -we do that anyway in make/utilities.pm
+if (($config{HAS_OPENSSL}) && (($config{HAS_OPENSSL} eq "y") || (vcheck($config{HAS_OPENSSL}, "0.8")))) {
 	print "yes\n";
 	$config{HAS_OPENSSL} = "y";
 } else {
@@ -562,13 +645,22 @@ if (($config{HAS_OPENSSL}) && (($config{HAS_OPENSSL} >= 0.8) || ($config{HAS_OPE
 # Clear the Screen..
 if ($interactive)
 {
-	system("clear");
-	$wholeos = $^O;
+#	system("clear");
+	my $wholeos = $^O;
 
 	my $rev = getrevision();
 	# Display Introduction Message..
-	print "
-Welcome to the \033[1mInspIRCd\033[0m Configuration program! (\033[1minteractive mode\033[0m)
+	{
+		my $fd;
+		open $fd, '<', '.sakura.logo' or die "Can't open logo: $!";
+		print while <$fd>; # cat :)
+		close $fd;
+	}
+	print << "STOP"
+                                      version \033[1m2.0\033[0m
+                                      using \033[1mInspIRCd\033[0m Technology
+
+Welcome to the \033[1mSakura 2.0\033[0m Configuration program! (\033[1minteractive mode\033[0m)
 \033[1mPackage maintainers: Type ./configure --help for non-interactive help\033[0m
 
 *** If you are unsure of any of these values, leave it blank for    ***
@@ -581,7 +673,9 @@ dir, otherwise you won't have a config file!
 
 Your operating system is: \033[1;32m$config{OSNAME}\033[0m ($wholeos)
 Maximum file descriptors: \033[1;32m$config{MAX_CLIENT_T}\033[0m
-Your InspIRCd revision ID is \033[1;32mr$rev\033[0m";
+Your Sakura revision ID is \033[1;32mr$rev\033[0m
+STOP
+	;
 	if ($rev eq "r0") {
 		print " (Non-SVN build)";
 	}
@@ -593,7 +687,7 @@ Your InspIRCd revision ID is \033[1;32mr$rev\033[0m";
 	while (($config{GCCVER} < 3) || ($config{GCCVER} eq "")) {
 		print "\033[1;32mIMPORTANT!\033[0m A GCC 2.x compiler has been detected, and
 should NOT be used. You should probably specify a newer compiler.\n\n";
-		yesno(CHANGE_COMPILER,"Do you want to change the compiler?");
+		yesno('CHANGE_COMPILER',"Do you want to change the compiler?");
 		if ($config{CHANGE_COMPILER} =~ /y/i) {
 			print "What command do you want to use to invoke your compiler?\n";
 			print "[\033[1;32m$config{CC}\033[0m] -> ";
@@ -601,6 +695,7 @@ should NOT be used. You should probably specify a newer compiler.\n\n";
 			if ($config{CC} eq "") {
 				$config{CC} = "g++";
 			}
+			my $foo;
 			chomp($foo = `$config{CC} -dumpversion | cut -c 1`);
 			if ($foo ne "") {
 				chomp($config{GCCVER}       = `$config{CC} -dumpversion | cut -c 1`); # we must redo these if we change compilers
@@ -619,7 +714,7 @@ should NOT be used. You should probably specify a newer compiler.\n\n";
 
 	# Directory Settings..
 	my $tmpbase = $config{BASE_DIR};
-	dir_check("do you wish to install the InspIRCd base", "BASE_DIR");
+	dir_check("do you wish to install the base", "BASE_DIR");
 	if ($tmpbase ne $config{BASE_DIR}) {
 		$config{CONFIG_DIR}	 = resolve_directory($config{BASE_DIR}."/conf");	   # Configuration Dir
 		$config{MODULE_DIR}	 = resolve_directory($config{BASE_DIR}."/modules");	# Modules Directory
@@ -633,32 +728,22 @@ should NOT be used. You should probably specify a newer compiler.\n\n";
 	dir_check("are the IRCd libraries to be placed", "LIBRARY_DIR");
 
 	if ($has_kqueue) {
-		yesno(USE_KQUEUE,"You are running a BSD operating system, and kqueue\nwas detected. Would you like to enable kqueue support?\nThis is likely to increase performance.\nIf you are unsure, answer yes.\n\nEnable kqueue?");
+		yesno('USE_KQUEUE',"You are running a BSD operating system, and kqueue\nwas detected. Would you like to enable kqueue support?\nThis is likely to increase performance.\nIf you are unsure, answer yes.\n\nEnable kqueue?");
 		print "\n";
 	}
 	if ($has_epoll) {
-		yesno(USE_EPOLL,"You are running a Linux 2.6+ operating system, and epoll\nwas detected. Would you like to enable epoll support?\nThis is likely to increase performance.\nIf you are unsure, answer yes.\n\nEnable epoll?");
+		yesno('USE_EPOLL',"You are running a Linux 2.6+ operating system, and epoll\nwas detected. Would you like to enable epoll support?\nThis is likely to increase performance.\nIf you are unsure, answer yes.\n\nEnable epoll?");
 		print "\n";
 	}
 	if ($has_ports) {
-		yesno(USE_PORTS,"You are running Solaris 10.\nWould you like to enable I/O completion ports support?\nThis is likely to increase performance.\nIf you are unsure, answer yes.\n\nEnable support for I/O completion ports?");
+		yesno('USE_PORTS',"You are running Solaris 10.\nWould you like to enable I/O completion ports support?\nThis is likely to increase performance.\nIf you are unsure, answer yes.\n\nEnable support for I/O completion ports?");
 		print "\n";
 	}
+	my $chose_hiperf;
 	$chose_hiperf = (($config{USE_EPOLL} eq "y") || ($config{USE_KQUEUE} eq "y") || ($config{USE_PORTS} eq "y"));
 	if (!$chose_hiperf) {
 		print "No high-performance socket engines are available, or you chose\n";
 		print "not to enable one. Defaulting to select() engine.\n\n";
-	}
-
-	yesno(IPV6,"Would you like to build InspIRCd with IPv6 support?");
-	print "\n";
-
-	if ($config{IPV6} eq "y") {
-		print "You have chosen to build an \033[1;32mIPV6-enabled\033[0m server.\nTo accept IPV4 users, you can still use IPV4 addresses\nin your port bindings..\n\n";
-		$config{SUPPORT_IP6LINKS} = "y";
-	} else {
-		yesno(SUPPORT_IP6LINKS,"You have chosen to build an \033[1;32mIPV4-only\033[0m server.\nWould you like to enable support for linking to IPV6-enabled\nInspIRCd servers?\nIf you are using a recent operating\nsystem and are unsure, answer yes.\nIf you answer 'no' here, your InspIRCd server will be unable\nto parse IPV6 addresses (e.g. for CIDR bans)");
-		print "\n";
 	}
 
 	if (($config{HAS_GNUTLS} eq "y") && ($config{HAS_OPENSSL} eq "y")) {
@@ -671,12 +756,12 @@ should NOT be used. You should probably specify a newer compiler.\n\n";
 	}
 
 	if ($config{HAS_GNUTLS} eq "y") {
-		yesno(USE_GNUTLS, "Would you like to enable SSL Support?");
+		yesno('USE_GNUTLS', "Would you like to enable SSL Support?");
 		if ($config{USE_GNUTLS} eq "y") {
 			print "\nUsing GnuTLS SSL module.\n";
 		}
 	} elsif	($config{HAS_OPENSSL} eq "y") {
-			yesno(USE_OPENSSL, "Would you like to enable SSL Support?");
+			yesno('USE_OPENSSL', "Would you like to enable SSL Support?");
 	if ($config{USE_OPENSSL} eq "y") {
 			print "\nUsing OpenSSL SSL module.\nYou will get better performance if you move to GnuTLS in the future.\n";
 		}
@@ -685,28 +770,52 @@ should NOT be used. You should probably specify a newer compiler.\n\n";
 		print "\nCould not detect OpenSSL or GnuTLS. Make sure pkg-config is installed if\nyou intend to use OpenSSL, or that GnuTLS is in your path if you intend\nto use GnuTLS.\n\n";
 	}
 
-	print "\nThe following questions will ask you for various figures relating\n";
-	print "To your IRCd install. Please note that these should usually be left\n";
-	print "as defaults unless you have a real reason to change them. If they\n";
-	print "changed, then the values must be identical on all servers on your\n";
-	print "network, or malfunctions and/or crashes may occur, with the exception\n";
-	print "of the 'maximum number of clients' setting which may be different on\n";
-	print "different servers on the network.\n\n";
+	yesno('IPV6',"Would you like to build with IPv6 support?");
+	print "\n";
 
-	# File Descriptor Settings..
-	promptnumeric("number of clients at any one time", "MAX_CLIENT_T");
-	$config{MAX_CLIENT} = $config{MAX_CLIENT_T};
-	$config{MAX_DESCRIPTORS} = $config{MAX_CLIENT_T};
+	# Get config file syntax type -- Dan
+	$config{USE_INSP_CONFIG} = promptboolean("Use InspIRCd-style config syntax (default Unreal4-style)?", "n");
 
-	promptnumeric("length of nicknames", "NICK_LENGT");
-	promptnumeric("length of channel names", "CHAN_LENGT");
-	promptnumeric("number of mode changes in one line", "MAXI_MODES");
-	promptnumeric("length of an ident (username)", "MAX_IDENT");
-	promptnumeric("length of a quit message", "MAX_QUIT");
-	promptnumeric("length of a channel topic", "MAX_TOPIC");
-	promptnumeric("length of a kick message", "MAX_KICK");
-	promptnumeric("length of a GECOS (real name)", "MAX_GECOS");
-	promptnumeric("length of an away message", "MAX_AWAY");
+	### --advanced mod begin (daltocli, 21/07/07) ###
+	if(defined $opt_advanced) {
+		if ($config{IPV6} eq "y") {
+			print "You have chosen to build an \033[1;32mIPV6-enabled\033[0m server.\nTo accept IPV4 users, you can still use IPV4 addresses\nin your port bindings..\n\n";
+			$config{SUPPORT_IP6LINKS} = "y";
+		} else {
+			yesno('SUPPORT_IP6LINKS',"You have chosen to build an \033[1;32mIPV4-only\033[0m server.\nWould you like to enable support for linking to IPV6-enabled\n servers?\nIf you are using a recent operating\nsystem and are unsure, answer yes.\nIf you answer 'no' here, your server will be unable\nto parse IPV6 addresses (e.g. for CIDR bans)");
+			print "\n";
+		}
+
+		print "\nThe following questions will ask you for various figures relating\n";
+		print "To your IRCd install. Please note that these should usually be left\n";
+		print "as defaults unless you have a real reason to change them. If they\n";
+		print "changed, then the values must be identical on all servers on your\n";
+		print "network, or malfunctions and/or crashes may occur, with the exception\n";
+		print "of the 'maximum number of clients' setting which may be different on\n";
+		print "different servers on the network.\n\n";
+
+		# File Descriptor Settings..
+		promptnumeric("number of clients at any one time", "MAX_CLIENT_T");
+		$config{MAX_CLIENT} = $config{MAX_CLIENT_T};
+		$config{MAX_DESCRIPTORS} = $config{MAX_CLIENT_T};
+
+		promptnumeric("length of nicknames", "NICK_LENGT");
+		promptnumeric("length of channel names", "CHAN_LENGT");
+		promptnumeric("number of mode changes in one line", "MAXI_MODES");
+		promptnumeric("length of an ident (username)", "MAX_IDENT");
+		promptnumeric("length of a quit message", "MAX_QUIT");
+		promptnumeric("length of a channel topic", "MAX_TOPIC");
+		promptnumeric("length of a kick message", "MAX_KICK");
+		promptnumeric("length of a GECOS (real name)", "MAX_GECOS");
+		promptnumeric("length of an away message", "MAX_AWAY");
+	} else {
+		$config{SUPPORT_IP6LINKS} = "y";
+		$config{MAX_CLIENT} = $config{MAX_DESCRIPTORS};
+		$config{NICK_LENGT} = 31;
+		$config{CHAN_LENGT} = 64;
+		$config{MAXI_MODES} = 20;
+	}
+	### --advanced mod end ###
 }
 
 dumphash();
@@ -722,14 +831,31 @@ if (($config{USE_OPENSSL} eq "y") && ($config{HAS_OPENSSL} ne "y"))
 	exit(0);
 }
 
+sub make_link($$) {
+	my ($source, $dest) = @_;
+	eval {
+		symlink $source, $dest or die "$!";
+	};
+	if ($@) {
+		print "Cannot create symlink: \033[1;31m$@\033[0m\nTrying hardlink instead:\n";
+		eval {
+			link $source, $dest or die "$!";
+		};
+		if ($@) {
+			print "Cannot create hard link: \033[1;31m$@\033[0m\nFalling back to normal copy. \033[1mYou will need to re-run configure if this file (\033[32m$source\033[0;1m from \033[32m" . cwd() . "\033[0;1m) ever changes!\n";
+			copy($source, $dest) or die "$!";
+		}
+	}
+}
+
 if ($config{USE_GNUTLS} eq "y") {
-	$failed = 0;
+	my $failed = 0;
 	open(TMP, "<src/modules/m_ssl_gnutls.cpp") or $failed = 1;
 	close(TMP);
 	if ($failed) {
 		print "Symlinking src/modules/m_ssl_gnutls.cpp from extra/\n";
 		chdir("src/modules");
-		system("ln -s extra/m_ssl_gnutls.cpp");
+		make_link("extra/m_ssl_gnutls.cpp", "./m_ssl_gnutls.cpp");
 		chdir("../..");
 	}
 	getmodules();
@@ -750,17 +876,17 @@ if ($config{USE_GNUTLS} eq "y") {
 * Questions which follow. If you are unsure, just hit enter *
 *************************************************************\n\n";
 			$failed = make_gnutls_cert();
-			if ($failed) {
-				print "\n\033[1;32mCertificate generation failed!\033[0m\n\n";
+			if ($failed )
+			{
+				print "\n\033[1;32mCertificate generation failed!!!\033[0m\n\n";
 			} else {
 				print "\nCertificate generation complete, copying to config directory... ";
-				system("mv key.pem $config{CONFIG_DIR}/key.pem");
-				system("mv cert.pem $config{CONFIG_DIR}/cert.pem");
+				move('key.pem', "$config{CONFIG_DIR}/key.pem") or print "key.pem: $!\n";
+				move('cert.pem', "$config{CONFIG_DIR}/cert.pem") or print "cert.pem: $!\n";
 				print "Done.\n\n";
 			}
-		}
-		else {
-			print "SSL Certificates found, skipping.\n\n";
+		} else {
+			print "SSL Certificates found, skipping.\n\n"
 		}
 	}
 	else
@@ -768,13 +894,13 @@ if ($config{USE_GNUTLS} eq "y") {
 		print "Skipping SSL certificate generation\nin non-interactive mode.\n\n";
 	}
 } elsif ($config{USE_OPENSSL} eq "y") {
-	$failed = 0;
+	my $failed = 0;
 	open(TMP, "<src/modules/m_ssl_openssl.cpp") or $failed = 1;
 	close(TMP);
 	if ($failed) {
 		print "Symlinking src/modules/m_ssl_openssl.cpp from extra/\n";
 		chdir("src/modules");
-		system("ln -s extra/m_ssl_openssl.cpp");
+		make_link('extra/m_ssl_openssl.cpp', './m_ssl_openssl.cpp');
 		chdir("../..");
 	}
 	getmodules();
@@ -792,12 +918,10 @@ if ($config{USE_GNUTLS} eq "y") {
 * coffee, or something.                                     *
 *************************************************************\n\n";
 			make_openssl_cert();
-			# May be, this could be stupid, but.. generating dhparams.pem here!
-			system("openssl dhparam -out dhparams.pem 1024");
 			print "\nCertificate generation complete, copying to config directory... ";
-			system("mv key.pem $config{CONFIG_DIR}/key.pem");
-			system("mv cert.pem $config{CONFIG_DIR}/cert.pem");
-			system("mv dhparams.pem $config{CONFIG_DIR}/dhparams.pem");
+			move('key.pem', "$config{CONFIG_DIR}/key.pem") or print "key.pem: $!\n";
+			move('cert.pem', "$config{CONFIG_DIR}/cert.pem") or print "cert.pem: $!\n";
+			move('dhparams.pem', "$config{CONFIG_DIR}/dhparams.pem") or print "dhparams.pem: $!\n";
 			print "Done.\n\n";
 		} else {
 			print "SSL Certificates found, skipping.\n\n"
@@ -831,7 +955,7 @@ if (($config{OSNAME} eq "OpenBSD") && ($config{CC} ne "eg++")) {
 
 if ($config{GCCVER} < "3") {
 	print <<FOO2;
-\033[1;32mWARNING!\033[0m You are attempting to compile InspIRCd on GCC 2.x!
+\033[1;32mWARNING!\033[0m You are attempting to compile on GCC 2.x!
 GCC 2.x series compilers only had partial (read as broken) C++ support, and
 your compile will most likely fail horribly! If you have any problems, do NOT
 report them to the bugtracker or forums without first upgrading your compiler
@@ -855,7 +979,7 @@ sub getcache {
 		# Do something with data here!
 		$config{$key} = $1;
 	}
-	close(CONFIG);
+	close(CACHE);
 	return 1;
 }
 
@@ -863,10 +987,16 @@ sub makecache {
 	# Dump the contents of %config
 	print "Writing \033[1;32mcache file\033[0m for future ./configures ...\n";
 	open(FILEHANDLE, ">.config.cache");
-	foreach $key (keys %config) {
+	foreach my $key (keys %config) {
 		print FILEHANDLE "$key=\"$config{$key}\"\n";
 	}
 	close(FILEHANDLE);
+}
+
+sub recursive_mkdir($) {
+	my ($path) = @_;
+	use File::Path qw(mkpath);
+	mkpath($path, 0, 0777);
 }
 
 sub dir_check {
@@ -875,6 +1005,7 @@ sub dir_check {
 	while (!$complete) {
 		print "In what directory $desc?\n";
 		print "[\033[1;32m$config{$hash_key}\033[0m] -> ";
+		my $var;
 		chomp($var = <STDIN>);
 		if ($var eq "") {
 			$var = $config{$hash_key};
@@ -888,17 +1019,17 @@ sub dir_check {
 			# Assume relative Path was given.. fill in the rest.
 			$var = $this . "/$var";
 		}
-		
 		$var = resolve_directory($var); 
 		if (! -e $var) {
 			print "$var does not exist. Create it?\n[\033[1;32my\033[0m] ";
+			my $tmp;
 			chomp($tmp = <STDIN>);
 			if (($tmp eq "") || ($tmp =~ /^y/i)) {
 				# Attempt to Create the Dir..
-				
-				system("mkdir -p \"$var\" >> /dev/null 2>&1");
-				$chk = system("mkdir -p \"$var\" >> /dev/null 2>&1") / 256;
-				if ($chk != 0) {
+				eval {
+					recursive_mkdir($var);
+				};
+				if ($@) {
 					print "Unable to create directory. ($var)\n\n";
 					# Restart Loop..
 					next;
@@ -922,6 +1053,8 @@ sub dir_check {
 	}
 }
 
+our $SHARED;
+
 sub getosflags {
 
 	$config{LDLIBS} = "-lstdc++";
@@ -938,6 +1071,7 @@ sub getosflags {
 
 	if ($config{OSNAME} =~ /OpenBSD/i) {
 		$config{MAKEPROG} = "gmake";
+		my $foo;
 		chomp($foo = `eg++ -dumpversion | cut -c 1`);
 		# theyre running the package version of gcc (eg++)... detect it and set up its version numbers.
 		# if theyre not running this, configure lets the build continue but they probably wont manage to
@@ -955,21 +1089,6 @@ sub getosflags {
 		$config{FLAGS}  .= " " . $ENV{CXXFLAGS} if exists($ENV{CXXFLAGS});
 		$config{LDLIBS} .= " " . $ENV{LDLIBS} if exists($ENV{LDLIBS});
 		$config{MAKEPROG} = "make";
-		if ($config{OSNAME} =~ /CYGWIN/) {
-			$config{FLAGS}  = "-fno-strict-aliasing -Wall -Woverloaded-virtual -Wno-deprecated $config{OPTIMISATI}";
-			$config{LDLIBS} = "";
-			$config{MAKEPROG} = "/usr/bin/make";
-			$config{MAKEORDER} = "ircd mods";
-			return "Cygwin";
-		} elsif ($config{OSNAME} eq "CYG-STATIC") {
-			$config{FLAGS} = "-fno-strict-aliasing -Wall -Woverloaded-virtual -Wno-deprecated $config{OPTIMISATI}";
-			$config{LDLIBS} = "";
-			$config{MAKEPROG} = "/usr/bin/make";
-			$config{MAKEORDER} = "mods ircd";
-			$config{STATICLIBS} = "modules/mods.a";
-			$config{STATIC_LINK} = "yes";
-			return "Cygwin-Static";
-		}
 	}
 
 	if ($config{OSNAME} =~ /FreeBSD/i) {
@@ -1001,8 +1120,10 @@ sub getosflags {
 
 sub writefiles {
 	my($writeheader) = @_;
+	my $se;
 	# First File.. inspircd_config.h
 	chomp(my $incos = `uname -n -s -r`);
+	my $version;
 	chomp($version = `sh src/version.sh`);
 	chomp(my $revision2 = getrevision());
 	if ($writeheader == 1)
@@ -1021,6 +1142,7 @@ sub writefiles {
 #define DllExport /**/
 
 #define CONFIG_FILE "$config{CONFIG_DIR}/sakura.conf"
+#define CONFIG_PATH "$config{CONFIG_DIR}/"
 #define MOD_PATH "$config{MODULE_DIR}"
 #define VERSION "$version"
 #define REVISION "$revision2"
@@ -1043,12 +1165,11 @@ sub writefiles {
 EOF
 print FILEHANDLE "#define MAXBUF " . ($config{MAXBUF}+2) . "\n";
 
-		if ($config{OSNAME} =~ /SunOS/i) {
-			print FILEHANDLE "#define IS_SOLARIS\n";
+		if ($config{USE_INSP_CONFIG} == 1) {
+			print FILEHANDLE "#define USEINSPCONFIG\n";
 		}
-		if ($config{OSNAME} =~ /CYGWIN/i) {
-			print FILEHANDLE "#define IS_CYGWIN\n";
-			print FILEHANDLE "#ifndef FD_SETSIZE\n#define FD_SETSIZE	1024\n#endif\n";
+		if ($config{OSNAME} =~ /SunOS/i or $config{OSNAME} =~ /solaris/i) {
+			print FILEHANDLE "#define IS_SOLARIS\n";
 		}
 		if ($config{OSNAME} =~ /MINGW32/i) {
 			print FILEHANDLE "#define IS_MINGW\n";
@@ -1118,7 +1239,7 @@ EOF
 
 	# Create a Modules List..
 	my $modules = "";
-	foreach $i (@modlist)
+	foreach my $i (@modlist)
 	{
 		if ($config{STATIC_LINK} eq "yes") {
 			$modules .= "m_".$i.".o ";
@@ -1130,9 +1251,9 @@ EOF
 	chomp($modules);   # Remove Redundant whitespace..
 
 	opendir(DIRHANDLE, "src/modules");
-	foreach $name (sort readdir(DIRHANDLE)) {
+	foreach my $name (sort readdir(DIRHANDLE)) {
 		if ($name =~ /^m_(.+?)$/) {
-			if (opendir(MDIRHANDLE, "src/modules/$name") != 0) {
+			if (opendir(MDIRHANDLE, "src/modules/$name")) {
 				closedir(MDIRHANDLE);
 				$modules .= "$name.so ";
 			}
@@ -1146,10 +1267,6 @@ EOF
 	my $file = "";
 	my $exe = "sakura";
 
-	if ($config{OSNAME} =~ /CYGWIN/i) {
-		$exe = "sakura.exe";
-	}
-
 	opendir(DIRHANDLE, $this);
 
 	# Do this once here, and cache it in the .*.inc files,
@@ -1157,7 +1274,7 @@ EOF
 	# compiled code -- we might not have the source to hand.
 	# Fix for bug#177 by Brain.
 
-	chomp(my $version = `sh ./src/version.sh`);
+	chomp($version = `sh ./src/version.sh`);
 	chomp(my $revision = getrevision());
 	$version = "$version(r$revision)";
 
@@ -1167,65 +1284,62 @@ EOF
 		$LIBEXT = "dylib";
 	}
 	# We can actually parse any file starting with . and ending with .inc,
-	# but right now we only parse .inspircd.inc to form './inspircd'
+	# but right now we only parse .sakura.inc to form './sakura'
 
-	foreach $name (sort readdir(DIRHANDLE)) {
+	foreach my $name (sort readdir(DIRHANDLE)) {
 		if ($name =~ /^\.(.+)\.inc$/) {
 			$file = $1;
 
 			# Bug #353, omit this on non-darwin
-			next if (($config{OSNAME} !~ /darwin/) && ($file eq "org.sakura.plist"));
+			next if (($config{OSNAME} !~ /darwin/) && ($file eq "org.inspircd.plist"));
 
 			# All .name.inc files need parsing!
-			$tmp = "";
-			open(FILEHANDLE, ".$file.inc");
-			while (<FILEHANDLE>) {
-				$tmp .= $_;
-			}
-			close(FILEHANDLE);
-
-			$tmp =~ s/\@CC\@/$config{CC}/;
-			$tmp =~ s/\@MAKEPROG\@/$config{MAKEPROG}/;
-			$tmp =~ s/\@FLAGS\@/$config{FLAGS}/;
-			$tmp =~ s/\@DEVELOPER\@/$config{DEVELOPER}/;
-			$tmp =~ s/\@LDLIBS\@/$config{LDLIBS}/;
-			$tmp =~ s/\@BASE_DIR\@/$config{BASE_DIR}/;
-			$tmp =~ s/\@CONFIG_DIR\@/$config{CONFIG_DIR}/;
-			$tmp =~ s/\@MODULE_DIR\@/$config{MODULE_DIR}/;
-			$tmp =~ s/\@BINARY_DIR\@/$config{BINARY_DIR}/;
-			$tmp =~ s/\@LIBRARY_DIR\@/$config{LIBRARY_DIR}/;
-			$tmp =~ s/\@LIBRARY_EXT\@/$LIBEXT/;
-			$tmp =~ s/\@MODULES\@/$modules/;
-			$tmp =~ s/\@STARTSCRIPT\@/$config{STARTSCRIPT}/;
-			$tmp =~ s/\@DESTINATION\@/$config{DESTINATION}/;
-			$tmp =~ s/\@EXTRA_DIR\@/$config{EXTRA_DIR}/;
-			$tmp =~ s/\@EXECUTABLE\@/$exe/;
-			$tmp =~ s/\@MAKEORDER\@/$config{MAKEORDER}/;
-			$tmp =~ s/\@STATICLIBS\@/$config{STATICLIBS}/;
-			$tmp =~ s/\@VERSION\@/$version/;
-
+			my $inc_fd;
+			my $out_fd;
+			open $inc_fd, "<", ".$file.inc" or die "Read Error: .$file.inc: $!";
+			open $out_fd, ">", $file or die "Write Error: $file: $!";
 			print "Writing \033[1;32m$file\033[0m\n";
-			open(FILEHANDLE, ">$file");
-			print FILEHANDLE $tmp;
+			while (<$inc_fd>) {
+				my $tmp = $_;
+				$tmp =~ s/\@CC\@/$config{CC}/;
+				$tmp =~ s/\@MAKEPROG\@/$config{MAKEPROG}/;
+				$tmp =~ s/\@FLAGS\@/$config{FLAGS}/;
+				$tmp =~ s/\@DEVELOPER\@/$config{DEVELOPER}/;
+				$tmp =~ s/\@LDLIBS\@/$config{LDLIBS}/;
+				$tmp =~ s/\@BASE_DIR\@/$config{BASE_DIR}/;
+				$tmp =~ s/\@CONFIG_DIR\@/$config{CONFIG_DIR}/;
+				$tmp =~ s/\@MODULE_DIR\@/$config{MODULE_DIR}/;
+				$tmp =~ s/\@BINARY_DIR\@/$config{BINARY_DIR}/;
+				$tmp =~ s/\@LIBRARY_DIR\@/$config{LIBRARY_DIR}/;
+				$tmp =~ s/\@LIBRARY_EXT\@/$LIBEXT/;
+				$tmp =~ s/\@MODULES\@/$modules/;
+				$tmp =~ s/\@STARTSCRIPT\@/$config{STARTSCRIPT}/;
+				$tmp =~ s/\@DESTINATION\@/$config{DESTINATION}/;
+				$tmp =~ s/\@EXTRA_DIR\@/$config{EXTRA_DIR}/;
+				$tmp =~ s/\@EXECUTABLE\@/$exe/;
+				$tmp =~ s/\@MAKEORDER\@/$config{MAKEORDER}/;
+				$tmp =~ s/\@STATICLIBS\@/$config{STATICLIBS}/;
+				$tmp =~ s/\@VERSION\@/$version/;
+				print $out_fd $tmp;
+			}
+			close $inc_fd;
+			close $out_fd;
 		}
 	}
 	closedir(DIRHANDLE);
 
-	# Make inspircd executable!
+	# Make script executable!
 	chmod 0744, 'sakura';
 
 	if ($config{STATIC_LINK} eq "yes") {
 		print "Writing static-build \033[1;32msrc/Makefile\033[0m\n";
 		write_static_makefile();
 		write_static_modules_makefile();
-	} elsif ($config{OSNAME} =~ /CYGWIN/i) {
-		print "Writing cygwin-build \033[1;32msrc/Makefile\033[0m\n";
-		write_static_makefile();
-		write_dynamic_modules_makefile();
 	} else {
 		print "Writing dynamic-build \033[1;32msrc/Makefile\033[0m\n";
 		write_dynamic_makefile();
 		write_dynamic_modules_makefile();
+		eval { write_new_makefile(); }; print STDERR "Write of new-style makefile src/Makefile.new failed: $@" if ($@);
 	}
 }
 
@@ -1276,9 +1390,11 @@ HEADER
 	###
 	# End Include File Header
 	###
+	my $deps;
+	my $flags;
 
 	# Place Module List into Include
-	foreach $i (@modlist) {
+	foreach my $i (@modlist) {
 		if ($i !~ /_static$/) {
 			print MODLIST "extern \"C\" void * $i\_init (void);\n";
 		}
@@ -1288,7 +1404,7 @@ HEADER
 	###
 	# Build Module Crap
 	###
-	foreach $i (@modlist)
+	foreach my $i (@modlist)
 	{
 		if ($i !~ /_static$/) {
 			$cmflags = getcompilerflags("src/modules/m_".$i.".cpp");
@@ -1333,11 +1449,7 @@ sub write_dynamic_modules_makefile {
 	# Modules Makefile..
 	print "Writing \033[1;32msrc/modules/Makefile\033[0m\n";
 	open(FILEHANDLE, ">src/modules/Makefile");
-	my $extra = "";
 
-	if ($config{OSNAME} =~ /CYGWIN/i) {
-		$extra = "../inspircd.dll.a";
-	}
 
 ###
 # Module Makefile Header
@@ -1366,8 +1478,9 @@ EOF
 	my $cmflags = "";
 	my $liflags = "";
 	my $crud = "";
+	my $deps;
 
-	foreach $i (@modlist) {
+	foreach my $i (@modlist) {
 		###
 		# Write Entry to the MakeFile
 		###
@@ -1384,12 +1497,12 @@ EOCHEESE
 
 if ($config{OSNAME} =~ /darwin/) {
 		print FILEHANDLE <<EOCHEESE;
-	\$(CC) -pipe -twolevel_namespace -undefined dynamic_lookup \$(FLAGS) -bundle $liflags -o m_$i.so m_$i.o $extra
+	\$(CC) -pipe -twolevel_namespace -undefined dynamic_lookup \$(FLAGS) -bundle $liflags -o m_$i.so m_$i.o
 
 EOCHEESE
 } else {
 		print FILEHANDLE <<EOCHEESE;
-	\$(CC) -pipe \$(FLAGS) -shared $liflags -o m_$i.so m_$i.o $extra
+	\$(CC) -pipe \$(FLAGS) -shared $liflags -o m_$i.so m_$i.o
 
 EOCHEESE
 }
@@ -1400,21 +1513,21 @@ EOCHEESE
 	}
 
 	opendir(DIRHANDLE, "src/modules");
-	foreach $name (sort readdir(DIRHANDLE)) {
+	foreach my $name (sort readdir(DIRHANDLE)) {
 		if ($name =~ /^m_(.+?)$/) {
-			$crapola = "";
-			$crap3 = "";
-			$mliflags = "";
+			my $crapola = "";
+			my $crap3 = "";
+			my $mliflags = "";
 			# A module made of multiple files, in a dir, e.g. src/modules/m_spanningtree/
-			if (opendir(MDIRHANDLE, "src/modules/$name") != 0) {
+			if (opendir(MDIRHANDLE, "src/modules/$name")) {
 				my $i = 0;
 				print FILEHANDLE "$name.so: ../../include/modules.h ../../include/users.h ../../include/channels.h ../../include/base.h ../../include/inspircd_config.h ../../include/inspircd.h ../../include/configreader.h"; 
-				foreach $fname (sort readdir(MDIRHANDLE)) {
+				foreach my $fname (sort readdir(MDIRHANDLE)) {
 					if ($fname =~ /\.cpp$/) {
 						$cmflags = getcompilerflags("src/modules/$name/$fname");
 						$mliflags = $mliflags . " " . getlinkerflags("src/modules/$name/$fname");
 						$deps = getdependencies("src/modules/$name/$fname");
-						$oname = $fname;
+						my $oname = $fname;
 						$oname =~ s/\.cpp$/.o/g;
 						print FILEHANDLE " $name/$oname";
 						$crapola = $crapola .  "$name/$oname: $name/$fname ../../include/modules.h ../../include/users.h ../../include/channels.h ../../include/base.h ../../include/inspircd_config.h ../../include/inspircd.h ../../include/configreader.h $deps\n";
@@ -1446,7 +1559,7 @@ sub write_static_makefile {
 	my $i = 0;
 	my @cmdlist = ();
 	opendir(DIRHANDLE, "src");
-	foreach $name (sort readdir(DIRHANDLE)) {
+	foreach my $name (sort readdir(DIRHANDLE)) {
 		if ($name =~ /^cmd_(.+)\.cpp$/) {
 			$cmdlist[$i++] = $1;
 		}
@@ -1478,7 +1591,7 @@ RELCPPFILES = \$(shell /bin/ls -l modes/ | grep '\\.cpp' | sed 's/^.* /modes\\//
 
 EOM
 
-$se = "socketengine_select";
+my $se = "socketengine_select";
 if (($has_kqueue) && ($config{USE_KQUEUE} eq "y")) {
 	$se = "socketengine_kqueue";
 }       
@@ -1488,34 +1601,6 @@ elsif (($has_epoll) && ($config{USE_EPOLL} eq "y")) {
 elsif (($has_ports) && ($config{USE_PORTS} eq "y")) {
 	$se = "socketengine_ports";
 }
-
-	###
-	# This next section is for cygwin dynamic module builds.
-	# Basically, what we do, is build the inspircd core as a library
-	# then the main executable uses that. the library is capable of
-	# loading / unloading the modules dynamically :)
-	# Massive thanks to the guys on #cygwin @ irc.freenode.net for helping
-	# make this work :)
-	###
-
-	if ($config{OSNAME} =~ /CYGWIN/i) {
-		print FH <<EOM;
-all: timer.o command_parse.o cull_list.o userprocess.o socketengine.o socket.o hashcomp.o channels.o mode.o xline.o inspstring.o dns.o base.o configreader.o inspsocket.o $cmdobjs commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o snomasks.o sakura.exe
-
-sakura.exe: inspircd.dll.a
-	\$(CC) -o \$@ \$^
-
-inspircd.dll inspircd.dll.a: inspircd.o channels.o mode.o xline.o inspstring.o dns.o base.o configreader.o inspsocket.o $cmdobjs  commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o hashcomp.o socket.o socketengine.o userprocess.o cull_list.o command_parse.o timer.o snomasks.o
-	\$(CC) -shared -Wl,--out-implib=inspircd.dll.a -o inspircd.dll \$^
-EOM
-	} else {
-		print FH <<EOM;
-all: timer.o command_parse.o cull_list.o userprocess.o socketengine.o socket.o hashcomp.o channels.o mode.o xline.o inspstring.o dns.o base.o configreader.o inspsocket.o $cmdobjs commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o snomasks.o \$(MODULES) sakura.exe
-
-sakura.exe: inspircd.cpp ../include/base.h ../include/channels.h ../include/inspircd.h ../include/channels.h ../include/globals.h ../include/inspircd_config.h ../include/base.h
-	\$(CC) -I../include \$(FLAGS) inspircd.cpp -o sakura.exe \$(LDLIBS) channels.o mode.o xline.o inspstring.o dns.o base.o inspsocket.o configreader.o $cmdobjs commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o hashcomp.o socket.o socketengine.o userprocess.o cull_list.o command_parse.o timer.o snomasks.o modes/modeclasses.a \$(MODULES)
-EOM
-	}
 
 	print FH <<EOM;
 
@@ -1562,6 +1647,9 @@ base.o: base.cpp ../include/base.h ../include/globals.h ../include/inspircd_conf
 configreader.o: configreader.cpp ../include/base.h ../include/configreader.h ../include/inspircd.h ../include/channels.h ../include/users.h ../include/globals.h ../include/inspircd_config.h
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c configreader.cpp
 
+unrealconfig.o: unrealconfig.cpp ../include/base.h ../include/unrealconfig.h ../include/inspircd.h ../include/channels.h ../include/users.h ../include/globals.h ../include/inspircd_config.h
+	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c unrealconfig.cpp
+
 commands.o: commands.cpp ../include/base.h ../include/inspircd.h ../include/channels.h ../include/users.h ../include/globals.h ../include/inspircd_config.h ../include/timer.h $srcobjs
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c commands.cpp $cmdobjs
 
@@ -1601,7 +1689,7 @@ sub write_dynamic_makefile {
 	my $i = 0;
 	my @cmdlist = ();
 	opendir(DIRHANDLE, "src");
-	foreach $name (sort readdir(DIRHANDLE)) {
+	foreach my $name (sort readdir(DIRHANDLE)) {
 		if ($name =~ /^cmd_(.+)\.cpp$/) {
 			$cmdlist[$i++] = $1;
 	    	}
@@ -1615,7 +1703,7 @@ sub write_dynamic_makefile {
 		$srcobjs = $srcobjs . "cmd_$cmd.cpp ";
 	}
 
-	$se = "socketengine_select";
+	my $se = "socketengine_select";
 	if (($has_kqueue) && ($config{USE_KQUEUE} eq "y")) {
 		$se = "socketengine_kqueue";
 	}
@@ -1649,7 +1737,8 @@ EOM
 
 if ($config{IS_DARWIN} eq "YES") {
 	print FH <<EOM;
-all: libIRCDtimer.dylib libIRCDcull_list.dylib libIRCDuserprocess.dylib libIRCDsocketengine.dylib libIRCDsocket.dylib libIRCDhash.dylib libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDcommand_parse.dylib libIRCDsnomasks.dylib sakura 
+all: libIRCDtimer.dylib libIRCDcull_list.dylib libIRCDuserprocess.dylib libIRCDsocketengine.dylib libIRCDsocket.dylib libIRCDhash.dylib libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDcommand_parse.dylib libIRCDsnomasks.dylib sakura
+
 sakura: inspircd.cpp ../include/base.h ../include/channels.h ../include/inspircd.h ../include/channels.h ../include/globals.h ../include/inspircd_config.h ../include/socket.h $cmdobjs libIRCDtimer.dylib libIRCDcull_list.dylib libIRCDuserprocess.dylib libIRCDsocketengine.dylib libIRCDsocket.dylib libIRCDhash.dylib libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDsnomasks.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDcommand_parse.dylib
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c inspircd.cpp
 	\$(CC) -pipe -dynamic -bind_at_load -L. -o sakura \$(LDLIBS) inspircd.o libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDhash.dylib libIRCDsocket.dylib libIRCDsocketengine.dylib libIRCDuserprocess.dylib libIRCDcull_list.dylib libIRCDcommand_parse.dylib libIRCDtimer.dylib libIRCDsnomasks.dylib
@@ -1708,9 +1797,10 @@ libIRCDbase.dylib: base.cpp ../include/base.h ../include/globals.h ../include/in
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c base.cpp
 	\$(CC) -pipe -install_name $config{LIBRARY_DIR}/libIRCDbase.dylib -dynamiclib -twolevel_namespace -undefined dynamic_lookup -o libIRCDbase.dylib base.o
 
-libIRCDconfigreader.dylib: configreader.cpp ../include/base.h ../include/configreader.h ../include/inspircd.h ../include/channels.h ../include/users.h ../include/globals.h ../include/inspircd_config.h
+libIRCDconfigreader.dylib: configreader.cpp ../include/base.h ../include/configreader.h ../include/inspircd.h ../include/channels.h ../include/users.h ../include/globals.h ../include/inspircd_config.h ../include/unrealconfig.h
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c configreader.cpp
-	\$(CC) -pipe -install_name $config{LIBRARY_DIR}/libIRCDconfigreader.dylib -dynamiclib -twolevel_namespace -undefined dynamic_lookup -o libIRCDconfigreader.dylib configreader.o
+	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c unrealconfig.cpp
+	\$(CC) -pipe -install_name $config{LIBRARY_DIR}/libIRCDconfigreader.dylib -dynamiclib -twolevel_namespace -undefined dynamic_lookup -o libIRCDconfigreader.dylib configreader.o unrealconfig.o
 
 libIRCDcommands.dylib: commands.cpp ../include/base.h ../include/inspircd.h ../include/channels.h ../include/users.h ../include/globals.h ../include/inspircd_config.h ../include/timer.h
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c commands.cpp
@@ -1752,7 +1842,7 @@ EOM
 all: libIRCDtimer.so libIRCDcull_list.so libIRCDuserprocess.so libIRCDsocketengine.so libIRCDsocket.so libIRCDhash.so libIRCDchannels.so libIRCDmode.so libIRCDxline.so libIRCDstring.so libIRCDasyncdns.so libIRCDbase.so libIRCDconfigreader.so libIRCDinspsocket.so $cmdobjs libIRCDcommands.so libIRCDdynamic.so libIRCDusers.so libIRCDmodules.so libIRCDwildcard.so libIRCDhelper.so libIRCDcommand_parse.so libIRCDsnomasks.so sakura
 
 sakura: inspircd.cpp ../include/base.h ../include/channels.h ../include/inspircd.h ../include/channels.h ../include/globals.h ../include/inspircd_config.h ../include/socket.h libIRCDtimer.so libIRCDcull_list.so libIRCDuserprocess.so libIRCDsocketengine.so libIRCDsocket.so libIRCDhash.so libIRCDchannels.so libIRCDmode.so libIRCDxline.so libIRCDstring.so libIRCDasyncdns.so libIRCDbase.so libIRCDconfigreader.so libIRCDinspsocket.so $cmdobjs libIRCDsnomasks.so libIRCDcommands.so libIRCDdynamic.so libIRCDusers.so libIRCDmodules.so libIRCDwildcard.so libIRCDhelper.so libIRCDcommand_parse.so
-	\$(CC) -pipe -I../include $extra -Wl,--rpath -Wl,$config{LIBRARY_DIR} \$(FLAGS) -rdynamic -L. inspircd.cpp -o sakura \$(LDLIBS) libIRCDchannels.so libIRCDmode.so libIRCDxline.so libIRCDstring.so libIRCDasyncdns.so libIRCDbase.so libIRCDconfigreader.so libIRCDinspsocket.so libIRCDcommands.so libIRCDdynamic.so libIRCDusers.so libIRCDmodules.so libIRCDwildcard.so libIRCDhelper.so libIRCDhash.so libIRCDsocket.so libIRCDsocketengine.so libIRCDuserprocess.so libIRCDcull_list.so libIRCDcommand_parse.so libIRCDtimer.so libIRCDsnomasks.so
+	\$(CC) -pipe -I../include -Wl,--rpath -Wl,$config{LIBRARY_DIR} \$(FLAGS) -rdynamic -L. inspircd.cpp -o sakura \$(LDLIBS) libIRCDchannels.so libIRCDmode.so libIRCDxline.so libIRCDstring.so libIRCDasyncdns.so libIRCDbase.so libIRCDconfigreader.so libIRCDinspsocket.so libIRCDcommands.so libIRCDdynamic.so libIRCDusers.so libIRCDmodules.so libIRCDwildcard.so libIRCDhelper.so libIRCDhash.so libIRCDsocket.so libIRCDsocketengine.so libIRCDuserprocess.so libIRCDcull_list.so libIRCDcommand_parse.so libIRCDtimer.so libIRCDsnomasks.so
 
 libIRCDsocketengine.so: $se.cpp socketengine.cpp ../include/base.h ../include/hashcomp.h ../include/globals.h ../include/inspircd_config.h ../include/$se.h
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c socketengine.cpp $se.cpp
@@ -1807,9 +1897,10 @@ libIRCDbase.so: base.cpp ../include/base.h ../include/globals.h ../include/inspi
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c base.cpp
 	\$(CC) -pipe -Wl,--rpath -Wl,$config{LIBRARY_DIR} -shared -o libIRCDbase.so base.o
 
-libIRCDconfigreader.so: configreader.cpp ../include/base.h ../include/configreader.h ../include/inspircd.h ../include/channels.h ../include/users.h ../include/globals.h ../include/inspircd_config.h
+libIRCDconfigreader.so: configreader.cpp unrealconfig.cpp ../include/base.h ../include/configreader.h ../include/inspircd.h ../include/channels.h ../include/users.h ../include/globals.h ../include/inspircd_config.h
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c configreader.cpp
-	\$(CC) -pipe -Wl,--rpath -Wl,$config{LIBRARY_DIR} -shared -o libIRCDconfigreader.so configreader.o
+	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c unrealconfig.cpp
+	\$(CC) -pipe -Wl,--rpath -Wl,$config{LIBRARY_DIR} -shared -o libIRCDconfigreader.so configreader.o unrealconfig.o
 
 libIRCDcommands.so: commands.cpp ../include/base.h ../include/inspircd.h ../include/channels.h ../include/users.h ../include/globals.h ../include/inspircd_config.h ../include/timer.h
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c commands.cpp
@@ -1854,5 +1945,221 @@ cmd_$cmd.so: cmd_$cmd.cpp ../include/base.h ../include/modules.h ../include/insp
 ITEM
 	}
 	close(FH);
+}
+
+sub get_header_deps($) {
+	my ($file) = @_;
+	chdir "src/";
+	my $cmd = "gcc -MM -I../include $file";
+	my $result;
+	my $diag;
+	require IPC::Open3; # Give a hoot, don't pollute (the global namespace)!
+	local (*GCC_IN, *GCC_OUT, *GCC_ERR);
+	my $pid = IPC::Open3::open3(\*GCC_IN, \*GCC_OUT, \*GCC_ERR, $cmd);
+	# GCC_OUT - has the dependencies
+	# GCC_ERR - has gcc error data
+	# GCC_IN - Not used!
+	waitpid $pid, 0;
+	{
+		local $/ = undef; # Slurp.
+		$result = <GCC_OUT>;
+		$diag = <GCC_ERR>;
+	}
+	my $exit = 0;
+	if (!POSIX::WIFEXITED($exit) || POSIX::WEXITSTATUS($exit) != 0) { # Didn't exit()/return from main() (killed), or exited with nonzero exit (failed).
+		# GCC failed.
+		die "GCC failed. Exit " . POSIX::WEXITSTATUS($exit) . ", signal " . POSIX::WTERMSIGNAL($exit) . " stderr output:\n$diag" unless wantarray;
+		return ( "", $diag, POSIX::WEXITSTATUS($exit), POSIX::WTERMSIG($exit) );
+	}
+	chdir "..";
+	return $result unless wantarray;
+	return ( $result, $diag, 0, 0 );
+}
+
+sub comment_out($) {
+	# Inserts a # at the beginning of each line of the parameter.
+	my ($text) = @_;
+	$text =~ s/^/# /mg;
+	return $text;
+}
+
+# Basically a more dynamic static makefile.
+sub write_new_makefile {
+	local $_;
+
+	# Makefiles should be able to test these.
+	my $se = "socketengine_select";
+	if (($has_kqueue) && ($config{USE_KQUEUE} eq "y")) {
+		$se = "socketengine_kqueue";
+	}
+	elsif (($has_epoll) && ($config{USE_EPOLL} eq "y")) {
+		$se = "socketengine_epoll";
+	}
+	elsif (($has_ports) && ($config{USE_PORTS} eq "y")) {
+		$se = "socketengine_ports";
+	}
+
+	my $makefile = <<STOP
+###################################################
+# Copyright 2002-2007 Sakura 2.0
+#
+# This file is automagically generated by configure 
+# Any changes made will be lost on ./configure         
+###################################################
+
+CC = 'DANGER WILL ROBINSON'
+
+CXXFLAGS = -I../include \${FLAGS}
+#CPPFILES = \$(shell /bin/ls -l modes/ | grep '\\.cpp' | sed 's/^.* //' | grep -v svn)
+#RELCPPFILES = \$(shell /bin/ls -l modes/ | grep '\\.cpp' | sed 's/^.* /modes\\//' | grep -v svn)
+
+STOP
+	;
+
+	my @exeDeps = ();
+
+	my %archives; # List of archives to generate from objects.
+	my %sharedObjs; # List of sharedobjs to generate shared objects.
+
+	my $ldflags = ""; # Flags to pass to linker for main binary.
+
+	my @cpprules = (); # List of rules to compile the C++ files.
+
+	my $dd;
+	opendir $dd, "src";
+	my $cppfile;
+	my $suffixes = qr/.(cpp|C|cc|cxx)$/o; # Allow any of the C++ suffixes.
+CPPFILE:
+	while (defined($cppfile = readdir($dd))) {
+		my $base = fileparse($cppfile, $suffixes);
+		next unless $cppfile =~ $suffixes;
+		my $cflags = ""; # Flags to gcc.
+		my $sharedobj = undef; # Shared Object name. We really shouldn't generate both, but why not?
+		my $archive = undef;
+		my $tflags = ""; # Flags to the tool for making the target (ld (actually just gcc again) for .so, ar for .a).
+		my @makeDirs = ();
+		# First, let's parse the C++ file itself for our tags.
+		my $cppfd;
+		open $cppfd, '<', "src/$cppfile";
+		my $line;
+		while (defined($line = <$cppfd>)) {
+			next unless $line =~ m|^\s*/\*\s+\$(\w+)\s*:\s*(.*?)\s*\*/|;
+			my ($key, $value) = ($1, $2);
+			if ($key eq "CompilerFlags") {
+				$cflags .= " " unless $cflags eq "";
+				$cflags .= $value;
+			} elsif ($key eq "SharedObject") {
+				$sharedobj = $value;
+			} elsif ($key eq "Archive") {
+				$archive = $value;
+			} elsif ($key eq "LinkerFlags") {
+				$ldflags .= " " unless $ldflags eq "";
+				$ldflags .= $value;
+			} elsif ($key eq "TargetFlags") {
+				$tflags .= " " unless $tflags eq "";
+				$tflags .= $value;
+			} elsif ($key eq "MakeDir") {
+				push @makeDirs, $value;
+			} elsif ($key eq "IncludeIf") {
+				# value is a perl expression to test. If it returns true, we include the file.
+				# If false, we exclude it. Currently the line has to be a complete expression.
+				my $ret = eval "$value";
+				my $str;
+				if ($@) {
+					my $error = $@;
+					$error =~ s/\(eval \d+\) line \d+, <\$cppfd>/$cppfile/; # Make the source of the problem point at the correct point.
+					$str  = "# The file $cppfile has been excluded because it has an IncludeIf test that failed in evaluation.\n";
+					$str .= "# The failing expression is: $value\n";
+					$str .= "# The following is the error message from perl:\n";
+					$str .= comment_out($error) . "\n";
+					push @cpprules, $str;
+					close $cppfd;
+					next CPPFILE;
+				}
+				if (!$ret) {
+					$str  = "# The file $cppfile has been excluded by request of a false IncludeIf test.\n";
+					$str .= "# The test is: $value\n";
+					push @cpprules, $str;
+					close $cppfd;
+					next CPPFILE;
+				}
+			}
+			# Do nothing for undefined keys.
+		}
+		close $cppfd;
+		my $cpprule;
+		{
+			my ($output, $errors, $exit, $signal) = get_header_deps($cppfile);
+			if (!defined($output) || $output eq "") {
+				$cpprule  = "# The file $cppfile has been excluded because it did not pass preprocessing by gcc.\n";
+				$cpprule .= "# GCC exited with status $exit, signal $signal\n";
+				$cpprule .= "# The following is the error output from gcc:\n";
+				$cpprule .= comment_out($errors) . "\n";
+				push @cpprules, $cpprule;
+				next CPPFILE; # Skip the rest of the rule generation.
+			} else {
+				if (defined($errors) && $errors ne "") {
+					$cpprule  = "# The following warnings were emitted by gcc while getting dependencies:\n";
+					$cpprule .= comment_out($errors) . "\n";
+				} else {
+					$cpprule = "";
+				}
+				$cpprule .= $output;
+			}
+		}
+		for my $mk (@makeDirs) {
+			$cpprule .= "\t$(MAKE) -C \"$mk\" DIRNAME=\"src/$mk\" CC=\"\$(CC)\" \$(MAKEARGS)\n";
+		}
+		$cpprule .= "\t\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic $cflags -o \$@ -c \$<\n";
+		if (defined($sharedobj) && defined($archive)) {
+			$cpprule  = "# The file $cppfile has been excluded because it has both a SharedObject and Archive directive.\n";
+			$cpprule .= "# It may only have at most one of either directive - it cannot have both.\n";
+		} elsif (defined($sharedobj)) {
+			if (!exists($sharedObjs{$sharedobj})) {
+				$sharedObjs{$sharedobj} = [ $tflags, "$base.o" ];
+			} else {
+				push @{$sharedObjs{$sharedobj}}, "$base.o";
+				$sharedObjs{$sharedobj}->[0] .= $tflags;
+			}
+		} elsif (defined($archive)) {
+			if (!exists($archives{$archive})) {
+				$archives{$archive} = [ $tflags, "$base.o" ];
+			} else {
+				push @{$archives{$archive}}, "$base.o";
+				$archives{$archive}->[0] .= $tflags;
+			}
+		} else {
+			push @exeDeps, "$base.o";
+		}
+		push @cpprules, $cpprule;
+	}
+	closedir $dd;
+	$makefile .= "all: sakura " . join(" ", keys(%sharedObjs)) . "\n\n";
+	$makefile .= "sakura: " . join(" ", @exeDeps, keys(%archives)) . "\n";
+	$makefile .= "\t\$(CC) $ldflags -o \$@ \$+\n\n";
+
+	for my $so (keys(%sharedObjs)) {
+		my @so = @{$sharedObjs{$so}};
+		my $tflags = $so[0];
+		my @objs = @so[1 .. $#so];
+		$makefile .= "$so: " . join(" ", @objs) . "\n";
+		$makefile .= "\t\$(CC) -pipe $SHARED $tflags -o \$@ \$+\n\n";
+	}
+
+	for my $ar (keys(%archives)) {
+		my @ar = @{$archives{$ar}};
+		my $tflags = $ar[0];
+		my @objs = @ar[1 .. $#ar];
+		$makefile .= "$ar: " . join(" ", @objs) . "\n";
+		$makefile .= "\tar cr \$@ \$+ $tflags\n";
+		$makefile .= "\tranlib \$@\n";
+	}
+	$makefile .= join "\n", @cpprules;
+	$makefile .= "\n";
+
+	my $mkfd;
+	open $mkfd, '>', 'src/Makefile.new' or die "src/Makefile.new: $!";
+	print $mkfd $makefile;
+	close $mkfd;
 }
 

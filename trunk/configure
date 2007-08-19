@@ -583,12 +583,12 @@ if (!$config{MAX_CLIENT}) {
 					}
 				}
 				close FH;
-				if (!vcheck($libcv, "2.3"))
+				if ($libcv < "2.3")
 				{
 					$has_epoll = 0;
 					printf "libc too old: $libcv... ";
 				}
-				if (!vcheck($kernelv, "2.6"))
+				if ($kernelv < "2.6")
 				{
 					$has_epoll = 0;
 					printf "libc built against older kernel $kernelv... ";
@@ -620,7 +620,7 @@ $config{HAS_EPOLL} = $has_epoll;
 $config{HAS_KQUEUE} = $has_kqueue; 
 
 printf "Checking for libgnutls... ";
-if (($config{HAS_GNUTLS}) && (($config{HAS_GNUTLS} eq "y") || (vcheck($config{HAS_GNUTLS}, "1.2")))) {
+if (($config{HAS_GNUTLS}) && (($config{HAS_GNUTLS} >= 1.2) || ($config{HAS_GNUTLS} eq "y"))) {
 	print "yes\n";
 	$config{HAS_GNUTLS} = "y";
 } else {
@@ -630,7 +630,7 @@ if (($config{HAS_GNUTLS}) && (($config{HAS_GNUTLS} eq "y") || (vcheck($config{HA
 
 printf "Checking for openssl... ";
 # This doesn't really do a proper check -we do that anyway in make/utilities.pm
-if (($config{HAS_OPENSSL}) && (($config{HAS_OPENSSL} eq "y") || (vcheck($config{HAS_OPENSSL}, "0.8")))) {
+if (($config{HAS_OPENSSL}) && (($config{HAS_OPENSSL} >= 0.8) || ($config{HAS_OPENSSL} eq "y"))) {
 	print "yes\n";
 	$config{HAS_OPENSSL} = "y";
 } else {

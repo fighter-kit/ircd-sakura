@@ -9,7 +9,7 @@
 
 CC = @CC@
 MAKE = @MAKEPROG@
-PROGS = inspircd
+PROGS = sakura
 FLAGS = @FLAGS@
 DEBUG = @DEVELOPER@
 LDLIBS = @LDLIBS@
@@ -181,7 +181,7 @@ module:
 
 clean:
 	@echo Cleaning...
-	@rm -rvf src/*.so src/*.dylib src/*.o src/inspircd src/modules/*.so src/modules/*.o *~ src/*~ src/modules/*~ src/modules/extra/*~ src/modes/*~ src/modes/*.o src/modes/*.a src/modules/*/*.o src/modules/*/*.so
+	@rm -rvf src/*.so src/*.dylib src/*.o src/sakura src/modules/*.so src/modules/*.o *~ src/*~ src/modules/*~ src/modules/extra/*~ src/modes/*~ src/modes/*.o src/modes/*.a src/modules/*/*.o src/modules/*/*.so
 	@echo Completed.
 
 modclean:
@@ -191,7 +191,7 @@ modclean:
 	rm -rf src/modules/*/*.so
 	rm -rf src/modules/*/*.o
 	rm -rf lib/*.so
-	rm -f bin/inspircd
+	rm -f bin/sakura
 
 squeakyclean: distclean
 

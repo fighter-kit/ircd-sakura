@@ -24,7 +24,7 @@ my @filechecked;
 
 # Lets see what they want to do.. Set the variable (Cause i'm a lazy coder)
 my $arg = $ARGV[0];
-getpidfile($confpath."unrealircd.conf");
+getpidfile($confpath."sakura.conf");
 
 if ($arg eq "start") { start(); exit(); }
 if ($arg eq "debug") { debug(); exit(); }
@@ -35,10 +35,10 @@ if ($arg eq "stop") { stop(); exit(); }
 if ($arg eq "status") {
 	if (getstatus() == 1) {
 		my $pid = getprocessid();
-		print "UnrealIRCd is running (PID: $pid)\n";
+		print "Sakura is running (PID: $pid)\n";
 		exit();
 	} else {
-		print "UnrealIRCd is not running. (Or PID File not found)\n";
+		print "Sakura is not running. (Or PID File not found)\n";
 		exit();
 	}
 }
@@ -46,10 +46,10 @@ if ($arg eq "rehash") {
 	if (getstatus() == 1) {
 		my $pid = getprocessid();
 		system("kill -HUP $pid >/dev/null 2>&1");
-		print "UnrealIRCd rehashed (pid: $pid).\n";
+		print "Sakura rehashed (pid: $pid).\n";
 		exit();
 	} else {
-		print "UnrealIRCd is not running. (Or PID File not found)\n";
+		print "Sakura is not running. (Or PID File not found)\n";
 		exit();
 	}
 }
@@ -60,7 +60,7 @@ if ($arg eq "cron") {
 }
 
 if ($arg eq "version") {
-	print "UnrealIRCd version: $version\n";
+	print "Sakura version: $version\n";
 	exit();
 }
 
@@ -81,7 +81,7 @@ if ($arg eq "checkconf") {
 # If we get here.. bad / no parameters.
 ###
 print "Invalid Argument: $arg\n";
-print "Usage: unreal (start|stop|restart|rehash|status|cron|checkconf|version)\n";
+print "Usage: sakura (start|stop|restart|rehash|status|cron|checkconf|version)\n";
 print "Developer arguments: (debug|screendebug|valdebug|screenvaldebug)\n";
 exit();
 
@@ -91,7 +91,7 @@ exit();
 
 sub start {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "Sakura is already running.\n"; return 0; }
 	# If we are still alive here.. Try starting the IRCd..
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -101,7 +101,7 @@ sub start {
 
 sub debug {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "Sakura is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -115,7 +115,7 @@ sub debug {
 sub screendebug
 {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "Sakura is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -124,7 +124,7 @@ sub screendebug
 	checkscreen();
 
 	# If we are still alive here.. Try starting the IRCd..
-	print "Starting UnrealIRCd in `screen`, type `screen -r` when the ircd crashes to view the gdb output and get a backtrace.\n";
+	print "Starting Sakura in `screen`, type `screen -r` when the ircd crashes to view the gdb output and get a backtrace.\n";
 	print "Once you're inside the screen session press ^C + d to re-detach from the session\n";
 	system("screen -m -d gdb --command=$basepath/.gdbargs --args $binpath/$executable -nofork -debug -nolog");
 }
@@ -132,7 +132,7 @@ sub screendebug
 sub valdebug
 {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "Sakura is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -149,7 +149,7 @@ sub valdebug
 sub screenvaldebug
 {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "Sakura is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -159,25 +159,25 @@ sub screenvaldebug
 	checkscreen();
 
 	# If we are still alive here.. Try starting the IRCd..
-	print "Starting UnrealIRCd in `screen`, type `screen -r` when the ircd crashes to view the valgrind and gdb output and get a backtrace.\n";
+	print "Starting Sakura in `screen`, type `screen -r` when the ircd crashes to view the valgrind and gdb output and get a backtrace.\n";
 	print "Once you're inside the screen session press ^C + d to re-detach from the session\n";
 	system("screen -m -d valgrind -v --tool=memcheck --leak-check=yes --db-attach=yes --num-callers=10 $binpath/$executable -nofork -debug -nolog");
 }
 
 sub stop {
-	if (getstatus() == 0) { print "UnrealIRCd is not running. (Or PID File not found)\n"; return 0; }
+	if (getstatus() == 0) { print "Sakura is not running. (Or PID File not found)\n"; return 0; }
 	# Get to here, we have something to kill.
 	my $pid = getprocessid();
-	print "Stopping UnrealIRCd (pid: $pid)...\n";
+	print "Stopping Sakura (pid: $pid)...\n";
 	system("kill -TERM $pid >/dev/null 2>&1");
 	# Give it a second to exit
 	sleep(1);
 	if (getstatus() == 1)
 	{
-		print "UnrealIRCd not dying quietly -- forcing kill\n";
+		print "Sakura not dying quietly -- forcing kill\n";
 		system("kill -9 $pid >/dev/null 2>&1");
 	}
-	print "UnrealIRCd Stopped.\n";
+	print "Sakura Stopped.\n";
 }
 
 # GetPidfile Version 2 - Now With Include Support..
@@ -240,7 +240,7 @@ sub getpidfile {
 		}
 	}
 	# End of includes / No includes found. Using default.
-	$pidfile = $confpath . "unrealircd.pid";
+	$pidfile = $confpath . "Sakura.pid";
 }
 
 sub getstatus {
@@ -298,7 +298,7 @@ sub checkxmllint
 sub checkconf
 {
 	checkxmllint();
-	validateconf($confpath."unrealircd.conf");
+	validateconf($confpath."sakura.conf");
 	print "Config check complete\n";
 }
 

@@ -1,2 +1,2 @@
 #!sh
-echo "InspIRCd-1.1.11+Xynotyro"
+echo "InspIRCd+Sakura(1.1.0)"

@@ -24,7 +24,7 @@ my @filechecked;
 
 # Lets see what they want to do.. Set the variable (Cause i'm a lazy coder)
 my $arg = $ARGV[0];
-getpidfile($confpath."sakura.conf");
+getpidfile($confpath."unrealircd.conf");
 
 if ($arg eq "start") { start(); exit(); }
 if ($arg eq "debug") { debug(); exit(); }
@@ -35,10 +35,10 @@ if ($arg eq "stop") { stop(); exit(); }
 if ($arg eq "status") {
 	if (getstatus() == 1) {
 		my $pid = getprocessid();
-		print "Sakura is running (PID: $pid)\n";
+		print "UnrealIRCd is running (PID: $pid)\n";
 		exit();
 	} else {
-		print "Sakura is not running. (Or PID File not found)\n";
+		print "UnrealIRCd is not running. (Or PID File not found)\n";
 		exit();
 	}
 }
@@ -46,10 +46,10 @@ if ($arg eq "rehash") {
 	if (getstatus() == 1) {
 		my $pid = getprocessid();
 		system("kill -HUP $pid >/dev/null 2>&1");
-		print "Sakura rehashed (pid: $pid).\n";
+		print "UnrealIRCd rehashed (pid: $pid).\n";
 		exit();
 	} else {
-		print "Sakura is not running. (Or PID File not found)\n";
+		print "UnrealIRCd is not running. (Or PID File not found)\n";
 		exit();
 	}
 }
@@ -60,7 +60,7 @@ if ($arg eq "cron") {
 }
 
 if ($arg eq "version") {
-	print "Sakura version: $version\n";
+	print "UnrealIRCd version: $version\n";
 	exit();
 }
 
@@ -77,17 +77,11 @@ if ($arg eq "checkconf") {
 	exit();
 }
 
-if ($arg eq "Cheese-Sandwich") {
-	print "Creating Cheese Sandwich..\n";
-	print "Done.\n";
-	exit();
-}
-
 ###
 # If we get here.. bad / no parameters.
 ###
 print "Invalid Argument: $arg\n";
-print "Usage: sakura (start|stop|restart|rehash|status|cron|checkconf|version)\n";
+print "Usage: unreal (start|stop|restart|rehash|status|cron|checkconf|version)\n";
 print "Developer arguments: (debug|screendebug|valdebug|screenvaldebug)\n";
 exit();
 
@@ -97,7 +91,7 @@ exit();
 
 sub start {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "InspIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
 	# If we are still alive here.. Try starting the IRCd..
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -107,7 +101,7 @@ sub start {
 
 sub debug {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "InspIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -121,7 +115,7 @@ sub debug {
 sub screendebug
 {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "InspIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -130,7 +124,7 @@ sub screendebug
 	checkscreen();
 
 	# If we are still alive here.. Try starting the IRCd..
-	print "Starting Sakura in `screen`, type `screen -r` when the ircd crashes to view the gdb output and get a backtrace.\n";
+	print "Starting UnrealIRCd in `screen`, type `screen -r` when the ircd crashes to view the gdb output and get a backtrace.\n";
 	print "Once you're inside the screen session press ^C + d to re-detach from the session\n";
 	system("screen -m -d gdb --command=$basepath/.gdbargs --args $binpath/$executable -nofork -debug -nolog");
 }
@@ -138,7 +132,7 @@ sub screendebug
 sub valdebug
 {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "Sakura is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -155,7 +149,7 @@ sub valdebug
 sub screenvaldebug
 {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "Sakura is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "UnrealIRCd is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -165,25 +159,25 @@ sub screenvaldebug
 	checkscreen();
 
 	# If we are still alive here.. Try starting the IRCd..
-	print "Starting InspIRCd in `screen`, type `screen -r` when the ircd crashes to view the valgrind and gdb output and get a backtrace.\n";
+	print "Starting UnrealIRCd in `screen`, type `screen -r` when the ircd crashes to view the valgrind and gdb output and get a backtrace.\n";
 	print "Once you're inside the screen session press ^C + d to re-detach from the session\n";
 	system("screen -m -d valgrind -v --tool=memcheck --leak-check=yes --db-attach=yes --num-callers=10 $binpath/$executable -nofork -debug -nolog");
 }
 
 sub stop {
-	if (getstatus() == 0) { print "InspIRCd is not running. (Or PID File not found)\n"; return 0; }
+	if (getstatus() == 0) { print "UnrealIRCd is not running. (Or PID File not found)\n"; return 0; }
 	# Get to here, we have something to kill.
 	my $pid = getprocessid();
-	print "Stopping Sakura (pid: $pid)...\n";
+	print "Stopping UnrealIRCd (pid: $pid)...\n";
 	system("kill -TERM $pid >/dev/null 2>&1");
 	# Give it a second to exit
 	sleep(1);
 	if (getstatus() == 1)
 	{
-		print "InspIRCd not dying quietly -- forcing kill\n";
+		print "UnrealIRCd not dying quietly -- forcing kill\n";
 		system("kill -9 $pid >/dev/null 2>&1");
 	}
-	print "Sakura Stopped.\n";
+	print "UnrealIRCd Stopped.\n";
 }
 
 # GetPidfile Version 2 - Now With Include Support..
@@ -199,66 +193,54 @@ sub stop {
 # -- Brain
 
 sub getpidfile {
-  my ($file) = @_;
-  # Before we start, do we have a PID already? (Should never occur)
-  if ($pid ne "") {
-    return;
-  }
-  # Are We using a relative path?
-  if ($file !~ /^\//) {
-    # Convert it to a full path..
-    $file = $confpath . $file;
-  }
+	my ($file) = @_;
+	# Before we start, do we have a PID already? (Should never occur)
+	if ($pid ne "") {
+		return;
+	}
+	# Are We using a relative path?
+	if ($file !~ /^\//) {
+		# Convert it to a full path..
+		$file = $confpath . $file;
+	}
 
-  # Have we checked this file before?
-  for (my $i = 0; $i < $filesparsed; $i++) {
-    if ($filesparsed[$i] eq $file) {
-      # Already Parsed, Possible recursive loop..
-      return;
-    }
-  }
+	# Have we checked this file before?
+	for (my $i = 0; $i < $filesparsed; $i++) {
+		if ($filesparsed[$i] eq $file) {
+			# Already Parsed, Possible recursive loop..
+			return;
+		}
+	}
 
-  # If we get here, Mark as 'Read'
-  $filesparsed[$filesparsed] = $file;
+	# If we get here, Mark as 'Read'
+	$filesparsed[$filesparsed] = $file;
 
-  # Open the File..
-  open INFILE, "< $file" or die "Unable to open file $file\n";
-  # Grab entire file contents..
-  my(@lines) = <INFILE>;
-  # Close the file
-  close INFILE;
-
-  # remove trailing spaces
-  chomp(@lines);
-  foreach $i (@lines) {
-    # clean it up
-    $i =~ s/[^=]+=\s(.*)/\1/;
-    # Does this file have a pid?
-    if (($i =~ /<pid file=\"(\S+)\">/i) && ($i !~ /^#/))
-    {
-      # Set the PID file and return.
-      $pidfile = $1;
-      return;
-    }
-  }
-
-  # If we get here, NO PID FILE! -- Check for includes
-  foreach $i (@lines) {
-    $i =~ s/[^=]+=\s(.*)/\1/;
-    if (($i =~ s/\<include file=\"(.+?)\"\>//i) && ($i !~ /^#/))
-    {
-      # Decend into that file, and check for PIDs.. (that sounds like an STD ;/)
-      getpidfile($1);
-      # Was a PID found?
-      if ($pidfile ne "") {
-	# Yes, Return.
-	return;
-      }
-    }
-  }
-
-  # End of includes / No includes found. Using default.
-  $pidfile = $confpath . "sakura.pid";
+	my $fd;
+	open $fd, "<", "$file" or die "Unable to open file $file\n";
+	for my $line (<$fd>) {
+		chomp $line;
+		# clean it up
+		$line =~ s/[^=]+=\s(.*)/\1/;
+		# Does this file have a pid?
+		if (($line =~ m/<pid file=\"(\S+)\">/i) && ($line !~ /^#/))
+		{
+			# Set the PID file and return.
+			$pidfile = ($1 =~ m'^/') ? $1 : $confpath . $1;
+			return;
+		}
+		if (($line =~ m/\<include file=\"(.+?)\"\>/i) && ($line !~ /^#/))
+		{
+			# Decend into that file, and check for PIDs.. (that sounds like an STD ;/)
+			getpidfile($1);
+			# Was a PID found?
+			if ($pidfile ne "") {
+				# Yes, Return.
+				return;
+			}
+		}
+	}
+	# End of includes / No includes found. Using default.
+	$pidfile = $confpath . "unrealircd.pid";
 }
 
 sub getstatus {
@@ -316,7 +298,7 @@ sub checkxmllint
 sub checkconf
 {
 	checkxmllint();
-	validateconf($confpath."sakura.conf");
+	validateconf($confpath."unrealircd.conf");
 	print "Config check complete\n";
 }
 

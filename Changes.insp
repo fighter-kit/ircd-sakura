@@ -1,0 +1,872 @@
+------------------------------------------------------------------------
+r7413 | special | 2007-06-26 08:33:41 +0200 (Tue, 26 Jun 2007) | 1 line
+
+Made all of the error messages in chg* and set* a bit more uniform, and added a few that were missing
+------------------------------------------------------------------------
+r7414 | special | 2007-06-28 19:29:41 +0200 (Thu, 28 Jun 2007) | 1 line
+
+Fixed a bug that caused classes with passwords to instantly disconnect any users (thanks Darom). Needs QA
+------------------------------------------------------------------------
+r7415 | peavey | 2007-06-30 21:47:46 +0200 (Sat, 30 Jun 2007) | 1 line
+
+Split hostmask with XLines::IdentSplit then re-inject into check for proper detection. Thx owine.
+------------------------------------------------------------------------
+r7416 | brain | 2007-07-01 14:06:15 +0200 (Sun, 01 Jul 2007) | 2 lines
+
+Optimizations and code tidyups. QA please check that svsnick and other forced nick changes still work right after this
+
+------------------------------------------------------------------------
+r7417 | brain | 2007-07-01 14:22:11 +0200 (Sun, 01 Jul 2007) | 2 lines
+
+Compile fixes
+
+------------------------------------------------------------------------
+r7418 | brain | 2007-07-01 14:36:37 +0200 (Sun, 01 Jul 2007) | 3 lines
+
+Add -Wno-deprecated to prevent an annoyingly stupid gcc4.2 error which stops you passing a literal string to a char* parameter:
+void a(char* foo); ->  a("test") == WARNING on gcc4.2!
+
+------------------------------------------------------------------------
+r7419 | special | 2007-07-03 00:45:48 +0200 (Tue, 03 Jul 2007) | 1 line
+
+std::string does not need a null terminator..
+------------------------------------------------------------------------
+r7420 | brain | 2007-07-03 00:53:31 +0200 (Tue, 03 Jul 2007) | 3 lines
+
+We know this worked... i think.
+std::string::reserve might not work the same as this.
+
+------------------------------------------------------------------------
+r7421 | w00t | 2007-07-03 13:44:35 +0200 (Tue, 03 Jul 2007) | 1 line
+
+Fix off-by-one reported by Darom in bug #339
+------------------------------------------------------------------------
+r7422 | w00t | 2007-07-03 15:21:26 +0200 (Tue, 03 Jul 2007) | 1 line
+
+Revert a changed file I didn't want to commit ..
+------------------------------------------------------------------------
+r7423 | pippijn | 2007-07-03 18:40:09 +0200 (Tue, 03 Jul 2007) | 1 line
+
+Removed superfluous semicolons
+------------------------------------------------------------------------
+r7424 | peavey | 2007-07-04 18:22:23 +0200 (Wed, 04 Jul 2007) | 1 line
+
+Init the sequence indicator to avoid undefined behaviour. Thx owine.
+------------------------------------------------------------------------
+r7425 | special | 2007-07-06 08:39:45 +0200 (Fri, 06 Jul 2007) | 1 line
+
+Fixed the handling of the CTCP TIME reply in m_antibear - it could generate random client errors. Bug #341
+------------------------------------------------------------------------
+r7426 | special | 2007-07-06 08:42:00 +0200 (Fri, 06 Jul 2007) | 1 line
+
+And fixed a race condition I introduced in the previous commit that could've caused the exact same error I was fixing. This is one of those commits that never happened
+------------------------------------------------------------------------
+r7427 | brain | 2007-07-06 18:14:24 +0200 (Fri, 06 Jul 2007) | 2 lines
+
+SSL buffering tweaks. NOTE this is not a complete fix till i say so, don't use this in production yet unless youre a masochist.
+
+------------------------------------------------------------------------
+r7428 | brain | 2007-07-06 19:31:44 +0200 (Fri, 06 Jul 2007) | 2 lines
+
+Warning: Loads of craq logging in here atm. /connect with openssl is broken, gnutls seems fine
+
+------------------------------------------------------------------------
+r7429 | special | 2007-07-07 21:58:16 +0200 (Sat, 07 Jul 2007) | 1 line
+
+Added some missing parameter checking in m_swhois
+------------------------------------------------------------------------
+r7430 | brain | 2007-07-07 23:13:12 +0200 (Sat, 07 Jul 2007) | 3 lines
+
+Implement /dalinfo, as a joke. Consider this an easter egg.
+More debug logging in m_ssl_openssl, still not fixed
+
+------------------------------------------------------------------------
+r7431 | brain | 2007-07-10 19:46:03 +0200 (Tue, 10 Jul 2007) | 2 lines
+
+First part of fix for bug #344
+
+------------------------------------------------------------------------
+r7432 | brain | 2007-07-10 19:59:07 +0200 (Tue, 10 Jul 2007) | 2 lines
+
+This should fix the rest of remote kill nick hiding
+
+------------------------------------------------------------------------
+r7433 | brain | 2007-07-10 20:00:35 +0200 (Tue, 10 Jul 2007) | 2 lines
+
+Clarifying comment
+
+------------------------------------------------------------------------
+r7434 | brain | 2007-07-11 18:59:10 +0200 (Wed, 11 Jul 2007) | 4 lines
+
+Fix for bug #347.
+WARNING: QA PEOPLE, THIS NEEDS TESTING!!!!
+Test this with lots of squits and connects, and i mean lots and lots in all different ways you can think of, /squit, pingout, closing the connection with a firewall etc.
+
+------------------------------------------------------------------------
+r7435 | brain | 2007-07-11 21:50:26 +0200 (Wed, 11 Jul 2007) | 2 lines
+
+Backport patch from stskeeps for checking success of gnutls cert generation
+
+------------------------------------------------------------------------
+r7436 | peavey | 2007-07-12 17:13:44 +0200 (Thu, 12 Jul 2007) | 1 line
+
+Apply patch from lain to fix multiple cgihosts not being read correctly.
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7437 | brain | 2007-07-12 20:42:17 +0200 (Thu, 12 Jul 2007) | 2 lines
+
+Implement a way to disable options:maxwho, bug #348
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7438 | brain | 2007-07-13 19:26:45 +0200 (Fri, 13 Jul 2007) | 2 lines
+
+Explicitly disallow mode prefixes > 126, to prevent excess muppetry by 3rd party module devs
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7439 | brain | 2007-07-15 14:34:30 +0200 (Sun, 15 Jul 2007) | 2 lines
+
+Fix for minor memory leak on unloading module, bug #340
+
+------------------------------------------------------------------------
+r7440 | brain | 2007-07-15 15:18:28 +0200 (Sun, 15 Jul 2007) | 4 lines
+
+Fix for bug #349: NOTE there is important caveat about this in the example config, MAKE SURE TO READ IT.
+When you connect a cgi:irc client two different connect classes are checked at two different times (first the one
+that the website they are cgi'ing from, then later one for the user's real ip). READ THIS AND UNDERSTAND IT!
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7441 | special | 2007-07-16 10:35:23 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Made m_ssl_gnutls throw an exception when unable to load the certificate (since SSL won't work at all without one)
+------------------------------------------------------------------------
+r7442 | peavey | 2007-07-16 13:47:47 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Use vsnprintf instead of vsprintf.
+------------------------------------------------------------------------
+r7443 | peavey | 2007-07-16 13:49:18 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Remove printf_c from wrapper, this code also segfaulted when it was used.
+------------------------------------------------------------------------
+r7444 | peavey | 2007-07-16 13:53:15 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Use colours.h in win_wrapper and also add __COLOURS_H define.
+------------------------------------------------------------------------
+r7445 | special | 2007-07-16 15:16:59 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Little tweak to fix the output when directory modules execute programs for cflags
+------------------------------------------------------------------------
+r7446 | peavey | 2007-07-16 15:25:03 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Tide this up and fix possible buffer overflow. Cannot use MAXBUF since inspircd_config.h may not be generated yet.
+------------------------------------------------------------------------
+r7447 | peavey | 2007-07-16 15:27:14 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Use wrapper include instead of colour.h.
+------------------------------------------------------------------------
+r7448 | peavey | 2007-07-16 15:29:12 +0200 (Mon, 16 Jul 2007) | 1 line
+
+And add colour.h to wrapper resource instead of the source.
+------------------------------------------------------------------------
+r7449 | peavey | 2007-07-16 15:35:59 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Begone evil DOS format :<
+------------------------------------------------------------------------
+r7450 | peavey | 2007-07-16 15:39:15 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Oops, the (*p) check was meant for the inner loop, I blame the vs editor :>
+------------------------------------------------------------------------
+r7451 | peavey | 2007-07-16 16:43:30 +0200 (Mon, 16 Jul 2007) | 1 line
+
+formatting and ^M
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7452 | peavey | 2007-07-16 17:39:31 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Ok windows.. YOU WIN :< .. but at least I can use MAXBUF now and configure will have to endure the fixed 500 limit :>
+------------------------------------------------------------------------
+r7453 | peavey | 2007-07-16 18:09:56 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Add flags to /STATS s output, and nuke some ^M
+------------------------------------------------------------------------
+r7454 | peavey | 2007-07-16 19:14:45 +0200 (Mon, 16 Jul 2007) | 1 line
+
+'svn propset -R svn:eol-style CR *' Set to UNIX-style always. Binaries are auto skipped by svn.
+------------------------------------------------------------------------
+r7455 | peavey | 2007-07-16 19:24:00 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Set EOL to WINDOWS-style always for Visual Studio files.
+------------------------------------------------------------------------
+r7456 | peavey | 2007-07-16 19:30:04 +0200 (Mon, 16 Jul 2007) | 1 line
+
+OOPS! We try again, since I'm smoking craq. LF is 0x0a NOT CR.
+------------------------------------------------------------------------
+r7457 | peavey | 2007-07-16 20:18:03 +0200 (Mon, 16 Jul 2007) | 1 line
+
+Don't hide from me! set LF eol-style on hidden files too.
+------------------------------------------------------------------------
+r7458 | special | 2007-07-17 10:26:25 +0200 (Tue, 17 Jul 2007) | 1 line
+
+Added the execruntime() function for Compile/Linker flags - executes shell commands at compile time rather than during configure
+------------------------------------------------------------------------
+r7459 | special | 2007-07-17 11:53:35 +0200 (Tue, 17 Jul 2007) | 1 line
+
+Module directories now use the concatenated linker flags from every cpp file, instead of just the last (which was rather unpredictable)
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7460 | pippijn | 2007-07-17 14:53:49 +0200 (Tue, 17 Jul 2007) | 4 lines
+
+Added a JSON-RPC module that can be used by other modules to provide a remote
+procedure call interface. This should work in theory, but does not for me.
+But then, neither does m_httpd_stats so it's probably me...
+
+------------------------------------------------------------------------
+r7461 | pippijn | 2007-07-17 15:02:02 +0200 (Tue, 17 Jul 2007) | 2 lines
+
+Ignore all exceptions for now.. m_rpc_json is rather willing to throw
+
+------------------------------------------------------------------------
+r7462 | pippijn | 2007-07-17 15:04:36 +0200 (Tue, 17 Jul 2007) | 2 lines
+
+provide feedback to the user if json throws an exception
+
+------------------------------------------------------------------------
+r7463 | pippijn | 2007-07-17 15:38:46 +0200 (Tue, 17 Jul 2007) | 1 line
+
+#ifdeffed out gnu extension
+------------------------------------------------------------------------
+r7464 | pippijn | 2007-07-17 16:39:18 +0200 (Tue, 17 Jul 2007) | 4 lines
+
+Now, json-rpc _ONLY_ supports member function pointers. An example is given in
+ModuleRpcJson::ModuleRpcJson. I must admit that it is kind of ugly but it is
+the only way I can see right now.
+
+------------------------------------------------------------------------
+r7465 | pippijn | 2007-07-17 16:50:33 +0200 (Tue, 17 Jul 2007) | 2 lines
+
+publish "JSON-RPC" interface
+
+------------------------------------------------------------------------
+r7466 | peavey | 2007-07-17 20:27:36 +0200 (Tue, 17 Jul 2007) | 1 line
+
+Fix copyright headers.
+------------------------------------------------------------------------
+r7467 | peavey | 2007-07-17 20:43:39 +0200 (Tue, 17 Jul 2007) | 1 line
+
+Mass header update. Chatspike-Dev => InspIRCd....
+------------------------------------------------------------------------
+r7468 | peavey | 2007-07-17 20:45:23 +0200 (Tue, 17 Jul 2007) | 1 line
+
+more headers.
+------------------------------------------------------------------------
+r7469 | brain | 2007-07-17 21:04:30 +0200 (Tue, 17 Jul 2007) | 2 lines
+
+Validation checks that seem to have been omitted here.
+
+------------------------------------------------------------------------
+r7470 | brain | 2007-07-17 21:07:31 +0200 (Tue, 17 Jul 2007) | 2 lines
+
+Stability fixes, some DELETEs here that dont belong any more.
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7471 | pippijn | 2007-07-18 11:54:07 +0200 (Wed, 18 Jul 2007) | 1 line
+
+untested fix for "unused functions"
+------------------------------------------------------------------------
+r7472 | pippijn | 2007-07-18 11:58:24 +0200 (Wed, 18 Jul 2007) | 1 line
+
+there were two.. yes, you're right Special
+------------------------------------------------------------------------
+r7473 | special | 2007-07-18 16:31:00 +0200 (Wed, 18 Jul 2007) | 1 line
+
+Fixed m_messageflood to free the channel if it kicks the last user. This would cause either a crash or a memory leak, probably the latter
+------------------------------------------------------------------------
+r7474 | brain | 2007-07-18 20:03:21 +0200 (Wed, 18 Jul 2007) | 2 lines
+
+Ive tidied up the mode count stuff, but i still cant duplicate negative invisible counts. :(
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7475 | brain | 2007-07-19 23:44:46 +0200 (Thu, 19 Jul 2007) | 2 lines
+
+Check libc version for epoll then check that glibc is built against this kernel version, if not dont allow epoll
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7476 | brain | 2007-07-19 23:48:45 +0200 (Thu, 19 Jul 2007) | 2 lines
+
+Whoops, someone forgot to check the return value when initializing windows IOCP
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7477 | brain | 2007-07-20 00:00:44 +0200 (Fri, 20 Jul 2007) | 2 lines
+
+Fix for bug #353, theres no solution to this but a slightly craqy one, but at least its one line.
+
+------------------------------------------------------------------------
+r7478 | brain | 2007-07-20 00:08:21 +0200 (Fri, 20 Jul 2007) | 3 lines
+
+Fix for bug #326, 'no error' quit can no longer theoretically occur because all errno == 0 are weeded out with a shorthand if() on calling userrec::SetWriteError, before, only one of three occurances 
+was.
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7479 | peavey | 2007-07-21 00:06:14 +0200 (Sat, 21 Jul 2007) | 1 line
+
+Fix gnutls cert generation failing. Thx owine.
+------------------------------------------------------------------------
+r7480 | peavey | 2007-07-21 12:38:12 +0200 (Sat, 21 Jul 2007) | 4 lines
+
+Add Custom Titles as requested per bug #334
+Optional hostmask and vhost supported
+This will need alot of QA to make it into 1.1.10
+
+------------------------------------------------------------------------
+r7481 | peavey | 2007-07-21 13:55:17 +0200 (Sat, 21 Jul 2007) | 1 line
+
+Make it local only.
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7482 | brain | 2007-07-21 15:01:12 +0200 (Sat, 21 Jul 2007) | 2 lines
+
+Why does getcache return "true" or undef?! Now returns 1 or 0. Thanks stskeeps
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7483 | peavey | 2007-07-21 15:18:32 +0200 (Sat, 21 Jul 2007) | 1 line
+
+push metadata out on title-up
+------------------------------------------------------------------------
+r7484 | peavey | 2007-07-21 15:19:46 +0200 (Sat, 21 Jul 2007) | 1 line
+
+le cleanup
+------------------------------------------------------------------------
+r7485 | peavey | 2007-07-21 16:59:10 +0200 (Sat, 21 Jul 2007) | 1 line
+
+Fix pastage spotted by dmb.
+------------------------------------------------------------------------
+r7486 | brain | 2007-07-21 17:52:51 +0200 (Sat, 21 Jul 2007) | 2 lines
+
+Test
+
+------------------------------------------------------------------------
+r7487 | brain | 2007-07-21 18:16:46 +0200 (Sat, 21 Jul 2007) | 2 lines
+
+Extra Dry! Shame it's not in Hereford right now :p
+
+------------------------------------------------------------------------
+r7488 | brain | 2007-07-21 18:23:40 +0200 (Sat, 21 Jul 2007) | 2 lines
+
+I broke socketengine_iocp with some fixes. Fixed again.
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7493 | brain | 2007-07-22 00:05:45 +0200 (Sun, 22 Jul 2007) | 2 lines
+
+oper-immune filters should be fixed now
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7494 | peavey | 2007-07-22 15:49:15 +0200 (Sun, 22 Jul 2007) | 1 line
+
+Less WOOT more TAXANOMY :>
+------------------------------------------------------------------------
+r7495 | peavey | 2007-07-22 15:52:23 +0200 (Sun, 22 Jul 2007) | 1 line
+
+Add m_taxonomy.so to example config.
+------------------------------------------------------------------------
+r7496 | peavey | 2007-07-22 16:10:49 +0200 (Sun, 22 Jul 2007) | 1 line
+
+Add syntax.
+------------------------------------------------------------------------
+r7497 | brain | 2007-07-22 19:38:22 +0200 (Sun, 22 Jul 2007) | 2 lines
+
+m_testcommand deletes its command handler manually, no modules should do this. Will cause a double free
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7498 | brain | 2007-07-22 19:40:11 +0200 (Sun, 22 Jul 2007) | 2 lines
+
+Grrr
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7499 | frostycoolslug | 2007-07-23 01:17:51 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Fixed windows configure in release mode in a directory with spaces.
+------------------------------------------------------------------------
+r7500 | burlex | 2007-07-23 02:37:03 +0200 (Mon, 23 Jul 2007) | 2 lines
+
+* Sockets will now always be nonblocking on win32 version of InspIRCd. There were some cases (mainly in TreeSockets) where a socket would not get restored to nonblocking mode after a connect() call, resulting in the server getting stuck on a blocking send() call causing freezeups.
+* configure will now compile under VC7 again. 
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7501 | w00t | 2007-07-23 19:22:10 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Fix for bug #358, by rogalek.
+------------------------------------------------------------------------
+r7502 | brain | 2007-07-23 19:42:48 +0200 (Mon, 23 Jul 2007) | 2 lines
+
+A couple of tweaks that i did earlier as diffs. ISON didnt always respect invisibility state of users. socketengine iocp didnt range check fd's before passing them for array lookup
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7503 | w00t | 2007-07-23 19:51:01 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Minor cleanup
+------------------------------------------------------------------------
+r7504 | w00t | 2007-07-23 19:58:57 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Bit more tidying. Add some comments here, too.
+------------------------------------------------------------------------
+r7505 | w00t | 2007-07-23 20:04:57 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Make these notices a little more helpful
+------------------------------------------------------------------------
+r7506 | brain | 2007-07-23 20:06:57 +0200 (Mon, 23 Jul 2007) | 2 lines
+
+Tidyup a bunch of stuff that was using userrec::modes directly rather than userrec::IsModeSet. Same for chanrec.
+
+------------------------------------------------------------------------
+r7507 | w00t | 2007-07-23 20:07:43 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Remove a braindead comment ('this belongs in class InspIRCd' -- when it's already there.)
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7514 | w00t | 2007-07-23 22:58:38 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Enable merge tracking
+------------------------------------------------------------------------
+r7515 | w00t | 2007-07-23 22:59:31 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Set svnmerge-blocked
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7516 | w00t | 2007-07-23 23:01:12 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Merge r7513 from trunk
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7520 | w00t | 2007-07-23 23:23:12 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Block 7517-7518
+------------------------------------------------------------------------
+r7521 | w00t | 2007-07-23 23:23:59 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Merge 7519 from trunk
+------------------------------------------------------------------------
+r7523 | w00t | 2007-07-23 23:37:26 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Merge r7522
+------------------------------------------------------------------------
+r7525 | peavey | 2007-07-23 23:47:57 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Merge 7524 from trunk
+------------------------------------------------------------------------
+r7527 | peavey | 2007-07-23 23:50:07 +0200 (Mon, 23 Jul 2007) | 1 line
+
+Block r7526
+------------------------------------------------------------------------
+r7530 | peavey | 2007-07-24 01:12:48 +0200 (Tue, 24 Jul 2007) | 1 line
+
+Merge r7528-7529 from trunk
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7532 | peavey | 2007-07-24 13:03:09 +0200 (Tue, 24 Jul 2007) | 1 line
+
+Merge r7531 from trunk.
+------------------------------------------------------------------------
+r7536 | w00t | 2007-07-24 14:30:04 +0200 (Tue, 24 Jul 2007) | 1 line
+
+Merge 7533-7535 from trunk
+------------------------------------------------------------------------
+r7538 | w00t | 2007-07-24 16:10:00 +0200 (Tue, 24 Jul 2007) | 1 line
+
+Block 7537, as discussed last night
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7573 | brain | 2007-07-25 23:24:35 +0200 (Wed, 25 Jul 2007) | 2 lines
+
+Block these changes from trunk
+
+------------------------------------------------------------------------
+r7574 | brain | 2007-07-25 23:26:01 +0200 (Wed, 25 Jul 2007) | 2 lines
+
+Block functor changes
+
+------------------------------------------------------------------------
+r7575 | brain | 2007-07-25 23:26:14 +0200 (Wed, 25 Jul 2007) | 2 lines
+
+Block signal handler changes
+
+------------------------------------------------------------------------
+r7576 | brain | 2007-07-25 23:37:22 +0200 (Wed, 25 Jul 2007) | 2 lines
+
+These should be blocked too (7563-7572)
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7581 | brain | 2007-07-26 20:44:58 +0200 (Thu, 26 Jul 2007) | 2 lines
+
+Block these changes (functor stuff) from stable
+
+------------------------------------------------------------------------
+r7582 | brain | 2007-07-26 20:45:53 +0200 (Thu, 26 Jul 2007) | 2 lines
+
+Merge detail fix from trunk
+
+------------------------------------------------------------------------
+r7584 | brain | 2007-07-26 21:46:33 +0200 (Thu, 26 Jul 2007) | 2 lines
+
+Merge from trunk, eliminate warning when building with anal flags
+
+------------------------------------------------------------------------
+r7586 | brain | 2007-07-26 21:51:58 +0200 (Thu, 26 Jul 2007) | 2 lines
+
+Merge in error check from trunk, bail if we can't chdir to our own dir on startup
+
+------------------------------------------------------------------------
+r7601 | brain | 2007-07-27 22:06:57 +0200 (Fri, 27 Jul 2007) | 2 lines
+
+Block changes r7587-7600
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7603 | peavey | 2007-07-28 20:05:37 +0200 (Sat, 28 Jul 2007) | 1 line
+
+Merge r7602 from trunk
+------------------------------------------------------------------------
+r7605 | peavey | 2007-07-28 20:16:41 +0200 (Sat, 28 Jul 2007) | 1 line
+
+Block -r7604
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7609 | brain | 2007-07-29 14:49:13 +0200 (Sun, 29 Jul 2007) | 2 lines
+
+Merge in m_close
+
+------------------------------------------------------------------------
+r7610 | brain | 2007-07-29 14:49:51 +0200 (Sun, 29 Jul 2007) | 2 lines
+
+Block 7602,7606
+
+------------------------------------------------------------------------
+r7611 | peavey | 2007-07-29 14:55:13 +0200 (Sun, 29 Jul 2007) | 1 line
+
+unblock r7602, something strange happened :<
+------------------------------------------------------------------------
+r7612 | peavey | 2007-07-29 14:56:11 +0200 (Sun, 29 Jul 2007) | 1 line
+
+set r7602 as merged.
+------------------------------------------------------------------------
+r7613 | brain | 2007-07-29 15:00:33 +0200 (Sun, 29 Jul 2007) | 2 lines
+
+1.1.11+Xynotyro
+
+------------------------------------------------------------------------
+r7617 | brain | 2007-07-29 21:36:42 +0200 (Sun, 29 Jul 2007) | 2 lines
+
+Update with warning about using \\ instead of \ (so that we don't get a repeat of bug #371)
+
+------------------------------------------------------------------------
+r7618 | brain | 2007-07-29 21:37:04 +0200 (Sun, 29 Jul 2007) | 2 lines
+
+Block 7614
+
+------------------------------------------------------------------------
+r7620 | brain | 2007-07-30 20:24:57 +0200 (Mon, 30 Jul 2007) | 2 lines
+
+Fix broken m_httpd (not receiving callbacks) from trunk commit
+
+------------------------------------------------------------------------
+r7622 | brain | 2007-07-30 20:31:47 +0200 (Mon, 30 Jul 2007) | 2 lines
+
+Set changed to true on load
+
+------------------------------------------------------------------------
+r7624 | brain | 2007-07-30 20:34:58 +0200 (Mon, 30 Jul 2007) | 2 lines
+
+Fix some op/halfop etc counts
+
+------------------------------------------------------------------------
+r7626 | brain | 2007-07-30 20:37:31 +0200 (Mon, 30 Jul 2007) | 2 lines
+
+Dont show hidden channels
+
+------------------------------------------------------------------------
+r7628 | brain | 2007-07-30 20:40:10 +0200 (Mon, 30 Jul 2007) | 2 lines
+
+7621,7623,7625,7627 manually merged
+
+------------------------------------------------------------------------
+r7632 | special | 2007-07-30 21:56:46 +0200 (Mon, 30 Jul 2007) | 1 line
+
+Fixed a recently introduced bug in cmd_list that would cause secret channels to be shown to all users. Highly recommended that you either hotpatch the /list command or load safelist..
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7634 | brain | 2007-07-30 22:05:09 +0200 (Mon, 30 Jul 2007) | 2 lines
+
+Block
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7636 | w00t | 2007-08-03 19:14:28 +0200 (Fri, 03 Aug 2007) | 1 line
+
+Manually merge 7635 because svnmerge is being a prick
+------------------------------------------------------------------------
+r7638 | w00t | 2007-08-03 22:22:11 +0200 (Fri, 03 Aug 2007) | 1 line
+
+Manual backport of r7637 - svnmerge is still being a prick
+------------------------------------------------------------------------
+r7639 | peavey | 2007-08-03 22:45:40 +0200 (Fri, 03 Aug 2007) | 1 line
+
+mark 7635 as merged
+------------------------------------------------------------------------
+r7640 | peavey | 2007-08-03 22:46:10 +0200 (Fri, 03 Aug 2007) | 1 line
+
+mark 7637 as merged
+------------------------------------------------------------------------
+r7642 | w00t | 2007-08-03 23:22:40 +0200 (Fri, 03 Aug 2007) | 1 line
+
+Backport 7641 manually via patch file. I'm off for pleasures of the flesh, cyall. :P
+------------------------------------------------------------------------
+r7643 | peavey | 2007-08-03 23:27:17 +0200 (Fri, 03 Aug 2007) | 1 line
+
+mark 7641 as merged since w00ts svnmerge is acting up
+------------------------------------------------------------------------
+r7645 | brain | 2007-08-03 23:47:05 +0200 (Fri, 03 Aug 2007) | 2 lines
+
+Merge in change from trunk
+
+------------------------------------------------------------------------
+r7647 | brain | 2007-08-03 23:58:35 +0200 (Fri, 03 Aug 2007) | 2 lines
+
+more fixes for openssl buffering (none of this affected the superior gnutls)
+
+------------------------------------------------------------------------
+r7650 | peavey | 2007-08-04 05:11:00 +0200 (Sat, 04 Aug 2007) | 1 line
+
+argh
+------------------------------------------------------------------------
+r7651 | peavey | 2007-08-04 05:22:01 +0200 (Sat, 04 Aug 2007) | 1 line
+
+Rollback 7650, since I got svnmerge'd badly.
+------------------------------------------------------------------------
+r7652 | peavey | 2007-08-04 05:26:13 +0200 (Sat, 04 Aug 2007) | 1 line
+
+Merge OpenSSL fix from trunk (r7648-7649)
+------------------------------------------------------------------------
+r7653 | peavey | 2007-08-04 05:31:24 +0200 (Sat, 04 Aug 2007) | 1 line
+
+Mark r7648-7649 as merged :<
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7655 | brain | 2007-08-05 14:13:27 +0200 (Sun, 05 Aug 2007) | 2 lines
+
+Block changes
+
+------------------------------------------------------------------------
+r7656 | brain | 2007-08-05 14:13:55 +0200 (Sun, 05 Aug 2007) | 2 lines
+
+Merge in fix for hanging client socket from trunk
+
+------------------------------------------------------------------------
+r7658 | brain | 2007-08-05 14:21:57 +0200 (Sun, 05 Aug 2007) | 2 lines
+
+Merge in epoll availability check from trunk
+
+------------------------------------------------------------------------
+r7660 | brain | 2007-08-05 15:52:10 +0200 (Sun, 05 Aug 2007) | 2 lines
+
+Merge buffering and notification fixes from trunk. Lessons learned from chatspike.
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7664 | peavey | 2007-08-05 18:35:43 +0200 (Sun, 05 Aug 2007) | 1 line
+
+Merge flushbuffer openssl fix from trunk manually (without debug), and set svnmerge props for merge -r7661-7663 also by hand.
+------------------------------------------------------------------------
+r7668 | brain | 2007-08-05 21:23:01 +0200 (Sun, 05 Aug 2007) | 3 lines
+
+Backport as fix, as old way was somewhat useless:
+Change latency figures in /map to milliseconds, much more useful for lag measurement than seconds
+
+------------------------------------------------------------------------
+r7669 | brain | 2007-08-05 21:23:25 +0200 (Sun, 05 Aug 2007) | 2 lines
+
+Block
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7671 | w00t | 2007-08-05 23:52:14 +0200 (Sun, 05 Aug 2007) | 1 line
+
+Backport of sorts for r7665 - adding m_nickflood. I do this only because it's an entirely new module, therefore it won't break anyone's setup if it explodes, and because 1.2 is a long way away :P
+------------------------------------------------------------------------
+r7672 | w00t | 2007-08-05 23:54:58 +0200 (Sun, 05 Aug 2007) | 1 line
+
+Oops. Add to example conf.
+------------------------------------------------------------------------
+r7675 | w00t | 2007-08-06 00:03:55 +0200 (Mon, 06 Aug 2007) | 1 line
+
+This is supported in exemptchanops
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7677 | w00t | 2007-08-06 09:59:58 +0200 (Mon, 06 Aug 2007) | 1 line
+
+Backport r7676
+------------------------------------------------------------------------
+r7679 | w00t | 2007-08-06 11:19:43 +0200 (Mon, 06 Aug 2007) | 1 line
+
+Backport r7678
+------------------------------------------------------------------------
+r7681 | w00t | 2007-08-06 21:56:41 +0200 (Mon, 06 Aug 2007) | 1 line
+
+Backport r7680: QA: Please check connect classes apply correctly before and after DNS resolution (differing sendq, etc)
+------------------------------------------------------------------------
+r7683 | brain | 2007-08-07 01:36:13 +0200 (Tue, 07 Aug 2007) | 2 lines
+
+Merge in missing part of gnutls fix
+
+------------------------------------------------------------------------
+r7685 | brain | 2007-08-07 02:19:52 +0200 (Tue, 07 Aug 2007) | 2 lines
+
+Backport: Check for remote and sighup rehashes here, so that it doesnt crash if there are ports that cant be bound
+
+------------------------------------------------------------------------
+r7687 | brain | 2007-08-07 23:45:25 +0200 (Tue, 07 Aug 2007) | 2 lines
+
+Feature request from djGrr, allow changing of server to server ping frequency: Backport to 1.1 for deployment on certain nets
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7690 | brain | 2007-08-09 18:23:03 +0200 (Thu, 09 Aug 2007) | 2 lines
+
+Fix for bug #379 reported by stealth. Trigger watch signon/signoff on +Q and -Q
+
+------------------------------------------------------------------------
+r7692 | brain | 2007-08-09 18:41:24 +0200 (Thu, 09 Aug 2007) | 2 lines
+
+Backport display glitch fix found by djGrrr, fixed by w00t
+
+------------------------------------------------------------------------
+r7695 | brain | 2007-08-09 23:54:31 +0200 (Thu, 09 Aug 2007) | 2 lines
+
+Merge in dns fix for bug found by djGrrr
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7697 | brain | 2007-08-10 00:01:19 +0200 (Fri, 10 Aug 2007) | 2 lines
+
+Commit patch from djGrrr for libc/epoll detection on FC7
+
+------------------------------------------------------------------------
+r7699 | w00t | 2007-08-10 19:06:42 +0200 (Fri, 10 Aug 2007) | 1 line
+
+Backport r7698: users (not opers) set +i would be unable to /who themselves. Found (inadvertently) by Trblmkr.
+------------------------------------------------------------------------
+r7701 | brain | 2007-08-10 23:08:36 +0200 (Fri, 10 Aug 2007) | 2 lines
+
+Backport *possible* fix for bug #374, note i am working BLIND here without a proper backtrace! This is *guesswork* but the fix makes sense. diff to see.
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7703 | brain | 2007-08-11 11:54:52 +0200 (Sat, 11 Aug 2007) | 2 lines
+
+bp typo fix
+
+------------------------------------------------------------------------
+r7704 | brain | 2007-08-11 11:55:51 +0200 (Sat, 11 Aug 2007) | 2 lines
+
+block chanrec::JoinUser logic cleanup
+
+------------------------------------------------------------------------
+r7705 | brain | 2007-08-11 11:56:58 +0200 (Sat, 11 Aug 2007) | 2 lines
+
+Someone forgot to bp m_nickflood to the example conf
+
+------------------------------------------------------------------------
+r7706 | brain | 2007-08-11 11:57:57 +0200 (Sat, 11 Aug 2007) | 2 lines
+
+Err 7676 manually backported? :S
+
+------------------------------------------------------------------------
+r7707 | brain | 2007-08-11 11:59:02 +0200 (Sat, 11 Aug 2007) | 2 lines
+
+Block 7693
+
+------------------------------------------------------------------------
+r7709 | brain | 2007-08-11 13:29:40 +0200 (Sat, 11 Aug 2007) | 2 lines
+
+Backport: Provide error output on failure to load a core command; to console on startup, and to user on /reload
+
+------------------------------------------------------------------------
+r7711 | brain | 2007-08-11 13:34:57 +0200 (Sat, 11 Aug 2007) | 2 lines
+
+bp: Make the return codes correct, and allow for LoadCommand without a user pointer
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7714 | brain | 2007-08-11 14:17:40 +0200 (Sat, 11 Aug 2007) | 4 lines
+
+Fix this so it works. 
+OBVIOUS WARNING FOR THE DUMB: Dont go overwriting .so files at random to test this, you WILL crash your ircd if you do this improprerly, this is a feature of the linux shared object loader.
+If you want to test this, try with:    rm cmd_whatever.so && echo "TESTTEST" >cmd_whatever.so, do NOT just do the echo.
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7718 | peavey | 2007-08-14 00:19:01 +0200 (Tue, 14 Aug 2007) | 1 line
+
+bp 7717: Fix new millisec /map to compile on windows, by ifndef gettimeofday out reverting back to seconds for latency.
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7721 | brain | 2007-08-15 20:13:49 +0200 (Wed, 15 Aug 2007) | 2 lines
+
+Merge 7719, 7720
+
+------------------------------------------------------------------------
+r7722 | brain | 2007-08-15 20:14:17 +0200 (Wed, 15 Aug 2007) | 2 lines
+
+Block 7715-7716
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7726 | brain | 2007-08-15 23:43:22 +0200 (Wed, 15 Aug 2007) | 3 lines
+
+Remove a whole load of #ifdef as we can now use gettimeofday.
+If we add a wrapper for getrusage, then we can remove a ton more
+
+------------------------------------------------------------------------
+r7727 | brain | 2007-08-15 23:44:05 +0200 (Wed, 15 Aug 2007) | 2 lines
+
+Forgot CoreExport
+
+------------------------------------------------------------------------
+r7729 | brain | 2007-08-15 23:48:54 +0200 (Wed, 15 Aug 2007) | 2 lines
+
+Block 7723-7725,7728 - millisecond /map on windows fixes manually merged
+
+------------------------------------------------------------------------
+r7731 | special | 2007-08-16 07:35:01 +0200 (Thu, 16 Aug 2007) | 1 line
+
+bp: Fixed bug #390 (broken m_chanprotect noservices)
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r7732 | brain | 2007-08-16 18:57:45 +0200 (Thu, 16 Aug 2007) | 2 lines
+
+Someone messed up
+
+------------------------------------------------------------------------
+r7734 | burlex | 2007-08-17 21:42:58 +0200 (Fri, 17 Aug 2007) | 2 lines
+
+* Fixed bug in m_banredirect where removing a ban on a channel with maxbans set would result in a "ban list full" message.
+* Fixed win32 compiling (forgot to backport the #pragma linker directive)
+------------------------------------------------------------------------
+r7736 | peavey | 2007-08-17 21:50:17 +0200 (Fri, 17 Aug 2007) | 1 line
+
+Mark 7735 as backported to stable. tho this was really done reverse, and is really 7734.
+------------------------------------------------------------------------

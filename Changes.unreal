@@ -1,0 +1,267 @@
+*
+* UnrealIRCd 4.0 --
+* Based on the original code by the InspIRCd development team
+* (C) 2002-2007 InspIRCd Development Team
+*               - http://www.inspircd.org/wiki/index.php/Credits
+* (C) 2007 UnrealIRCd Development Team
+*
+* For lines marked "Inported insp rX changes", see Changes.insp
+
+Unreal4 Changes Log
+=============================================================
+- Forked from inspircd (Jun 25 2007)
+- Changed the big header in configure to use a perl heredoc.
+- Some branding towards UnrealIRCd
+- Fixed some branding screwups
+- Shiny ./configure :)
+- Removed NOTICE Auth :Welcome to \002<network>\002! on connect pre-001
+- Changed some quit messages regarding banning so they match with Unreal3
+- More branding
+- Fix for configure regarding copying src/inspircd instead of src/unrealircd
+- Fix for hardcoded resolution of where to lay the logs, reported by dmb
+- Renamed unreal.logo to .unreal.logo
+- Synched with insp r7413
+- More branding, in INFO, and fixing .pid problem
+- More branding, in some error messages regarding running as root
+- Made CONNECT/SQUIT in base a little more friendly when no linking
+  module is loaded.
+- Removed some bold in some messages
+- Imported insp r7414 changes
+- Imported insp r7423 changes
+- Imported insp r7424 changes
+- Imported insp r7430 changes
+- Imported insp r7432 changes
+- Imported insp r7434 changes
+- Testing CIA bot..
+- Patch for #0003425 by apt, making configure handle errors in ssl cert
+  creation
+- Patch for #0003419 by apt, making unreal script create pid correctly
+- Patch for #0003435 by dmb, making a more unreal-ish example conf for how
+  we usually run an IRCd.
+- Imported insp r7436 changes
+- Included u3 configuration parser and C++'ified it a bit.
+- Imported insp r7437 changes 
+- De-craq'd some things in configure (use of system() instead of perfectly-good Perl
+  things), and fixed ./unreal script pid finding when a pid file is specified in conf.
+- De-craq'd generation of files from .*.inc files in configure.
+- Imported insp r7437-r7438 changes 
+- Removed m_invisible.cpp from distribution.
+- Imported insp r7438-r7440 changes 
+- Imported insp r7440-r7451 changes 
+- Actually imported u3 configuration parser..
+- Imported insp r7451-r7459 changes 
+- Removed some caps messages in src/modules/m_globalload.cpp
+- Added some stars to a NOTICE in src/modules/m_hostchange.cpp
+- Added more stars to server NOTICEs
+- Some more stars..
+- Imported insp r7459-r7470 changes 
+- Implemented new unreal configuration file parser
+- Added m_whoismodes.cpp to modules from VaraiX, shined up to be more
+  Unreal3 like
+- Imported insp r7470-r7474 changes 
+- Patch #0003457 by CuttingEdge, A slight cosmetic change (patch) to the
+  extra/m_ssl_openssl.cpp and extra/m_ssl_gnutls.cpp modules so that the
+  output is identical to the Unreal 3.2.* branch (capital letters, etc). 
+- Patch #0003458 by CuttingEdge, Changed /RULES output from using NOTICE to
+  identical Unreal 3.2.* numerics.
+- Changed version to Unreal4.0-devel (mostly to test CIA bot..)
+- Imported insp r7474-r7475 changes 
+- Imported insp r7475-r7476 changes 
+- Patch #0003434 reported by dmb fixed by DrStein regarding make install
+  doesn't copy example files to conf directory 
+- Patch #0003468 reported and patched by Stealth, fixing SSL whois numerics:
+  Currently uses numeric 320, Unreal uses 671.
+- Fixed a goofup that resulted in symlinking m_ssl_gnutls.cpp not working at all.
+- ./configure should now be use strict; use warnings; safe.
+- Imported insp r7476-r7478 changes 
+- Imported insp r7478-r7481 changes 
+- Imported insp r7481-r7482 changes 
+- Changed the OpenSSL check a bit around in configure - there's still
+  problems when you compare OpenSSL 0.9.7 to 0.9.8a in vcheck() in  
+  make/utilities.pm
+- Removed strict/warnings from make/*.pm for now to unbreak SVN
+- Fixed vcheck version checking logic, and now using vcheck to check openssl version when we start up.
+  Also, restored strict and warnings, but warnings no longer abort configure, and strict is only
+  pre-run stuff (vars, subs), that way we can still catch stuff without things being completely
+  broken.
+- Patch for #0003462 by daltocli, regarding ./configure and ./configure
+  -advanced, which asks all the questions, and ./configure which defaults to
+  most questions. Also fixes a non-vcheck problem with gnutls
+- Imported insp r7482-r7489 changes (insp 1.1.10 release, we are switching
+  to follow stable branch after this.)
+- Imported insp r7489-r7492 changes 
+- epoll libc/kernel version checks now use vcheck(), should fix bug #0003473 reported by CuttingEdge
+- Imported insp r7492-r7493 changes 
+- Imported insp r7493-r7497 changes 
+- Patch for #0003476 by CuttingEdge, changed the /MOTD numerics (375, 376)
+  so that they're identical to the Unreal 3.2.* branch output. 
+- Corrected an inspsync that didn't go well (sync 7479), found by owine
+- Fixed a fix for an inspsync (sorry owine)
+- Imported insp r7497-r7498 changes 
+- Imported insp r7498-r7500 changes (includes important win32 fix)
+- Removed cheese sandwich notion in .unreal.inc
+- Patch for #0003480 by CuttingEdge integrating /BOTMOTD into the m_botmode module.
+  This is automatically triggered when a user adds +B to their usermodes like the
+  Unreal 3.2.* branch. 
+- Imported insp r7500-r7502 changes 
+- Imported insp r7502-r7507 changes (last sync in insp-trunk)
+- Imported insp r7508-r7509 changes 
+- Fix for #0003481 manually from insp r7513, bug found by DrStein
+- Imported insp r7515-r7516 changes 
+- Patch for #0003427 reported by apt, fixed by CuttingEdge, making opermotd
+  configurable through <files>
+- Imported insp 1_1_stable r7516-r7530 changes 
+- Patch for #0003483 by CuttingEdge, making botmotd configurable
+  through <files>
+- Imported insp 1_1_stable r7530-r7562 changes 
+- Imported insp 1_1_stable r7562-r7576 changes 
+- Implemented ENCAP proposal, see
+  http://dev.unrealircd.com/unreal4:development:encap
+  (NEEDS QA)
+- Protocol version change -> 4000 (THIS WILL BREAK LINKING TO INSPIRCD!!!),
+  as we have introduced ENCAP in the protocol.
+- Implemented /RPING, using ENCAP over the wire (#0003485)
+- Actually add m_rping.cpp (requires OnEncap support and will not compile on
+  current Insp)
+- Fixed copyright header in m_rping.cpp
+- Modified the U4 config parser to work with the existing InspIRCd ConfigReader class
+- Oops, missed some bugs in the U4 parser modifications. Fixed now.
+- Refix for #0003480 (integrating botmotd into botmode) by CuttingEdge,
+  as original implementation was declined by QA
+- Fixed issue with ENCAP where it sent wildcards out on the wire (this is
+  alright, but better to make it consistent since we found a target
+  originally)
+- Removed check for servername in RPING, since send_encap only can go
+  towards servers.
+- Imported insp 1_1_stable r7576-r7601 changes 
+- Implemented /CLOSE, closes all unknown connections to the local server.
+  (#0003438)
+- Implemented #0003416: LOADMODULE with wildcard output result of each
+  module suggested by Stealth
+- Stopped U4 config parser from storing the surrounding quotes of strings
+- Imported insp 1_1_stable r7601-r7606 changes 
+- Implemented #0003465: Linked U3-style parser to existing config code. Added new config option to choose config style
+- Added some newlines in Dan's code to avoid warnings
+- Made #0003465 it compile on *nix as well
+- Made U3-style parser actually work
+- Fixed U3-style parser's handling of quotation marks
+- U3-style parser now allows '=' between key and value. "key = value;" now works. Also included unrealconfig.h/cpp in the VS projects.
+- Added transformations to the U3-style parser to convert certain blocks to InspIRCd format. "loadmodule" and "loadmodules" are now supported.
+- Fixed compile bug in U3-style parser
+- Did initial work on includes for u4 conf
+- U4 parser: Added "include" directive (this *should* work). Error/warning messages now output the filename.>>>>>>> .r119
+- Imported insp 1_1_stable r7606-r7633 changes 
+- Fixed a superflous /* and ClearSections in unrealconfig.h. Previous
+  revision also added #define CONFIG_PATH in inspircd_config.h. Problem
+  found by owine
+- Insp sync fucked up and ruined m_close.cpp - found by owine
+- unrealircd.conf.example now parses correctly. Replaced references to "InspIRCd" with "UnrealIRCd".
+- Added getSection to the Section class. Makes it easier to search a Section instance for a specific subsection
+- Altered the *nix configuration script to ask for the config style to use (Insp or Unreal)
+- Got rid of non-unix linefeeds in the configure script. 
+- Added new U4-style block formats: oper "Name" {}, link "Name" {}, and banlist "#Channel"{} should now work.
+- Updated the code documentation of the U4 parser
+- #0003443: Modified some modules that use globally routed commands to include VF_COMMON.
+- #0003443: Forgot to modify m_setname (r130)
+- Made vcheck do alphabetical compare if either side is a letter, rather than requiring both to be letter.
+- #0003493: Fixed compile bug(s) in Visual Studio 2005. Fixed windows compile bugs in m_rping and m_whoismodes
+- Changed configure.cpp to use unrealircd.conf instead of inspircd.conf (Win32 build)
+- #0003490: Made parameters hidden in /list (normal LIST and safelist)
+  suggested by CuttingEdge. Implemented chanrec::U4_ChanModesNoParam() for
+  this purpose
+- m_hidechans.cpp: Changing to usermode +p from +I
+- Changed windows build to use unrealircd.exe instead of inspircd.exe (like the *nix build). Commands now load properly
+- Fixed m_spanningtreet to load properly on Win32 UnrealIRCd
+- Fixed U4 parser. oper "Name", link "Name" and banlist "#channel" now work correctly.
+- Changed the example conf to reflect the changes in revision 139
+- Possible fix for Darwin compiling issues found by TheSkorm
+- Changed some of the error messages the U4 parser gives. They're (hopefully) less cryptic & more helpful now
+- Imported insp 1_1_stable r7634-r7653 changes 
+- Imported insp 1_1_stable r7653-r7660 changes 
+- Fix for #0003497 by Tiburon that makes U4 not having to be under the
+  ircdaemon user under OS X
+- Imported insp 1_1_stable r7660-r7669 changes 
+- configure: new makefile format (currently writes to src/Makefile.new, so we can check how it comes out, until it's tested
+  enough to replace normal makefile).
+- configure: fixed odd version strings breaking, like >>2.6.blah<<
+- configure: Should now try to run perl5 if regular perl is under 5.6.0.
+- configure goof up in last commit, <<STOP, not << STOP.
+- Imported insp 1_1_stable r7669-r7675 changes (adding m_nickflood)
+- Actually adding m_nickflood by w00t
+- ... Fix screwups in configure that broke it.
+- Fix new Makefile creation, put a basename() in the wrong place
+- Changed config reader to output warning messages
+- Makefile.new using wrong directory for files, was causing gcc error spam.
+- Some enhancements to Makefile.new creation: gcc errors will be logged (commented out) in the makefile.
+- Makefile.new generation now looks for an IncludeIf tag, which we can use to evaluate something (in scope
+  of configure, so %config stuff can be tested) to decide if the source file should be used or not, eg test
+  against $se for the socket engines. Documentation on new makefile stuff is still forthcoming.
+- Makefile.new now appears to be generating fine, but don't expect it to compile correctly yet: the cpp files
+  in src/ now have to be adjusted to make it work right.
+- More enhancements to Makefile.new
+- Imported insp 1_1_stable r7675-r7687 changes 
+- Imported insp 1_1_stable r7687-r7695 changes 
+- Added m_allowdenychans module which is allow channel {} / deny channel {}
+  from Unreal3. Config format:
+  deny-channel { mask "*"; reason "Only channel #foo is allowed"; };
+  allow-channel { mask "#foo"; };. Feature suggested by djGrrr (module does
+  not use U4 specific stuff)
+- Made the core use sigaction() instead of signal(). This caused problems
+  with ./unreal rehash being done twice causing the IRCd to shut down with
+  HUP on SysV systems (solaris). This should probably be pushed upstream.
+- Added Module::OnChannelList, this will pave the way for "official
+  channels" module. (U4 specific extension)
+- Added m_officialchannels which is in conf format:
+  official-channel { name "#foo"; [topic "topic"; ] };
+  Shows ghost channels/"Official channels" if they don't already exist
+  with the specified topic. Uses U4-only module APIs
+- Made U:lines doing CHGIDENT do it silently, requested by djGrrr
+- Imported insp 1_1_stable r7695-r7701 changes 
+- Made InspSocket::Close() set fd = -1 after close as some code may
+  rely on this behaviour. Discussed with upstream but declined.
+- Added m_banversion. Conf format: ban-version { mask "*mask*"; reason
+  "reason"; }; Requested by CuttingEdge. Only currently zlines for 3600
+  seconds
+- Imported insp 1_1_stable r7701-r7711 changes 
+- Added m_u3cloaking - Conf format: cloak { key1 "string"; key2 "string";
+  key3 "string"; prefix "prefix"; }; Uses U4 specific API (raw md5 hash
+  return)
+- Imported insp 1_1_stable r7711-r7714 changes 
+- Fixed a compilation problem in u3cloaking found by owine
+- Fixed problem with on /rehash, SSL ports is plain text until /rehash ssl
+  (sending upstream)
+- Added ban-server {} support - disconnects a server if it dares to
+  introduce a banned server to the network. Conf format:
+  ban-server { mask "*mask"; reason "reason"; };
+- Imported insp 1_1_stable r7714-r7718 changes 
+- Imported insp 1_1_stable r7718-r7722 changes 
+- Added m_ldapauth which uses LDAP libraries (OpenLDAP) to access a LDAP
+  server for authentication. Not the complete version as the final one will
+  be doing it asynchronously. Conf format:
+  ldapauth { base-rdn "dc=whereever,dc=com"; attribute "uid"; server
+  "ldaps://server"; allowpattern ""; killreason "Not authed"; verbose "true";
+  }
+- Imported insp 1_1_stable r7722-r7731 changes 
+- Fixed memory leak in m_ldapauth
+- Added ldapauth { searchscope "base|onelevel|subtree"; }. Explanation of
+  conf format:
+  ldapauth {
+         base-rdn "dc=whereever,dc=com"; // the part of the LDAP tree you want to search for users in
+         attribute "uid"; // the attribute you would like to match your user on, can for example be Common Name (cn)
+         server "ldaps://server"; // URI for the LDAP server
+         allowpattern "Guest*"; // Mask of people who can bypass the auth
+         killreason "Not authed"; // Quit message to exit people that fails to auth with
+         verbose "true"; // true means send warnings to opers when people fail to auth or errors happen
+         searchscope "base"; // base means only search inside base rdn itself, onelevel search one level below base rdn,
+                             // subtree means search everything below base rdn
+  };. There will probably not be a async version of this as the support to
+  do this properly sucks in the LDAP libraries. Default behaviour is to
+  connect with LDAPv3
+- Made ldapauth keep a persistent connection, suggested by Special
+- Added missing ldap_msgfree in ldapauth
+- Made preliminary remote includes hooks in class Module. Also fixed a potential stability issue.
+- Imported insp 1_1_stable r7731-r7736 changes 
+- Moved around the new remote include hooks a bit and added them to enum Implementation
+- Fixed a typo in previous commit
+- Fixed up remote includes API a bit to make it more proper
+- Switched around umode +n and +s to be more like U3 (#0003516)

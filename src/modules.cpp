@@ -168,6 +168,11 @@ void		Module::OnSyncChannelMetaData(chanrec* chan, Module* proto,void* opaque, c
 void		Module::OnSyncUserMetaData(userrec* user, Module* proto,void* opaque, const std::string &extname, bool displayable) { }
 void		Module::OnSyncOtherMetaData(Module* proto, void* opaque, bool displayable) { }
 void		Module::OnDecodeMetaData(int target_type, void* target, const std::string &extname, const std::string &extdata) { }
+int		Module::OnDownloadFileAsync(const std::string &url) { return 0; }
+int		Module::OnDownloadFileCompleted(const std::string &url, std::string &contents) { return 0; }
+int		Module::OnDownloadFileFailure(const std::string &url, std::string &error) { return 0; }
+int		Module::OnCancelDownloadFileAsync(const std::string& url) { return 0; }
+int		Module::OnDownloadFile(std::string& url, std::string& contents, std::string &error) { return 0; }
 void		Module::ProtoSendMetaData(void* opaque, int target_type, void* target, const std::string &extname, const std::string &extdata) { }
 void		Module::OnWallops(userrec* user, const std::string &text) { }
 void		Module::OnChangeHost(userrec* user, const std::string &newhost) { }
@@ -193,6 +198,8 @@ int		Module::OnWhoisLine(userrec* user, userrec* dest, int &numeric, std::string
 void		Module::OnBuildExemptList(MessageType message_type, chanrec* chan, userrec* sender, char status, CUList &exempt_list) { }
 void		Module::OnGarbageCollect() { }
 void		Module::OnBufferFlushed(userrec* user) { }
+int		Module::OnEncapReceived(const std::string& from, std::deque<std::string>& parameters) { return 0; }
+void 		Module::OnChannelList(userrec* user, const char** parameters, int pcnt, int minusers, int maxusers) { }
 
 long InspIRCd::PriorityAfter(const std::string &modulename)
 {

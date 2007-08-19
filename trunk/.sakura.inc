@@ -35,10 +35,10 @@ if ($arg eq "stop") { stop(); exit(); }
 if ($arg eq "status") {
 	if (getstatus() == 1) {
 		my $pid = getprocessid();
-		print "InspIRCd is running (PID: $pid)\n";
+		print "Sakura is running (PID: $pid)\n";
 		exit();
 	} else {
-		print "InspIRCd is not running. (Or PID File not found)\n";
+		print "Sakura is not running. (Or PID File not found)\n";
 		exit();
 	}
 }
@@ -46,10 +46,10 @@ if ($arg eq "rehash") {
 	if (getstatus() == 1) {
 		my $pid = getprocessid();
 		system("kill -HUP $pid >/dev/null 2>&1");
-		print "InspIRCd rehashed (pid: $pid).\n";
+		print "Sakura rehashed (pid: $pid).\n";
 		exit();
 	} else {
-		print "InspIRCd is not running. (Or PID File not found)\n";
+		print "Sakura is not running. (Or PID File not found)\n";
 		exit();
 	}
 }
@@ -60,7 +60,7 @@ if ($arg eq "cron") {
 }
 
 if ($arg eq "version") {
-	print "InspIRCd version: $version\n";
+	print "Sakura version: $version\n";
 	exit();
 }
 
@@ -87,7 +87,7 @@ if ($arg eq "Cheese-Sandwich") {
 # If we get here.. bad / no parameters.
 ###
 print "Invalid Argument: $arg\n";
-print "Usage: inspircd (start|stop|restart|rehash|status|cron|checkconf|version)\n";
+print "Usage: sakura (start|stop|restart|rehash|status|cron|checkconf|version)\n";
 print "Developer arguments: (debug|screendebug|valdebug|screenvaldebug)\n";
 exit();
 
@@ -130,7 +130,7 @@ sub screendebug
 	checkscreen();
 
 	# If we are still alive here.. Try starting the IRCd..
-	print "Starting InspIRCd in `screen`, type `screen -r` when the ircd crashes to view the gdb output and get a backtrace.\n";
+	print "Starting Sakura in `screen`, type `screen -r` when the ircd crashes to view the gdb output and get a backtrace.\n";
 	print "Once you're inside the screen session press ^C + d to re-detach from the session\n";
 	system("screen -m -d gdb --command=$basepath/.gdbargs --args $binpath/$executable -nofork -debug -nolog");
 }
@@ -138,7 +138,7 @@ sub screendebug
 sub valdebug
 {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "InspIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "Sakura is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -155,7 +155,7 @@ sub valdebug
 sub screenvaldebug
 {
 	# Check to see its not 'running' already.
-	if (getstatus() == 1) { print "InspIRCd is already running.\n"; return 0; }
+	if (getstatus() == 1) { print "Sakura is already running.\n"; return 0; }
 
 	print "$binpath/$executable doesn't exist\n" and return 0 unless(-e "$binpath/$executable");
 
@@ -174,7 +174,7 @@ sub stop {
 	if (getstatus() == 0) { print "InspIRCd is not running. (Or PID File not found)\n"; return 0; }
 	# Get to here, we have something to kill.
 	my $pid = getprocessid();
-	print "Stopping InspIRCd (pid: $pid)...\n";
+	print "Stopping Sakura (pid: $pid)...\n";
 	system("kill -TERM $pid >/dev/null 2>&1");
 	# Give it a second to exit
 	sleep(1);
@@ -183,7 +183,7 @@ sub stop {
 		print "InspIRCd not dying quietly -- forcing kill\n";
 		system("kill -9 $pid >/dev/null 2>&1");
 	}
-	print "InspIRCd Stopped.\n";
+	print "Sakura Stopped.\n";
 }
 
 # GetPidfile Version 2 - Now With Include Support..
@@ -258,7 +258,7 @@ sub getpidfile {
   }
 
   # End of includes / No includes found. Using default.
-  $pidfile = $confpath . "inspircd.pid";
+  $pidfile = $confpath . "sakura.pid";
 }
 
 sub getstatus {

@@ -37,19 +37,16 @@ class cmd_chgname : public command_t
 			user->WriteServ("401 %s %s :No such nick/channel", user->nick, parameters[0]);
 			return CMD_FAILURE;
 		}
-		
 		if (!*parameters[1])
 		{
-			user->WriteServ("NOTICE %s :*** GECOS must be specified", user->nick);
+			user->WriteServ("NOTICE %s :*** Please write a non-zero length GECOS", user->nick);
 			return CMD_FAILURE;
 		}
-		
-		if (strlen(parameters[1]) > MAXGECOS)
-		{
-			user->WriteServ("NOTICE %s :*** GECOS too long", user->nick);
-			return CMD_FAILURE;
+ 		if (strlen(parameters[1]) > MAXGECOS)
+ 		{
+ 			user->WriteServ("NOTICE %s :*** GECOS too long", user->nick);
+ 			return CMD_FAILURE;
 		}
-		
 		if (IS_LOCAL(dest))
 		{
 			dest->ChangeName(parameters[1]);
@@ -81,7 +78,7 @@ public:
 	
 	virtual Version GetVersion()
 	{
-		return Version(1,1,0,0,VF_VENDOR,API_VERSION);
+		return Version(1,1,0,0,VF_VENDOR | VF_COMMON,API_VERSION);
 	}
 	
 };

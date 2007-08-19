@@ -174,7 +174,7 @@ std::string ModuleSpanningTree::TimeToStr(time_t secs)
 const std::string ModuleSpanningTree::MapOperInfo(TreeServer* Current)
 {
 	time_t secs_up = ServerInstance->Time() - Current->age;
-	return (" [Up: " + TimeToStr(secs_up) + " Lag: "+ConvToStr(Current->rtt)+"s]");
+	return (" [Up: " + TimeToStr(secs_up) + " Lag: "+ConvToStr(Current->rtt)+"ms]");
 }
 
 // WARNING: NOT THREAD SAFE - DONT GET ANY SMART IDEAS.
@@ -485,8 +485,14 @@ void ModuleSpanningTree::DoPingChecks(time_t curtime)
 				if (serv->AnsweredLastPing())
 				{
 					sock->WriteLine(std::string(":")+ServerInstance->Config->ServerName+" PING "+serv->GetName());
-					serv->SetNextPingTime(curtime + 60);
+					serv->SetNextPingTime(curtime + Utils->PingFreq);
 					serv->LastPing = curtime;
+#ifndef WIN32
+					timeval t;
+					gettimeofday(&t, NULL);
+					long ts = (t.tv_sec * 1000) + (t.tv_usec / 1000);
+					serv->LastPingMsec = ts;
+#endif
 					serv->Warned = false;
 				}
 				else
@@ -499,7 +505,7 @@ void ModuleSpanningTree::DoPingChecks(time_t curtime)
 					return;
 				}
 			}
-			else if ((Utils->PingWarnTime) && (!serv->Warned) && (curtime >= serv->NextPingTime() - (60 - Utils->PingWarnTime)) && (!serv->AnsweredLastPing()))
+			else if ((Utils->PingWarnTime) && (!serv->Warned) && (curtime >= serv->NextPingTime() - (Utils->PingFreq - Utils->PingWarnTime)) && (!serv->AnsweredLastPing()))
 			{
 				/* The server hasnt responded, send a warning to opers */
 				ServerInstance->SNO->WriteToSnoMask('l',"Server \002%s\002 has not responded to PING for %d seconds, high latency.", serv->GetName().c_str(), Utils->PingWarnTime);
@@ -1353,6 +1359,17 @@ void ModuleSpanningTree::OnEvent(Event* event)
 			
 		(*params)[1] = ":" + (*params)[1];
 		Utils->DoOneToOne(ServerInstance->Config->ServerName, "PUSH", *params, a->server);
+	}
+	else if (event->GetEventID() == "send_encap")
+	{
+		if (params->size() < 2)
+			return;
+		
+		TreeServer* s = Utils->FindServerMask((*params)[0]);
+		if (!s)
+			return;
+		(*params)[0] = s->GetName();
+		Utils->DoOneToOne(ServerInstance->Config->ServerName, "ENCAP", *params, (*params)[0]);
 	}
 }
 

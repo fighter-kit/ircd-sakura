@@ -68,7 +68,7 @@ class ModuleOpermotd : public Module
 	{
 		ConfigReader* conf = new ConfigReader(ServerInstance);
 		std::string filename;
-		filename = conf->ReadValue("opermotd","file",0);
+		filename = conf->ReadValue("files","opermotd",0);
 		if (opermotd)
 		{
 			delete opermotd;

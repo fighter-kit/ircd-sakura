@@ -142,7 +142,7 @@ bool TreeSocket::Motd(const std::string &prefix, std::deque<std::string> &params
 					Utils->DoOneToOne(this->Instance->Config->ServerName, "PUSH",par, source->server);
 				}
 
-				par[1] = std::string("::")+Instance->Config->ServerName+" 376 "+source->nick+" End of message of the day.";
+				par[1] = std::string("::")+Instance->Config->ServerName+" 376 "+source->nick+" :End of message of the day.";
 				Utils->DoOneToOne(this->Instance->Config->ServerName, "PUSH",par, source->server);
 			}
 		}
@@ -365,7 +365,10 @@ bool TreeSocket::LocalPong(const std::string &prefix, std::deque<std::string> &p
 		if (ServerSource)
 		{
 			ServerSource->SetPingFlag();
-			ServerSource->rtt = Instance->Time() - ServerSource->LastPing;
+			timeval t;
+			gettimeofday(&t, NULL);
+			long ts = (t.tv_sec * 1000) + (t.tv_usec / 1000);
+			ServerSource->rtt = ts - ServerSource->LastPingMsec;
 		}
 	}
 	else
@@ -620,6 +623,45 @@ bool TreeSocket::Push(const std::string &prefix, std::deque<std::string> &params
 	return true;
 }
 
+bool TreeSocket::Encap(const std::string &prefix, std::deque<std::string> &params)
+{
+	if (params.size() < 3)
+		return true;
+	
+	// For us
+	if (this->Instance->MatchText(this->Instance->Config->ServerName, params[0]))
+	{
+		int MOD_RESULT = 0;
+		FOREACH_RESULT_I(this->Instance, I_OnEncapReceived, OnEncapReceived(prefix, params));
+		return true;
+	}
+	else 
+	{
+		// check users
+		userrec *u = this->Instance->FindNick(params[0]);
+		if (u)
+		{
+			if (IS_LOCAL(u))
+			{
+				u->Write(params[1]);
+			}
+			else
+			{
+				// not local user, pass it on
+				params[1] = ":" + params[1];
+				Utils->DoOneToOne(prefix, "ENCAP", params, u->server);
+			}
+			return true;
+		}
+		else // for a server then, passing it on
+		{
+			Utils->DoOneToOne(prefix, "ENCAP", params, params[0]);
+		}
+			
+	}
+	return true;
+}
+
 bool TreeSocket::HandleSetTime(const std::string &prefix, std::deque<std::string> &params)
 {
 	if (!params.size() || !Utils->EnableTimeSync)
@@ -756,6 +798,7 @@ bool TreeSocket::RemoteServer(const std::string &prefix, std::deque<std::string>
 		this->SendError("Protocol error - Introduced remote server from unknown server "+prefix);
 		return false;
 	}
+	
 	TreeServer* CheckDupe = Utils->FindServer(servername);
 	if (CheckDupe)
 	{
@@ -763,6 +806,21 @@ bool TreeSocket::RemoteServer(const std::string &prefix, std::deque<std::string>
 		this->Instance->SNO->WriteToSnoMask('l',"Server \2"+servername+"\2 being introduced from \2" + prefix + "\2 denied, already exists. Closing link with " + prefix);
 		return false;
 	}
+	// ban-server configuration
+	ConfigReader* conf = new ConfigReader(this->Instance);
+	int acount = conf->Enumerate("ban-server");
+	for (int i = 0; i < acount; i++)
+	{
+		if (this->Instance->MatchText(servername,
+			conf->ReadValue("ban-server", "mask", "", i)))
+		{
+			std::string reason = conf->ReadValue("ban-server", "reason", "Your server is not welcome on this network", i);
+			this->SendError("Server "+servername+" is banned in my configuration: " + reason);
+			this->Instance->SNO->WriteToSnoMask('l', "Server \2"+servername+"\2 being introduced from \2" + prefix + "\2 is banned in configuration, closing link with " + prefix + " reason: " + reason);
+			return false;
+		}
+	}
+	
 	Link* lnk = Utils->FindLink(servername);
 	TreeServer* Node = new TreeServer(this->Utils,this->Instance,servername,description,ParentOfThis,NULL, lnk ? lnk->Hidden : false);
 	ParentOfThis->AddChild(Node);
@@ -1108,7 +1166,7 @@ bool TreeSocket::ProcessLine(std::string &line)
 				 * When there is activity on the socket, reset the ping counter so
 				 * that we're not wasting bandwidth pinging an active server.
 				 */
-				route_back_again->SetNextPingTime(time(NULL) + 60);
+				route_back_again->SetNextPingTime(time(NULL) + Utils->PingFreq);
 				route_back_again->SetPingFlag();
 			}
 			else
@@ -1384,6 +1442,10 @@ bool TreeSocket::ProcessLine(std::string &line)
 				rmode.Send(Instance);
 
 				return true;
+			}
+			else if (command == "ENCAP")
+			{
+				return this->Encap(prefix, params);
 			}
 			else
 			{

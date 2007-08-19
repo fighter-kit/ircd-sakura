@@ -32,22 +32,21 @@ class cmd_setident : public command_t
 	{
 		if (!*parameters[0])
 		{
-			user->WriteServ("NOTICE %s :*** SETIDENT: Ident must be specified", user->nick);
+			user->WriteServ("NOTICE %s :*** SETIDENT: Ident too short", user->nick);
 			return CMD_FAILURE;
 		}
-		
 		if (strlen(parameters[0]) > IDENTMAX)
 		{
-			user->WriteServ("NOTICE %s :*** SETIDENT: Ident is too long", user->nick);
+			user->WriteServ("NOTICE %s :*** Ident is too long", user->nick);
 			return CMD_FAILURE;
 		}
-		
-		if (!ServerInstance->IsIdent(parameters[0]))
-		{
-			user->WriteServ("NOTICE %s :*** SETIDENT: Invalid characters in ident", user->nick);
-			return CMD_FAILURE;
+ 		if (!ServerInstance->IsIdent(parameters[0]))
+ 		{
+ 			user->WriteServ("NOTICE %s :*** SETIDENT: Invalid characters in ident", user->nick);
+ 			return CMD_FAILURE;
 		}
-		
+ 		
+
 		user->ChangeIdent(parameters[0]);
 		ServerInstance->WriteOpers("%s used SETIDENT to change their ident to '%s'", user->nick, user->ident);
 
@@ -74,7 +73,7 @@ class ModuleSetIdent : public Module
 	
 	virtual Version GetVersion()
 	{
-		return Version(1,1,0,0,VF_VENDOR,API_VERSION);
+		return Version(1,1,0,0,VF_VENDOR | VF_COMMON,API_VERSION);
 	}
 	
 };

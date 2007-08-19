@@ -53,6 +53,11 @@ class HashRequest : public Request
 	{
 	}
 
+	/** Initialize HashRequest as an Hash_RAW message, U4 specific */
+	HashRequest(Module* Me, Module* Target, const std::string &hashable, char dummy) : Request(Me, Target, "RAW"), keys(NULL), outputs(NULL), tohash(hashable)
+	{
+	}
+
 	/** Get data to be hashed */
 	const char* GetHashData()
 	{
@@ -191,6 +196,36 @@ class HashHexRequest : public HashRequest
 	{
 	}
 };
+
+/** Send this class to the hashing module to HashRAW a std::string.
+ * You should make sure you know the state of the module before you send this
+ * class, e.g. by first sending an HashResetRequest class. The hash will be
+ * returned when you call Send().
+ *
+ * Example:
+ * \code
+ * // ALWAYS ALWAYS reset first, or set your own IV and hex chars.
+ * HashResetRequest(this, HashModule).Send();
+ * // Get the Hash sum (raw!) of the string 'doodads'. The result will be a array of chars
+ * // with length depending on the Hash provider used.
+ * unsigned char *result = HashRawRequest(this, HashModule, "doodads").Send();
+ *
+ * \endcode
+ * This is a U4-specific request
+ */
+class HashRawRequest : public HashRequest
+{
+ public:
+	/** Initialize HashSumRequest for sending.
+	 * @param Me A pointer to the sending module
+	 * @param Target A pointer to the hashing module
+	 * @param data The data to be hashed
+	 */
+	HashRawRequest(Module* Me, Module* Target, const std::string &data) : HashRequest(Me, Target, data, 0)
+	{
+	}
+};
+
 
 #endif
 

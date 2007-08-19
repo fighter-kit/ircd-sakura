@@ -18,10 +18,6 @@
 
 /* $ModDesc: Provides support for hiding channels with user mode +p */
 
-/** Changed from +I to +p
- ** -- puremind
- */
-
 /** Handles user mode +p
  */
 class HideChans : public ModeHandler
@@ -83,12 +79,12 @@ class ModuleHideChans : public Module
 	
 	virtual Version GetVersion()
 	{
-		return Version(1,1,0,0,VF_COMMON|VF_VENDOR,API_VERSION);
+		return Version(4,0,0,0,VF_COMMON|VF_VENDOR,API_VERSION);
 	}
 
 	int OnWhoisLine(userrec* user, userrec* dest, int &numeric, std::string &text)
 	{
-		/* Dont display channels if they have +p set and the
+		/* Dont display channels if they have +I set and the
 		 * person doing the WHOIS is not an oper
 		 */
 		return ((user != dest) && (!IS_OPER(user)) && (numeric == 319) && dest->IsModeSet('p'));

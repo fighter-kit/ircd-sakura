@@ -70,7 +70,7 @@ class cmd_helpop : public command_t
 		if (pcnt == 0 || parameter == "index")
 		{
 			/* iterate over all helpop items */
-			user->WriteServ("NOTICE %s :HELPOP topic index", user->nick);
+			user->WriteServ("NOTICE %s :*** HELPOP topic index", user->nick);
 			for (std::map<irc::string, std::string>::iterator iter = helpop_map.begin(); iter != helpop_map.end(); iter++)
 			{
 				user->WriteServ("NOTICE %s :    %s", user->nick, iter->first.c_str());				

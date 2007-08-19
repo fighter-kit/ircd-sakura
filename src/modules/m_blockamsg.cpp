@@ -150,7 +150,7 @@ class ModuleBlockAmsg : public Module
 				if(action == IBLOCK_KILL || action == IBLOCK_KILLOPERS)
 					userrec::QuitUser(ServerInstance, user, "Global message (/amsg or /ame) detected");
 				else if(action == IBLOCK_NOTICE || action == IBLOCK_NOTICEOPERS)
-					user->WriteServ( "NOTICE %s :Global message (/amsg or /ame) detected", user->nick);
+					user->WriteServ( "NOTICE %s :*** Global message (/amsg or /ame) detected", user->nick);
 									
 				return 1;
 			}

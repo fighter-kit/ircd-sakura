@@ -1100,6 +1100,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\modules\m_operperms.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\src\modules\m_override.cpp"
 					>
 				</File>
@@ -1200,6 +1204,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\modules\m_shun.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\src\modules\m_silence.cpp"
 					>
 				</File>
@@ -1265,6 +1273,10 @@
 				</File>
 				<File
 					RelativePath="..\src\modules\m_watch.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\modules\m_whoismodes.cpp"
 					>
 				</File>
 				<File

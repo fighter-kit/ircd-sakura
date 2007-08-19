@@ -31,11 +31,11 @@ public:
 	{
 		if(*source->oper) {
 			if (dest->modes[UM_SNOMASK] != 0) {
-				ServerInstance->SendWhoisLine(source, dest, 379, "%s %s :usermodes [+%s +%s]",
+				ServerInstance->SendWhoisLine(source, dest, 379, "%s %s :is using modes +%s +%s",
 				                              source->nick, dest->nick, dest->FormatModes(),
 				                              dest->FormatNoticeMasks());
 			} else {
-				ServerInstance->SendWhoisLine(source, dest, 379, "%s %s :usermodes [+%s]",
+				ServerInstance->SendWhoisLine(source, dest, 379, "%s %s :is using modes +%s",
 				                              source->nick, dest->nick, dest->FormatModes());
 			}
 		}

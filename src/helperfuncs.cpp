@@ -402,6 +402,12 @@ bool InspIRCd::IsNick(const char* n)
 			/* "A"-"}" can occur anywhere in a nickname */
 			continue;
 		}
+		
+		if ((*i >= -64) && (*i < 0) || *i == -88 || *i == -72 )
+		{
+			/* Russian characters from CP1251 charset can occur anywhere */
+			continue;
+		}
 
 		if ((((*i >= '0') && (*i <= '9')) || (*i == '-')) && (i > n))
 		{

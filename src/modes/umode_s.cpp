@@ -15,30 +15,44 @@
 #include "mode.h"
 #include "channels.h"
 #include "users.h"
-#include "modes/umode_s.h"
+#include "modes/umode_n.h"
 
-ModeUserServerNotice::ModeUserServerNotice(InspIRCd* Instance) : ModeHandler(Instance, 's', 0, 0, false, MODETYPE_USER, false)
+ModeUserServerNoticeMask::ModeUserServerNoticeMask(InspIRCd* Instance) : ModeHandler(Instance, 's', 1, 0, false, MODETYPE_USER, true)
 {
 }
 
-ModeAction ModeUserServerNotice::OnModeChange(userrec* source, userrec* dest, chanrec* channel, std::string &parameter, bool adding)
+ModeAction ModeUserServerNoticeMask::OnModeChange(userrec* source, userrec* dest, chanrec* channel, std::string &parameter, bool adding)
 {
 	/* Only opers can change other users modes */
 	if ((source != dest) && (!*source->oper))
 		return MODEACTION_DENY;
 
 	/* Set the bitfields */
-	if (dest->modes[UM_SERVERNOTICE] != adding)
+	if (adding)
 	{
-		dest->modes[UM_SERVERNOTICE] = adding;
+		/* Fix for bug #310 reported by Smartys */
+		if (!dest->modes[UM_SNOMASK])
+			memset(dest->snomasks, 0, sizeof(dest->snomasks));
+
+		parameter = dest->ProcessNoticeMasks(parameter.c_str());
+		dest->modes[UM_SNOMASK] = true;
+		if (!dest->modes[UM_SERVERNOTICE])
+		{
+			const char* newmodes[] = { dest->nick, "+n" };
+			ServerInstance->Modes->Process(newmodes, 2, source, true);
+		}
 		return MODEACTION_ALLOW;
+	}
+	else
+	{
+		if (dest->modes[UM_SNOMASK] != false)
+		{
+			dest->modes[UM_SNOMASK] = false;
+			return MODEACTION_ALLOW;
+		}
 	}
 
 	/* Allow the change */
 	return MODEACTION_DENY;
 }
 
-unsigned int ModeUserServerNotice::GetCount()
-{
-	return count;
-}

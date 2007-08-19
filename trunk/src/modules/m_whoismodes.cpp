@@ -2,7 +2,7 @@
 // Updated for new API - LeaChim
 // Updated for even newer API - Om
 // Updated for 1.1-beta5 - AnMaster
-// Updated for Sakura - puremind
+// Cosmetic changes for Unreal4.0 - CuttingEdge
 
 #include "users.h"
 #include "channels.h"
@@ -14,7 +14,7 @@ class ModuleWhoismodes : public Module
 {
 public:
 	ModuleWhoismodes(InspIRCd* Me)
-	: Module::Module(Me)
+	: Module(Me)
 	{
 	}
 	
@@ -31,8 +31,6 @@ public:
 	virtual void OnWhois(userrec* source, userrec* dest)
 	{
 		if(*source->oper) {
-			/** changed RPL to look like in Unreal3.x, it's more pretty ;) -- puremind
-			 */
 			if (dest->modes[UM_SNOMASK] != 0) {
 				ServerInstance->SendWhoisLine(source, dest, 379, "%s %s :is using modes +%s +%s",
 				                              source->nick, dest->nick, dest->FormatModes(),
@@ -45,4 +43,23 @@ public:
 	}
 };
 
-MODULE_INIT(ModuleWhoismodes)
+class ModuleWhoismodesFactory : public ModuleFactory
+{
+	public: ModuleWhoismodesFactory()
+	{
+	}
+
+	~ModuleWhoismodesFactory()
+	{
+	}
+
+	virtual Module* CreateModule(InspIRCd* Me)
+	{
+		return new ModuleWhoismodes(Me);
+	}
+}; 
+
+extern "C" void* init_module() 
+{ 
+	return new ModuleWhoismodesFactory; 
+}

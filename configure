@@ -4,11 +4,13 @@
 #
 # Copyright 2002-2007 The InspIRCd Development Team
 #  http://www.inspircd.org/wiki/index.php/Credits
+# Copyright 2007 The Sakura Development Team
+#  http://code.google.com/p/ircd-sakura/
 #
 # Licensed under GPL, please see the COPYING file
 # for more information
 #
-# $Id: configure 7482 2007-07-21 13:01:12Z brain $
+# $Id: configure 75216 2007-08-19 11:06:10Z darkwire $
 #
 ###################################################
 
@@ -1142,10 +1144,10 @@ EOF
 	# Write all .in files.
 	my $tmp = "";
 	my $file = "";
-	my $exe = "inspircd";
+	my $exe = "sakura";
 
 	if ($config{OSNAME} =~ /CYGWIN/i) {
-		$exe = "inspircd.exe";
+		$exe = "sakura.exe";
 	}
 
 	opendir(DIRHANDLE, $this);
@@ -1210,7 +1212,7 @@ EOF
 	closedir(DIRHANDLE);
 
 	# Make inspircd executable!
-	chmod 0744, 'inspircd';
+	chmod 0744, 'sakura';
 
 	if ($config{STATIC_LINK} eq "yes") {
 		print "Writing static-build \033[1;32msrc/Makefile\033[0m\n";
@@ -1498,9 +1500,9 @@ elsif (($has_ports) && ($config{USE_PORTS} eq "y")) {
 
 	if ($config{OSNAME} =~ /CYGWIN/i) {
 		print FH <<EOM;
-all: timer.o command_parse.o cull_list.o userprocess.o socketengine.o socket.o hashcomp.o channels.o mode.o xline.o inspstring.o dns.o base.o configreader.o inspsocket.o $cmdobjs commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o snomasks.o inspircd.exe
+all: timer.o command_parse.o cull_list.o userprocess.o socketengine.o socket.o hashcomp.o channels.o mode.o xline.o inspstring.o dns.o base.o configreader.o inspsocket.o $cmdobjs commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o snomasks.o sakura.exe
 
-inspircd.exe: inspircd.dll.a
+sakura.exe: inspircd.dll.a
 	\$(CC) -o \$@ \$^
 
 inspircd.dll inspircd.dll.a: inspircd.o channels.o mode.o xline.o inspstring.o dns.o base.o configreader.o inspsocket.o $cmdobjs  commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o hashcomp.o socket.o socketengine.o userprocess.o cull_list.o command_parse.o timer.o snomasks.o
@@ -1508,10 +1510,10 @@ inspircd.dll inspircd.dll.a: inspircd.o channels.o mode.o xline.o inspstring.o d
 EOM
 	} else {
 		print FH <<EOM;
-all: timer.o command_parse.o cull_list.o userprocess.o socketengine.o socket.o hashcomp.o channels.o mode.o xline.o inspstring.o dns.o base.o configreader.o inspsocket.o $cmdobjs commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o snomasks.o \$(MODULES) inspircd.exe
+all: timer.o command_parse.o cull_list.o userprocess.o socketengine.o socket.o hashcomp.o channels.o mode.o xline.o inspstring.o dns.o base.o configreader.o inspsocket.o $cmdobjs commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o snomasks.o \$(MODULES) sakura.exe
 
-inspircd.exe: inspircd.cpp ../include/base.h ../include/channels.h ../include/inspircd.h ../include/channels.h ../include/globals.h ../include/inspircd_config.h ../include/base.h
-	\$(CC) -I../include \$(FLAGS) inspircd.cpp -o inspircd.exe \$(LDLIBS) channels.o mode.o xline.o inspstring.o dns.o base.o inspsocket.o configreader.o $cmdobjs commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o hashcomp.o socket.o socketengine.o userprocess.o cull_list.o command_parse.o timer.o snomasks.o modes/modeclasses.a \$(MODULES)
+sakura.exe: inspircd.cpp ../include/base.h ../include/channels.h ../include/inspircd.h ../include/channels.h ../include/globals.h ../include/inspircd_config.h ../include/base.h
+	\$(CC) -I../include \$(FLAGS) inspircd.cpp -o sakura.exe \$(LDLIBS) channels.o mode.o xline.o inspstring.o dns.o base.o inspsocket.o configreader.o $cmdobjs commands.o dynamic.o users.o modules.o wildcard.o helperfuncs.o hashcomp.o socket.o socketengine.o userprocess.o cull_list.o command_parse.o timer.o snomasks.o modes/modeclasses.a \$(MODULES)
 EOM
 	}
 
@@ -1647,11 +1649,10 @@ EOM
 
 if ($config{IS_DARWIN} eq "YES") {
 	print FH <<EOM;
-all: libIRCDtimer.dylib libIRCDcull_list.dylib libIRCDuserprocess.dylib libIRCDsocketengine.dylib libIRCDsocket.dylib libIRCDhash.dylib libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDcommand_parse.dylib libIRCDsnomasks.dylib inspircd
-
-inspircd: inspircd.cpp ../include/base.h ../include/channels.h ../include/inspircd.h ../include/channels.h ../include/globals.h ../include/inspircd_config.h ../include/socket.h $cmdobjs libIRCDtimer.dylib libIRCDcull_list.dylib libIRCDuserprocess.dylib libIRCDsocketengine.dylib libIRCDsocket.dylib libIRCDhash.dylib libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDsnomasks.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDcommand_parse.dylib
+all: libIRCDtimer.dylib libIRCDcull_list.dylib libIRCDuserprocess.dylib libIRCDsocketengine.dylib libIRCDsocket.dylib libIRCDhash.dylib libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDcommand_parse.dylib libIRCDsnomasks.dylib sakura 
+sakura: inspircd.cpp ../include/base.h ../include/channels.h ../include/inspircd.h ../include/channels.h ../include/globals.h ../include/inspircd_config.h ../include/socket.h $cmdobjs libIRCDtimer.dylib libIRCDcull_list.dylib libIRCDuserprocess.dylib libIRCDsocketengine.dylib libIRCDsocket.dylib libIRCDhash.dylib libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDsnomasks.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDcommand_parse.dylib
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c inspircd.cpp
-	\$(CC) -pipe -dynamic -bind_at_load -L. -o inspircd \$(LDLIBS) inspircd.o libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDhash.dylib libIRCDsocket.dylib libIRCDsocketengine.dylib libIRCDuserprocess.dylib libIRCDcull_list.dylib libIRCDcommand_parse.dylib libIRCDtimer.dylib libIRCDsnomasks.dylib
+	\$(CC) -pipe -dynamic -bind_at_load -L. -o sakura \$(LDLIBS) inspircd.o libIRCDchannels.dylib libIRCDmode.dylib libIRCDxline.dylib libIRCDstring.dylib libIRCDasyncdns.dylib libIRCDbase.dylib libIRCDconfigreader.dylib libIRCDinspsocket.dylib libIRCDcommands.dylib libIRCDdynamic.dylib libIRCDusers.dylib libIRCDmodules.dylib libIRCDwildcard.dylib libIRCDhelper.dylib libIRCDhash.dylib libIRCDsocket.dylib libIRCDsocketengine.dylib libIRCDuserprocess.dylib libIRCDcull_list.dylib libIRCDcommand_parse.dylib libIRCDtimer.dylib libIRCDsnomasks.dylib
 
 libIRCDsocketengine.dylib: $se.cpp socketengine.cpp ../include/base.h ../include/hashcomp.h ../include/globals.h ../include/inspircd_config.h ../include/$se.h
 	\$(CC) -pipe -I../include \$(FLAGS) -export-dynamic -c socketengine.cpp
@@ -1748,9 +1749,9 @@ EOM
 } else {
 
 	print FH <<EOM;
-all: libIRCDtimer.so libIRCDcull_list.so libIRCDuserprocess.so libIRCDsocketengine.so libIRCDsocket.so libIRCDhash.so libIRCDchannels.so libIRCDmode.so libIRCDxline.so libIRCDstring.so libIRCDasyncdns.so libIRCDbase.so libIRCDconfigreader.so libIRCDinspsocket.so $cmdobjs libIRCDcommands.so libIRCDdynamic.so libIRCDusers.so libIRCDmodules.so libIRCDwildcard.so libIRCDhelper.so libIRCDcommand_parse.so libIRCDsnomasks.so inspircd
+all: libIRCDtimer.so libIRCDcull_list.so libIRCDuserprocess.so libIRCDsocketengine.so libIRCDsocket.so libIRCDhash.so libIRCDchannels.so libIRCDmode.so libIRCDxline.so libIRCDstring.so libIRCDasyncdns.so libIRCDbase.so libIRCDconfigreader.so libIRCDinspsocket.so $cmdobjs libIRCDcommands.so libIRCDdynamic.so libIRCDusers.so libIRCDmodules.so libIRCDwildcard.so libIRCDhelper.so libIRCDcommand_parse.so libIRCDsnomasks.so sakura
 
-inspircd: inspircd.cpp ../include/base.h ../include/channels.h ../include/inspircd.h ../include/channels.h ../include/globals.h ../include/inspircd_config.h ../include/socket.h libIRCDtimer.so libIRCDcull_list.so libIRCDuserprocess.so libIRCDsocketengine.so libIRCDsocket.so libIRCDhash.so libIRCDchannels.so libIRCDmode.so libIRCDxline.so libIRCDstring.so libIRCDasyncdns.so libIRCDbase.so libIRCDconfigreader.so libIRCDinspsocket.so $cmdobjs libIRCDsnomasks.so libIRCDcommands.so libIRCDdynamic.so libIRCDusers.so libIRCDmodules.so libIRCDwildcard.so libIRCDhelper.so libIRCDcommand_parse.so
+sakura: inspircd.cpp ../include/base.h ../include/channels.h ../include/inspircd.h ../include/channels.h ../include/globals.h ../include/inspircd_config.h ../include/socket.h libIRCDtimer.so libIRCDcull_list.so libIRCDuserprocess.so libIRCDsocketengine.so libIRCDsocket.so libIRCDhash.so libIRCDchannels.so libIRCDmode.so libIRCDxline.so libIRCDstring.so libIRCDasyncdns.so libIRCDbase.so libIRCDconfigreader.so libIRCDinspsocket.so $cmdobjs libIRCDsnomasks.so libIRCDcommands.so libIRCDdynamic.so libIRCDusers.so libIRCDmodules.so libIRCDwildcard.so libIRCDhelper.so libIRCDcommand_parse.so
 	\$(CC) -pipe -I../include $extra -Wl,--rpath -Wl,$config{LIBRARY_DIR} \$(FLAGS) -rdynamic -L. inspircd.cpp -o inspircd \$(LDLIBS) libIRCDchannels.so libIRCDmode.so libIRCDxline.so libIRCDstring.so libIRCDasyncdns.so libIRCDbase.so libIRCDconfigreader.so libIRCDinspsocket.so libIRCDcommands.so libIRCDdynamic.so libIRCDusers.so libIRCDmodules.so libIRCDwildcard.so libIRCDhelper.so libIRCDhash.so libIRCDsocket.so libIRCDsocketengine.so libIRCDuserprocess.so libIRCDcull_list.so libIRCDcommand_parse.so libIRCDtimer.so libIRCDsnomasks.so
 
 libIRCDsocketengine.so: $se.cpp socketengine.cpp ../include/base.h ../include/hashcomp.h ../include/globals.h ../include/inspircd_config.h ../include/$se.h

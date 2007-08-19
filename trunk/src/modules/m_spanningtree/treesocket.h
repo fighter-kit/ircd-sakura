@@ -339,6 +339,10 @@ class TreeSocket : public InspSocket
 	 */
 	bool Push(const std::string &prefix, std::deque<std::string> &params);
 
+	/** ENCAP
+	 */
+	bool Encap(const std::string &prefix, std::deque<std::string> &params);
+
 	/** SETTIME
 	 */
 	bool HandleSetTime(const std::string &prefix, std::deque<std::string> &params);

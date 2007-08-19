@@ -261,7 +261,15 @@ class ModuleMD5 : public Module
 		}
 		*dest++ = 0;
 	}
-
+	
+	unsigned char *U4_GenHashRaw(const char *src, unsigned int* key)
+	{
+		static unsigned char bytes[16];
+		
+		MyMD5((char*)bytes, (void *)src, strlen(src), key);
+		return bytes;
+	}
+	
 	unsigned int *key;
 	char* chars;
 
@@ -300,6 +308,10 @@ class ModuleMD5 : public Module
 			static char data[MAXBUF];
 			GenHash((const char*)MD5->GetHashData(), data, chars ? chars : "0123456789abcdef", key);
 			return data;
+		}
+		else if (strcmp("RAW", request->GetId()) == 0)
+		{
+			return (char *) U4_GenHashRaw((const char*) MD5->GetHashData(), key);
 		}
 		else if (strcmp("NAME", request->GetId()) == 0)
 		{

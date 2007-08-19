@@ -31,25 +31,24 @@ class cmd_setname : public command_t
 
 	CmdResult Handle (const char** parameters, int pcnt, userrec *user)
 	{
-		if (!*parameters[0])
+ 		if (!*parameters[0])
+  		{
+ 			user->WriteServ("NOTICE %s :*** SETNAME: GECOS must be specified", user->nick);
+ 			return CMD_FAILURE;
+ 		}
+ 		
+ 		if (strlen(parameters[0]) > MAXGECOS)
+ 		{
+ 			user->WriteServ("NOTICE %s :*** SETNAME: GECOS too long", user->nick);
+ 			return CMD_FAILURE;
+ 		}
+ 		
+ 		if (user->ChangeName(parameters[0]))
 		{
-			user->WriteServ("NOTICE %s :*** SETNAME: GECOS must be specified", user->nick);
-			return CMD_FAILURE;
-		}
-		
-		if (strlen(parameters[0]) > MAXGECOS)
-		{
-			user->WriteServ("NOTICE %s :*** SETNAME: GECOS too long", user->nick);
-			return CMD_FAILURE;
-		}
-		
-		if (user->ChangeName(parameters[0]))
-		{
-			ServerInstance->WriteOpers("%s used SETNAME to change their GECOS to %s", user->nick, parameters[0]);
-			return CMD_SUCCESS;
-		}
-
-		return CMD_SUCCESS;
+ 			ServerInstance->WriteOpers("%s used SETNAME to change their GECOS to %s", user->nick, parameters[0]);
+ 			return CMD_SUCCESS;
+ 		}
+ 		return CMD_SUCCESS;
 	}
 };
 
@@ -72,7 +71,7 @@ class ModuleSetName : public Module
 	
 	virtual Version GetVersion()
 	{
-		return Version(1,1,0,1,VF_VENDOR,API_VERSION);
+		return Version(1,1,0,1,VF_VENDOR | VF_COMMON,API_VERSION);
 	}
 	
 };

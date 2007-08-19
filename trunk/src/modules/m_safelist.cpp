@@ -158,7 +158,7 @@ class ModuleSafeList : public Module
 		user->Extend("safelist_last", llt);
 
 		user->WriteServ("321 %s Channel :Users Name",user->nick);
-
+		FOREACH_MOD(I_OnChannelList,OnChannelList(user, parameters, pcnt, minusers, maxusers));
 		global_listing++;
 
 		return 1;
@@ -202,7 +202,7 @@ class ModuleSafeList : public Module
 					bool display = (match(chan->name, ld->glob.c_str()) || (*chan->topic && match(chan->topic, ld->glob.c_str())));
 					if ((users) && (display))
 					{
-						int counter = snprintf(buffer, MAXBUF, "322 %s %s %ld :[+%s] %s",user->nick, chan->name, users, chan->ChanModes(has_user), chan->topic);
+						int counter = snprintf(buffer, MAXBUF, "322 %s %s %ld :[+%s] %s",user->nick, chan->name, users, has_user ? chan->ChanModes(has_user) : chan->U4_ChanModesNoParams(), chan->topic);
 						amount_sent += counter + ServerNameSize;
 						user->WriteServ(std::string(buffer));
 					}

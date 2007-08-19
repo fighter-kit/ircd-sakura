@@ -54,14 +54,14 @@ class cmd_tban : public command_t
 			{
 				if (!ServerInstance->IsValidMask(parameters[2]))
 				{
-					user->WriteServ("NOTICE "+std::string(user->nick)+" :Invalid ban mask");
+					user->WriteServ("NOTICE "+std::string(user->nick)+" :*** Invalid ban mask");
 					return CMD_FAILURE;
 				}
 				for (BanList::iterator i = channel->bans.begin(); i != channel->bans.end(); i++)
 				{
 					if (!strcasecmp(i->data,parameters[2]))
 					{
-						user->WriteServ("NOTICE "+std::string(user->nick)+" :The ban "+std::string(parameters[2])+" is already on the banlist of "+std::string(parameters[0]));
+						user->WriteServ("NOTICE "+std::string(user->nick)+" :*** The ban "+std::string(parameters[2])+" is already on the banlist of "+std::string(parameters[0]));
 						return CMD_FAILURE;
 					}
 				}
@@ -71,7 +71,7 @@ class cmd_tban : public command_t
 				unsigned long expire = duration + time(NULL);
 				if (duration < 1)
 				{
-					user->WriteServ("NOTICE "+std::string(user->nick)+" :Invalid ban time");
+					user->WriteServ("NOTICE "+std::string(user->nick)+" :*** Invalid ban time");
 					return CMD_FAILURE;
 				}
 				std::string mask = parameters[2];
@@ -160,7 +160,7 @@ class ModuleTimedBans : public Module
 					again = true;
 					if (cr)
 					{
-						cr->WriteChannelWithServ(ServerInstance->Config->ServerName, "NOTICE %s :Timed ban on %s expired.", cr->name, i->mask.c_str());
+						cr->WriteChannelWithServ(ServerInstance->Config->ServerName, "NOTICE %s :*** Timed ban on %s expired.", cr->name, i->mask.c_str());
 						const char *setban[3];
 						setban[0] = i->channel.c_str();
 						setban[1] = "-b";
@@ -196,7 +196,7 @@ class ModuleTimedBans : public Module
 	
 	virtual Version GetVersion()
 	{
-		return Version(1,1,0,0,VF_VENDOR,API_VERSION);
+		return Version(1, 1, 0, 0, VF_COMMON | VF_VENDOR, API_VERSION);
 	}
 };
 

@@ -363,17 +363,17 @@ class ModuleDCCAllow : public Module
 								if (defaultaction == "allow")
 									return 0;
 							}
-							user->WriteServ("NOTICE %s :The user %s is not accepting DCC SENDs from you. Your file %s was not sent.", user->nick, u->nick, filename.c_str());
-							u->WriteServ("NOTICE %s :%s (%s@%s) attempted to send you a file named %s, which was blocked.", u->nick, user->nick, user->ident, user->dhost, filename.c_str());
-							u->WriteServ("NOTICE %s :If you trust %s and were expecting this, you can type /DCCALLOW HELP for information on the DCCALLOW system.", u->nick, user->nick);
+							user->WriteServ("NOTICE %s :*** The user %s is not accepting DCC SENDs from you. Your file %s was not sent.", user->nick, u->nick, filename.c_str());
+							u->WriteServ("NOTICE %s :*** %s (%s@%s) attempted to send you a file named %s, which was blocked.", u->nick, user->nick, user->ident, user->dhost, filename.c_str());
+							u->WriteServ("NOTICE %s :*** If you trust %s and were expecting this, you can type /DCCALLOW HELP for information on the DCCALLOW system.", u->nick, user->nick);
 							return 1;
 						}
 					}
 					else if ((type == "CHAT") && (blockchat))
 					{
-						user->WriteServ("NOTICE %s :The user %s is not accepting DCC CHAT requests from you.", user->nick, u->nick);
-						u->WriteServ("NOTICE %s :%s (%s@%s) attempted to initiate a DCC CHAT session, which was blocked.", u->nick, user->nick, user->ident, user->dhost);
-						u->WriteServ("NOTICE %s :If you trust %s and were expecting this, you can type /DCCALLOW HELP for information on the DCCALLOW system.", u->nick, user->nick);
+						user->WriteServ("NOTICE %s :*** The user %s is not accepting DCC CHAT requests from you.", user->nick, u->nick);
+						u->WriteServ("NOTICE %s :*** %s (%s@%s) attempted to initiate a DCC CHAT session, which was blocked.", u->nick, user->nick, user->ident, user->dhost);
+						u->WriteServ("NOTICE %s :*** If you trust %s and were expecting this, you can type /DCCALLOW HELP for information on the DCCALLOW system.", u->nick, user->nick);
 						return 1;
 					}
 				}
@@ -432,7 +432,7 @@ class ModuleDCCAllow : public Module
 						if (i->nickname == user->nick)
 						{
 					
-							u->WriteServ("NOTICE %s :%s left the network or changed their nickname and has been removed from your DCCALLOW list", u->nick, i->nickname.c_str());
+							u->WriteServ("NOTICE %s :*** %s left the network or changed their nickname and has been removed from your DCCALLOW list", u->nick, i->nickname.c_str());
 							u->WriteServ("995 %s %s :Removed %s from your DCCALLOW list", u->nick, u->nick, i->nickname.c_str());
 							dl->erase(i);
 							break;
@@ -482,7 +482,7 @@ class ModuleDCCAllow : public Module
 
 	virtual Version GetVersion()
 	{
-		return Version(1,1,0,0,VF_COMMON|VF_VENDOR,API_VERSION);
+		return Version(1, 1, 0, 0, VF_COMMON | VF_VENDOR, API_VERSION);
 	}
 };
 

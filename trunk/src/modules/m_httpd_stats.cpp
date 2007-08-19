@@ -48,7 +48,7 @@ class ModuleHttpStats : public Module
 	{
 		
 		ReadConfig();
-		this->changed = false;
+		this->changed = true;
 	}
 
 	void InsertOrder(irc::string channel, int count)
@@ -134,9 +134,9 @@ class ModuleHttpStats : public Module
 				for (SortedIter a = so->begin(); ((a != so->end()) && (n < 25)); a++, n++)
 				{
 					chanrec* c = ServerInstance->FindChan(a->second.c_str());
-					if (c)
+					if (c && !c->IsModeSet('s') && !c->IsModeSet('p'))
 					{
-						data << "<tr><td>" << a->first << "</td><td>" << a->second << "</td>";
+						data << "<tr><td>" << a->first << "</td><td>" << c->GetUsers()->size() << "</td>";
 						data << "<td>" << c->GetOppedUsers()->size() << "</td>";
 						data << "<td>" << c->GetHalfoppedUsers()->size() << "</td>";
 						data << "<td>" << c->GetVoicedUsers()->size() << "</td>";

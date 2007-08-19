@@ -44,7 +44,7 @@ class cmd_sethost : public command_t
 		}
 		if (len == 0)
 		{
-			user->WriteServ("NOTICE %s :*** SETHOST: Host must be specified", user->nick);
+			user->WriteServ("NOTICE %s :*** SETHOST: Host too short", user->nick);
 			return CMD_FAILURE;
 		}
 		if (len > 64)
@@ -100,7 +100,7 @@ class ModuleSetHost : public Module
 	
 	virtual Version GetVersion()
 	{
-		return Version(1,1,0,1,VF_VENDOR,API_VERSION);
+		return Version(1,1,0,1,VF_VENDOR | VF_COMMON,API_VERSION);
 	}
 	
 };

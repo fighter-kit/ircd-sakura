@@ -33,7 +33,7 @@ class cmd_gloadmodule : public command_t
 	{
 		if (ServerInstance->LoadModule(parameters[0]))
 		{
-			ServerInstance->WriteOpers("*** NEW MODULE '%s' GLOBALLY LOADED BY '%s'",parameters[0],user->nick);
+			ServerInstance->WriteOpers("*** New module '%s' globally loaded by '%s'",parameters[0],user->nick);
 			user->WriteServ("975 %s %s :Module successfully loaded.",user->nick, parameters[0]);
 
 			/* route it! */
@@ -66,7 +66,7 @@ class cmd_gunloadmodule : public command_t
 	{
 		if (ServerInstance->UnloadModule(parameters[0]))
 		{
-			ServerInstance->WriteOpers("*** MODULE '%s' GLOBALLY UNLOADED BY '%s'",parameters[0],user->nick);
+			ServerInstance->WriteOpers("*** Module '%s' globally unloaded by '%s'",parameters[0],user->nick);
 			user->WriteServ("973 %s %s :Module successfully unloaded.",user->nick, parameters[0]);
 		}
 		else
@@ -103,7 +103,7 @@ class cmd_greloadmodule : public command_t
 			return CMD_FAILURE;
 		}
 
-		ServerInstance->WriteOpers("*** MODULE '%s' GLOBALLY RELOADED BY '%s'",parameters[0],user->nick);
+		ServerInstance->WriteOpers("*** Module '%s' globally reloaded by '%s'",parameters[0],user->nick);
 		user->WriteServ("975 %s %s :Module successfully loaded.",user->nick, parameters[0]);
 		
 		return CMD_SUCCESS;
@@ -134,7 +134,7 @@ class ModuleGlobalLoad : public Module
 	
 	virtual Version GetVersion()
 	{
-		return Version(1, 1, 0, 0, VF_VENDOR, API_VERSION);
+		return Version(1, 1, 0, 0, VF_COMMON | VF_VENDOR, API_VERSION);
 	}
 };
 

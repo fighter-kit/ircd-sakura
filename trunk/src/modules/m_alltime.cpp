@@ -36,7 +36,7 @@ class cmd_alltime : public command_t
 		
 		int delta = ServerInstance->GetTimeDelta();
 		
-		string msg = ":" + string(ServerInstance->Config->ServerName) + " NOTICE " + user->nick + " :System time for " +
+		string msg = ":" + string(ServerInstance->Config->ServerName) + " NOTICE " + user->nick + " :*** System time for " +
 			ServerInstance->Config->ServerName + " is: " + fmtdate + " (delta " + ConvToStr(delta) + " seconds): Time with delta: "+ fmtdate2;
 		
 		if (IS_LOCAL(user))

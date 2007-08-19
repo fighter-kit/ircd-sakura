@@ -113,8 +113,7 @@ class ModuleSSLGnuTLS : public Module
 
 	virtual void OnRehash(userrec* user, const std::string &param)
 	{
-		if(param != "ssl")
-			return;
+		bool rehashssl = (param == "ssl");
 
 		Conf = new ConfigReader(ServerInstance);
 
@@ -163,63 +162,64 @@ class ModuleSSLGnuTLS : public Module
 				}
 			}
 		}
+		if (rehashssl)
+		{		
+			std::string confdir(ServerInstance->ConfigFileName);
+			// +1 so we the path ends with a /
+			confdir = confdir.substr(0, confdir.find_last_of('/') + 1);
 
-		std::string confdir(ServerInstance->ConfigFileName);
-		// +1 so we the path ends with a /
-		confdir = confdir.substr(0, confdir.find_last_of('/') + 1);
+			cafile	= Conf->ReadValue("gnutls", "cafile", 0);
+			crlfile	= Conf->ReadValue("gnutls", "crlfile", 0);
+			certfile	= Conf->ReadValue("gnutls", "certfile", 0);
+			keyfile	= Conf->ReadValue("gnutls", "keyfile", 0);
+			dh_bits	= Conf->ReadInteger("gnutls", "dhbits", 0, false);
+			
+			// Set all the default values needed.
+			if (cafile.empty())
+				cafile = "ca.pem";
+				
+			if (crlfile.empty())
+				crlfile = "crl.pem";
+				
+			if (certfile.empty())
+				certfile = "cert.pem";
 
-		cafile	= Conf->ReadValue("gnutls", "cafile", 0);
-		crlfile	= Conf->ReadValue("gnutls", "crlfile", 0);
-		certfile	= Conf->ReadValue("gnutls", "certfile", 0);
-		keyfile	= Conf->ReadValue("gnutls", "keyfile", 0);
-		dh_bits	= Conf->ReadInteger("gnutls", "dhbits", 0, false);
+			if (keyfile.empty())
+				keyfile = "key.pem";
 
-		// Set all the default values needed.
-		if (cafile.empty())
-			cafile = "ca.pem";
+			if((dh_bits != 768) && (dh_bits != 1024) && (dh_bits != 2048) && (dh_bits != 3072) && (dh_bits != 4096))
+				dh_bits = 1024;
 
-		if (crlfile.empty())
-			crlfile = "crl.pem";
+			// Prepend relative paths with the path to the config directory.
+			if(cafile[0] != '/')
+				cafile = confdir + cafile;
+				
+			if(crlfile[0] != '/')
+				crlfile = confdir + crlfile;
 
-		if (certfile.empty())
-			certfile = "cert.pem";
+			if(certfile[0] != '/')
+				certfile = confdir + certfile;
 
-		if (keyfile.empty())
-			keyfile = "key.pem";
+			if(keyfile[0] != '/')
+				keyfile = confdir + keyfile;
 
-		if((dh_bits != 768) && (dh_bits != 1024) && (dh_bits != 2048) && (dh_bits != 3072) && (dh_bits != 4096))
-			dh_bits = 1024;
+			int ret;
 
-		// Prepend relative paths with the path to the config directory.
-		if(cafile[0] != '/')
-			cafile = confdir + cafile;
-
-		if(crlfile[0] != '/')
-			crlfile = confdir + crlfile;
-
-		if(certfile[0] != '/')
-			certfile = confdir + certfile;
-
-		if(keyfile[0] != '/')
-			keyfile = confdir + keyfile;
-
-		int ret;
-
-		if((ret =gnutls_certificate_set_x509_trust_file(x509_cred, cafile.c_str(), GNUTLS_X509_FMT_PEM)) < 0)
+			if((ret =gnutls_certificate_set_x509_trust_file(x509_cred, cafile.c_str(), GNUTLS_X509_FMT_PEM)) < 0)
 			ServerInstance->Log(DEFAULT, "m_ssl_gnutls.so: Failed to set X.509 trust file '%s': %s", cafile.c_str(), gnutls_strerror(ret));
 
-		if((ret = gnutls_certificate_set_x509_crl_file (x509_cred, crlfile.c_str(), GNUTLS_X509_FMT_PEM)) < 0)
-			ServerInstance->Log(DEFAULT, "m_ssl_gnutls.so: Failed to set X.509 CRL file '%s': %s", crlfile.c_str(), gnutls_strerror(ret));
+			if((ret = gnutls_certificate_set_x509_crl_file (x509_cred, crlfile.c_str(), GNUTLS_X509_FMT_PEM)) < 0)
+				ServerInstance->Log(DEFAULT, "m_ssl_gnutls.so: Failed to set X.509 CRL file '%s': %s", crlfile.c_str(), gnutls_strerror(ret));
 
-		if((ret = gnutls_certificate_set_x509_key_file (x509_cred, certfile.c_str(), keyfile.c_str(), GNUTLS_X509_FMT_PEM)) < 0)
-		{
-			// If this fails, no SSL port will work. At all. So, do the smart thing - throw a ModuleException
-			throw ModuleException("Unable to load GnuTLS server certificate: " + std::string(gnutls_strerror(ret)));
+			if((ret = gnutls_certificate_set_x509_key_file (x509_cred, certfile.c_str(), keyfile.c_str(), GNUTLS_X509_FMT_PEM)) < 0)
+			{
+				// If this fails, no SSL port will work. At all. So, do the smart thing - throw a ModuleException
+				throw ModuleException("Unable to load GnuTLS server certificate: " + std::string(gnutls_strerror(ret)));
+			}
+
+			// This may be on a large (once a day or week) timer eventually.
+			GenerateDHParams();
 		}
-
-		// This may be on a large (once a day or week) timer eventually.
-		GenerateDHParams();
-
 		DELETE(Conf);
 	}
 
@@ -287,7 +287,7 @@ class ModuleSSLGnuTLS : public Module
 	void Implements(char* List)
 	{
 		List[I_On005Numeric] = List[I_OnRawSocketConnect] = List[I_OnRawSocketAccept] = List[I_OnRawSocketClose] = List[I_OnRawSocketRead] = List[I_OnRawSocketWrite] = List[I_OnCleanup] = 1;
-		List[I_OnRequest] = List[I_OnSyncUserMetaData] = List[I_OnDecodeMetaData] = List[I_OnUnloadModule] = List[I_OnRehash] = List[I_OnWhois] = List[I_OnPostConnect] = 1;
+		List[I_OnBufferFlushed] = List[I_OnRequest] = List[I_OnSyncUserMetaData] = List[I_OnDecodeMetaData] = List[I_OnUnloadModule] = List[I_OnRehash] = List[I_OnWhois] = List[I_OnPostConnect] = 1;
 	}
 
 	virtual void On005Numeric(std::string &output)
@@ -432,6 +432,7 @@ class ModuleSSLGnuTLS : public Module
 		else if (session->status == ISSL_HANDSHAKING_WRITE)
 		{
 			errno = EAGAIN;
+			MakePollWrite(session);
 			return -1;
 		}
 
@@ -500,9 +501,6 @@ class ModuleSSLGnuTLS : public Module
 
 	virtual int OnRawSocketWrite(int fd, const char* buffer, int count)
 	{
-		if (!count)
-			return 0;
-
 		issl_session* session = &sessions[fd];
 		const char* sendbuffer = buffer;
 
@@ -549,7 +547,6 @@ class ModuleSSLGnuTLS : public Module
 				{
 					ServerInstance->Log(DEBUG,"Again please");
 					errno = EAGAIN;
-					return -1;
 				}
 			}
 			else
@@ -558,6 +555,8 @@ class ModuleSSLGnuTLS : public Module
 				session->outbuf = session->outbuf.substr(ret);
 			}
 		}
+
+		MakePollWrite(session);
 
 		/* Who's smart idea was it to return 1 when we havent written anything?
 		 * This fucks the buffer up in InspSocket :p
@@ -574,7 +573,7 @@ class ModuleSSLGnuTLS : public Module
 		// Bugfix, only send this numeric for *our* SSL users
 		if(dest->GetExt("ssl", dummy) || (IS_LOCAL(dest) &&  isin(dest->GetPort(), listenports)))
 		{
-			ServerInstance->SendWhoisLine(source, dest, 320, "%s %s :is using a secure connection", source->nick, dest->nick);
+			ServerInstance->SendWhoisLine(source, dest, 671, "%s %s :is using a Secure Connection", source->nick, dest->nick);
 		}
 	}
 
@@ -688,7 +687,22 @@ class ModuleSSLGnuTLS : public Module
 
 	void MakePollWrite(issl_session* session)
 	{
-		OnRawSocketWrite(session->fd, NULL, 0);
+		//OnRawSocketWrite(session->fd, NULL, 0);
+		EventHandler* eh = ServerInstance->FindDescriptor(session->fd);
+		if (eh)
+			ServerInstance->SE->WantWrite(eh);
+		ServerInstance->Log(DEBUG, "Want write set");
+	}
+
+	virtual void OnBufferFlushed(userrec* user)
+	{
+		if (user->GetExt("ssl"))
+		{
+			ServerInstance->Log(DEBUG,"OnBufferFlushed for ssl user");
+			issl_session* session = &sessions[user->GetFd()];
+			if (session && session->outbuf.size())
+				OnRawSocketWrite(user->GetFd(), NULL, 0);
+		}
 	}
 
 	void CloseSession(issl_session* session)

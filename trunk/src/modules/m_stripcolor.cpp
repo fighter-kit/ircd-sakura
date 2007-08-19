@@ -3,7 +3,7 @@
  *       +------------------------------------+
  *
  *  InspIRCd: (C) 2002-2007 InspIRCd Development Team
- * See: http://www.inspircd.org/wiki/index.php/Credits
+ *       Sakura: (C) 2007 Sakura Development Team
  *
  * This program is free but copyrighted software; see
  *	    the file COPYING for details.
@@ -32,6 +32,12 @@ class ChannelStripColor : public ModeHandler
 			if (!channel->IsModeSet('S'))
 			{
 				channel->SetMode('S',true);
+
+				/** check for +c, we must remove it!!! -- puremind
+				 */
+				if(channel->IsModeSet('c'))
+					channel->SetMode('c',false);
+
 				return MODEACTION_ALLOW;
 			}
 		}

@@ -1,9 +1,63 @@
+/***********************************************************************
+*                              _                                       *
+*                   ____  ___ | | _  _   _ _ __ ___                    *
+*                  / ___|/ _ `| |/ || | | | '__/ _ `|                  *
+*                  \___ \ (_| |   ( | |_| | |  |(_| |                  *
+*                  |____/\___,|_|\_| \___/|_|  \___,|                  *
+*      ____             __ _                       _   _               *
+*     / ___|___  _ __  / _(_) __ _ _   _ _ __ __ _| |_(_) ___  _ __    *
+*    | |   / _ \| '_ \| |_| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \   *
+*    | |__| (_) | | | |  _| | (_| | |_| | | | (_| | |_| | (_) | | | |  *
+*     \____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|  *
+*                            |___/                                     *
+*								                                       *
+*     Based off the Unreal4 unreadlircd.conf.example document          *
+*	  Based off the InspIRCd inspircd.conf.example document	           *
+*                                                                      *
+**********************************||***********************************/
+				                 #||#
+##################################||####################################
+#                                                                      #
+#         This is an example of the config file for Sakura.            #
+#             Change the options to suit your network                  #
+#                                                                      #
+#                                                                      #
+#    ____                _   _____ _     _       ____  _ _   _         #
+#   |  _ \ ___  __ _  __| | |_   _| |__ (_)___  | __ )(_) |_| |        #
+#   | |_) / _ \/ _` |/ _` |   | | | '_ \| / __| |  _ \| | __| |        #
+#   |  _ {  __/ (_| | (_| |   | | | | | | \__ \ | |_) | | |_|_|        #
+#   |_| \_\___|\__,_|\__,_|   |_| |_| |_|_|___/ |____/|_|\__(_)        #
+#                                                                      #
+#   Lines prefixed with READ THIS BIT, as shown above, are IMPORTANT   #
+#   lines, and you REALLY SHOULD READ THEM. Yes, THIS MEANS YOU. Even  #
+#   if you've configured InspIRCd before, these probably indicate      #
+#   something new or different to this version and you SHOULD READ IT. #
+#                                                                      #
 ########################################################################
 #                                                                      #
-#         This is an ircd-sakura configuration file for eFNet          #
-#                      irc.efnet-ru.net #sakura                       #
+#         Unalphabeticalise the modules list at your own risk          #
 #                                                                      #
 ########################################################################
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-  COMMENTS  -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+#								                                       #
+#	There are three different styles of commenting that can be         #
+#	used throughout an UnrealIRCd-stlye config file. So that           #
+#	you can add notes and comments to document your own                #
+#	customized config.					                               #
+#								                                       #
+#	There are two types of comments: Single line and multi-line:       #
+#	- Single line comments start from the comment mark and end at      #
+#	  the end of that line.					                           #
+#	- Multi-line comments start from an opening comment mark           #
+#	  and end at a closing comment mark.			                   #
+#								                                       #
+// This is a single line comment.
+# This is also a single line comment.
+/* This is a
+	     multi-
+		   line
+			comment */
 
 
 #-#-#-#-#-#-#-#-#-#-#-#-  SERVER DESCRIPTION  -#-#-#-#-#-#-#-#-#-#-#-#-
@@ -11,22 +65,19 @@
 #   Here is where you enter the information about your server.        #
 #                                                                     #
 #  Syntax is as follows:                                              #
-#                                                                     #
-#     <server name="server.name"                                      #
-#      description="Server Description"                               #
-#      networkemail="Email address shown on g/k/z/q lines"            #
-#      network="MyNetwork">                                           #
-#                                                                     #
-#  eFNet note:                                                        #
-#   - you mustn't change network                                      #
-#   - you can change networkemail to your server's mail               #
-#                                                                     #
-
-<server name="sakura.efnet-ru.net"
-        description="Sakura eFNet Server"
-        networkemail="info@efnet-ru.net"
-		network="eFNet">
-
+#								      #
+#	server {						      # 
+#		name "server.name"; 				      #
+#		description "Server Description";                     #
+#		networkemail "Email address shown on g/k/z/q lines";  #
+#		network "MyNetwork"; 				      #
+# 	};							      #
+# 								      #
+server {
+	name "penguin.omega.org.za";
+	description "Waddle World";
+	network "Omega";
+};
 
 #-#-#-#-#-#-#-#-#-#-#-#-   ADMIN INFORMATION   -#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -34,14 +85,17 @@
 #   nick, and email address.                                          #
 #                                                                     #
 #  Syntax is as follows:                                              #
-#       <admin name="real name"                                       #
-#              nick="nick name"                                       #
-#              email="email@address.com">                             #
-#                                                                     #
-
-<admin name="Sakura Admin"
-       nick="Admin"
-       email="admin@efnet-ru.net">
+#								      #
+#       admin {							      #
+#       	name "real name"; 	                              #
+#		nick "nick name";                                     #
+#		email "email@address.com";                            #
+#	};                                                            #
+admin {
+	name "Johnny English";
+	nick "M15";
+	email "M15@the.best.secret.agent";
+};
 
 
 #-#-#-#-#-#-#-#-#-#-#-#-   PORT CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-
@@ -86,6 +140,11 @@
 #                 may not be limited in use to just encryption,       #
 #                 the 'ssl' value used for client ports does not      #
 #                 exist for servers, and this value is used instead.  #
+#    ____                _   _____ _     _       ____  _ _   _        #
+#   |  _ \ ___  __ _  __| | |_   _| |__ (_)___  | __ )(_) |_| |       #
+#   | |_) / _ \/ _` |/ _` |   | | | '_ \| / __| |  _ \| | __| |       #
+#   |  _ {  __/ (_| | (_| |   | | | | | | \__ \ | |_) | | |_|_|       #
+#   |_| \_\___|\__,_|\__,_|   |_| |_| |_|_|___/ |____/|_|\__(_)       #
 #                                                                     #
 #  If you want to link servers to InspIRCd you must load the          #
 #  m_spanningtree module! Please see the modules list below for       #
@@ -96,8 +155,8 @@
 #                                                                     #
 #  Syntax is as follows:                                              #
 #                                                                     #
-# <bind address="ip address" port="port" type="clients">              #
-# <bind address="ip address" port="port" type="servers">              #
+# bind { address "ip address";  port "port"; type "clients"; };       #
+# bind { address "ip address";  port "port"; type "servers"; };       #
 #                                                                     #
 # If InspIRCd is built for IPV6, and you wish to accept IPV4 clients, #
 # then you can specify IPV4 ip addresses here to bind. You may also   #
@@ -115,17 +174,34 @@
 # server for ipv4 connections only, then specifying an empty bind     #
 # address binds the port to all ipv4 IP addresses, as expected.       #
 #                                                                     #
+bind {
+	address "";
+	port 6697;
+	type "clients";
+	ssl "gnutls";
+};
+bind {
+	address "";
+	port "6660-6669";
+	type "clients";
+};
+bind {
+	address "";
+	port 7000;
+	type "clients";
+};
 
-<bind address="" port="6660-6669" type="clients">
-<bind address="" port="6690-6699" type="clients" ssl="openssl">
-
-# When linking servers, the openssl and gnutls transports are largely
-# link-compatible and can be used alongside each other or either/or
-# on each end of the link without any significant issues.
-
-<bind address="" port="9967" type="servers">
-<bind address="" port="9997" type="servers" transport="openssl">
-
+bind {
+	address "";
+	port 7151;
+	type "servers";
+};
+bind {
+	address "1.2.3.4";
+	port 7152;
+	type "servers";
+	transport "openssl";
+};
 
 #-#-#-#-#-#-#-#-#-#-  DIE/RESTART CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-
 #                                                                     #
@@ -134,11 +210,16 @@
 #   need this ability should know the die and restart password.       #
 #                                                                     #
 #  Syntax is as follows:                                              #
-#       <power diepass="die password" restartpass="restart password"  #
-#        pause="secs before dying">                                   #
-#                                                                     #
-
-<power diepass="" restartpass="" pause="2">
+#       power { 						      #
+#       	diepass "die password"; 			      #
+#       	restartpass "restart password"; 		      #
+#            	pause "secs before dying";                            #
+#       };							      #
+power {
+	diepass "";
+	restartpass "";
+	pause 2;
+};
 
 
 #-#-#-#-#-#-#-#-#-#  INCLUDE CONFIGURATION  #-#-#-#-#-#-#-#-#-#-#-#-#-#
@@ -153,8 +234,9 @@
 # slash (/) in which case it is treated as an absolute path.          #
 #                                                                     #
 # Syntax is as follows:                                               #
-#<include file="file.conf">                                           #
+# include "file.conf";  			                      #
 #                                                                     #
+
 
 #-#-#-#-#-#-#-#-#-#-  CONNECTIONS CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -165,36 +247,44 @@
 #                                                                     #
 #  Syntax is as follows:                                              #
 #                                                                     #
-#       <connect allow="1.2.3.0/24" password="blahblah"               #
-#                timeout="10" timeout="blah" flood="5"                #
-#                threshold="8" pingfreq="120" sendq="99999"           #
-#                revcq="696969" localmax="3" globalmax="3"            #
-#                port="6660">                                         #
+#	connect {						      #
+#		allow "1.2.3.0/24"; 				      #
+#		password "blahblah"; 			              #
+#		timeout "10"; 					      #
+#		flood "5"; 					      #
+#               threshold "8";                                        #
+#               pingfreq "120";                                       #
+#               sendq "99999";                                        #
+#               revcq "696969";                                       #
+#               localmax "3";                                         #
+#               globalmax "3";                                        #
+#               port "6660"; 					      #
+#       };			                                      #
 #                                                                     #
-#       <connect deny="127.0.0.1" port="6667">                        #
+#       connect { deny "127.0.0.1";  port "6667"; };                  #
 #                                                                     #
 #   IP masks may be specified in CIDR format or wildcard format,      #
 #   for IPV4 and IPV6. You *cannot* use hostnames in the allow or     #
 #   deny field, as the state is applied before the user's DNS has     #
 #   been resolved.                                                    #
 #                                                                     #
-#   You may optionally include timeout="x" on any allow line, which   #
+#   You may optionally include timeout "x"; on any allow line, which  #
 #   specifies the amount of time given before an unknown connection   #
 #   is closed if USER/NICK/PASS are not given. This value is in secs  #
 #                                                                     #
-#   You should also include a flood="x" line which indicates          #
+#   You should also include a flood "x"; line which indicates         #
 #   the number of lines a user may place into their buffer at once    #
 #   before they are disconnected for excess flood. This feature can   #
 #   not be disabled, however it can be set to extremely high values,  #
 #   rendering it effectively disabled. A recommended value is 10.     #
 #   A counter is maintained for each user which is reset every        #
 #   'threshold' seconds and specifying this threshold value with      #
-#   threshold="X" indicates how often the counter is reset. For       #
-#   example, with flood="5" and threshold="8", the user may not send  #
+#   threshold "X"; indicates how often the counter is reset. For      #
+#   example, with flood "5"; and threshold "8", the user may not send #
 #   more than 5 lines in 8 secs.                                      #
 #                                                                     #
 #   You may optionally specify the sendq size and ping frequency of   #
-#   each connect:allow line using the pingfreq="X" and sendq="X"      #
+#   each connect:allow line using the pingfreq "X"; and sendq "X";    #
 #   settings as shown in the full example below.                      #
 #   The ping frequency is specified in seconds, and the sendq size    #
 #   in bytes. It is recommended, although not enforced, that you      #
@@ -229,22 +319,29 @@
 #   only incoming connections on the specified port will match. Port  #
 #   tags may be used on connect allow and connect deny tags.          #
 #                                                                     #
-
-<connect allow="196.12.*"  password="secret" port="6667">
-
-<connect allow="*"
-         timeout="60"
-         flood="20"
-         threshold="1"
-         pingfreq="120"
-         sendq="262144"
-         recvq="8192"
-         modes="+x"
-         localmax="3"
-         globalmax="3">
-
-<connect deny="69.254.*">
-<connect deny="3ffe::0/32">
+connect {
+	allow "196.12.*";
+	password "secret";
+	port 6667;
+};
+connect {
+	allow "*";
+	timeout 60;
+	flood 20;
+	threshold 1;
+	pingfreq 120;
+	sendq 262144;
+	recvq 8192;
+	localmax 3;
+	globalmax 3;
+	modes "+x";
+};
+connect {
+	deny "69.254.*";
+};
+connect {
+	deny "3ff3::0/32";
+};
 
 
 #-#-#-#-#-#-#-#-#-#-#-#-  CLASS CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-
@@ -255,61 +352,96 @@
 #                                                                     #
 #  Syntax is as follows:                                              #
 #                                                                     #
-#       <class name="name" commands="oper commands">                  #
+#       class { name "name";  commands "oper commands"; };            #
+#                                                                     #
+#    ____                _   _____ _     _       ____  _ _   _        #
+#   |  _ \ ___  __ _  __| | |_   _| |__ (_)___  | __ )(_) |_| |       #
+#   | |_) / _ \/ _` |/ _` |   | | | '_ \| / __| |  _ \| | __| |       #
+#   |  _ {  __/ (_| | (_| |   | | | | | | \__ \ | |_) | | |_|_|       #
+#   |_| \_\___|\__,_|\__,_|   |_| |_| |_|_|___/ |____/|_|\__(_)       #
 #                                                                     #
 #  You are not forced to give these classes the names given below.    #
 #  You can create your own named classes, if you want, in fact that   #
 #  is the whole idea of this system!                                  #
 #                                                                     #
 #  Note: It is possible to make a class which covers all available    #
-#  commands. To do this, specify commands="*". This is not really     #
+#  commands. To do this, specify commands "*". This is not really     #
 #  recommended, as it negates the whole purpose of the class system,  #
 #  however it is provided for fast configuration (e.g. in test nets)  #
 #                                                                     #
-#  eFNet note:                                                        #
-#   We have changed our policy a bit since we moved from Unreal3.x,   #
-#   so ircops now cannot use /sa* commands, if you enable them,       #
-#   you will be simply delinked                                       #
-#                                                                     #
+class {
+	name "Shutdown";
+	commands "DIE RESTART REHASH LOADMODULE UNLOADMODULE RELOAD";
+};
+class {
+	name "ServerLink";
+	commands "CONNECT SQUIT RCONNECT MKPASSWD MKSHA256";
+};
+class {
+	name "BanControl";
+	commands "KILL GLINE KLINE ZLINE QLINE ELINE";
+};
+class {
+	name "OperChat";
+	commands "WALLOPS GLOBOPS SETIDLE SPYLIST SPYNAMES";
+};
+class {
+	name "HostCloak";
+	commands "SETHOST SETIDENT SETNAME CHGHOST CHGIDENT";
+};
 
-<class name="Shutdown" commands="DIE RESTART REHASH LOADMODULE UNLOADMODULE RELOAD">
-<class name="ServerLink" commands="CONNECT SQUIT RCONNECT MKPASSWD MKSHA256">
-<class name="BanControl" commands="KILL GLINE KLINE ZLINE QLINE ELINE SHUN">
-<class name="OperChat" commands="WALLOPS GLOBOPS SETIDLE SPYLIST SPYNAMES">
-<class name="HostCloak" commands="SETHOST SETIDENT SETNAME CHGHOST CHGIDENT">
 
+#-#-#-#-#-#-#-#-#-#-#-#-  OPERATOR COMPOSITION   -#-#-#-#-#-#-#-#-#-#-#-
+#                                                                      #
+#   This is where you specify which types of operators you have on     #
+#   your server, as well as the commands they are allowed to use.      #
+#   This works alongside with the classes specified above.             #
+#                                                                      #
+#  type name  - a name for the combined class types                    #
+#               a type name cannot contain spaces, however if you      #
+#               put an _ symbol in the name, it will be translated     #
+#               to a space when displayed in a WHOIS.                  #
+#                                                                      #
+#  classes    - specified above, used for flexibility for the          #
+#               server admin to decide on which operators get          #
+#               what commands. Class names are case sensitive,         #
+#               seperate multiple class names with spaces.             #
+#                                                                      #
+#  host       - optional hostmask operators will receive on oper-up.   #
+#                                                                      #
+#  Syntax is as follows:                                               #
+#                                                                      #
+#  type { name "name";  classes "class names"; host "oper hostmask"; };#
+#                                                                      #
+#    ____                _   _____ _     _       ____  _ _   _         #
+#   |  _ \ ___  __ _  __| | |_   _| |__ (_)___  | __ )(_) |_| |        #
+#   | |_) / _ \/ _` |/ _` |   | | | '_ \| / __| |  _ \| | __| |        #
+#   |  _ {  __/ (_| | (_| |   | | | | | | \__ \ | |_) | | |_|_|        #
+#   |_| \_\___|\__,_|\__,_|   |_| |_| |_|_|___/ |____/|_|\__(_)        #
+#                                                                      #
+#  You are not forced to give these types the names given below.       #
+#  You can create your own named types, if you want, in fact that      #
+#  is the whole idea of this system!                                   #
+#                                                                      #
+type {
+	name "NetAdmin";
+	classes "OperChat BanControl HostCloak Shutdown ServerLink";
+	host "netadmin.omega.org.za";
+	modes "+sn *";
+};
+type {
+	name "GlobalOp";
+	classes "OperChat BanControl HostCloak ServerLink";
+	host "ircop.omega.org.za";
+	modes "+sn *";
+};
+type {
+	name "Helper";
+	classes "HostCloak";
+	host "helper.omega.org.za";
+	modes "+sn *";
+};
 
-#-#-#-#-#-#-#-#-#-#-#-#-  OPERATOR COMPOSITION   -#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-#   This is where you specify which types of operators you have on    #
-#   your server, as well as the commands they are allowed to use.     #
-#   This works alongside with the classes specified above.            #
-#                                                                     #
-#  type name  - a name for the combined class types                   #
-#               a type name cannot contain spaces, however if you     #
-#               put an _ symbol in the name, it will be translated    #
-#               to a space when displayed in a WHOIS.                 #
-#                                                                     #
-#  classes    - specified above, used for flexibility for the         #
-#               server admin to decide on which operators get         #
-#               what commands. Class names are case sensitive,        #
-#               seperate multiple class names with spaces.            #
-#                                                                     #
-#  host       - optional hostmask operators will receive on oper-up.  #
-#                                                                     #
-#  Syntax is as follows:                                              #
-#                                                                     #
-#     <type name="name" classes="class names" host="oper hostmask">   #
-#                                                                     #
-#  You are not forced to give these types the names given below.      #
-#  You can create your own named types, if you want, in fact that     #
-#  is the whole idea of this system!                                  #
-#
-# eFNet note:
-#  Leave these lines 'as is'                                                                     #
-#
-<type name="Server_Administrator" classes="OperChat BanControl HostCloak Shutdown ServerLink" host="omega.org.za" modes="+Wwsn +gcqkKloxtf" level="10">
-<type name="IRC_Operator" classes="OperChat BanControl HostCloak ServerLink" host="omega.org.za" modes="+Wwsn +gcqkKloxtf" level="5">
 
 #-#-#-#-#-#-#-#-#-#-#-  OPERATOR CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -348,17 +480,22 @@
 #                tag you defined above, and is case sensitive.        #
 #                                                                     #
 #  Syntax is as follows:                                              #
-#       <oper name="login"                                            #
-#             password="pass"                                         #
-#             host="hostmask@of.oper"                                 #
-#           fingerprint="hexsequence"                               #
-#             type="oper type">                                       #
-#                                                                     #
-
-<oper name="Brain"
-      password="s3cret"
-      host="ident@dialup15.isp.com *@localhost *@server.com *@3ffe::0/16"
-      type="Server_Administrator">
+#       oper "name" { 						      #
+#             password "pass";                                        #
+#             host "hostmask@of.oper"                                 #
+#             fingerprint "hexsequenc";                               #
+#             type "oper type";  };"                                  #
+#	 };                                                           #
+oper Brain {
+	password "s3cret";
+	host "ident@dialup15.isp.com *@localhost *@server.com *@3ffe::0/16";
+	type "NetAdmin";
+};
+#
+# Note that you can do either:
+# oper "name" { ... };
+# OR
+# oper { name "name"; ... };
 
 
 #-#-#-#-#-#-#-#-#-#-#-  SERVER LINK CONFIGURATION  -#-#-#-#-#-#-#-#-#-#
@@ -386,7 +523,7 @@
 #                 from this server.                                   #
 #                                                                     #
 # autoconnect -   Sets the server to autoconnect. Where x is the num. #
-# (optional)      of seconds between attempts. e.g. 300 = 5 minutes.  #
+# (optional)      of seconds between attempts. e.g. 300   5 minutes.  #
 #                                                                     #
 # transport     - If defined, this is a transport name implemented by #
 #                 another module. Transports are layers on top of     #
@@ -403,8 +540,8 @@
 #                 set this to 'yes', and if you do, the IP address/   #
 #                 hostname of this connection will NEVER be shown to  #
 #                 any opers on the network. In /STATS c its address   #
-#                 will show as *@<hidden>, and during CONNECT and     #
-#                 inbound connections, its IP will show as <hidden>   #
+#                 will show as *@hidden};, { and during CONNECT and   #
+#                 inbound connections, its IP will show as hidden{};  #
 #                 UNLESS the connection fails (e.g. due to a bad      #
 #                 password or servername)                             #
 #                                                                     #
@@ -444,7 +581,7 @@
 #                 place here will be bound to. This is for multi-     #
 #                 homed servers which may have multiple IP addresses. #
 #                 If you do not define this value, the first IP that  #
-#                 is not empty or localhost from your <bind> tags     #
+#                 is not empty or localhost from your bind {}; tags   #
 #                 will be bound to. This is usually acceptable,       #
 #                 however if your server has multiple network cards   #
 #                 then you may have to manually specify the bind      #
@@ -466,8 +603,9 @@
 #                 do not have an IP address or resolvable hostname.   #
 #                                                                     #
 # to u:line a server (give it extra privilages required for running   #
-# services, Q, etc) you must include the <uline server> tag as shown  #
-# in the example below. You can have as many of these as you like.    #
+# services, Q, etc) you must include the uline { server; };           #
+# tag as shown in the example below. You can have as many of          #
+# these as you like.						      #
 #                                                                     #
 # WARNING: Unlike other ircds, u:lining a server allows ALL users on  #
 # that server to operoverride modes. This should only be used for     #
@@ -485,7 +623,13 @@
 #                                                                     #
 # ------------------------------------------------------------------- #
 #                                                                     #
-#  If you want to link servers to Sakura you must load the            #
+#    ____                _   _____ _     _       ____  _ _   _        #
+#   |  _ \ ___  __ _  __| | |_   _| |__ (_)___  | __ )(_) |_| |       #
+#   | |_) / _ \/ _` |/ _` |   | | | '_ \| / __| |  _ \| | __| |       #
+#   |  _ {  __/ (_| | (_| |   | | | | | | \__ \ | |_) | | |_|_|       #
+#   |_| \_\___|\__,_|\__,_|   |_| |_| |_|_|___/ |____/|_|\__(_)       #
+#                                                                     #
+#  If you want to link servers to InspIRCd you must load the          #
 #  m_spanningtree module! Please see the modules list below for       #
 #  information on how to load this module! If you do not load this    #
 #  module, server links will NOT work!                                #
@@ -496,45 +640,34 @@
 #  modules m_ssl_gnutls, m_ziplinks and m_ssl_openssl, depending on   #
 #  which you choose to use.                                           #
 #                                                                     #
-
-<link name="dmage.efnet-ru.net"
-      ipaddr="dmage.efnet-ru.net"
-      port="9997"
-      allowmask="69.58.44.0/24"
-      autoconnect="300"
-      failover="irc.penza.ru"
-      timeout="15"
-      transport="openssl"
-      bind="1.2.3.4"
-      statshidden="no"
-      hidden="no"
-      sendpass="outgoing!password"
-      recvpass="incoming!password">
-
-<link name="irc.penza.ru"
-      ipaddr="irc.penza.ru"
-      port="9997"
-      allowmask="69.58.44.0/24"
-      autoconnect="300"
-      timeout="15"
-      transport="openssl"
-      bind="1.2.3.4"
-      statshidden="no"
-      hidden="no"
-      sendpass="outgoing!password"
-      recvpass="incoming!password">
-
+link "hub.penguin.org" {
+	ipaddr "penguin.box.com";
+	port 7000;
+	allowmask "69.58.44.0/24";
+	autoconnect 300;
+	failover "hub.other.net";
+	timeout 15;
+	transport "gnutls";
+	bind "1.2.3.4";
+	statshidden "no";
+	hidden "no";
+	sendpass "outgoing!password";
+	recvpass "incoming!password";
+};
+link {
+	name "services.antartic.com";
+	ipaddr "localhost";
+	port 7000;
+	allowmask "127.0.0.0/8";
+	sendpass "penguins";
+	recvpass "polarbears";
+};
 #
-#  eFNet note:
-#   You are not allowed to link services to the network
-#
-# <link name="services.efnet-ru.net"
-#      ipaddr="localhost"
-#      port="7000"
-#      allowmask="127.0.0.0/8"
-#      sendpass="penguins"
-#      recvpass="polarbears">
-#
+# Note that you can do either:
+# link "servername" { ... };
+# OR
+# link { name "servername"; ... };
+
 
 #-#-#-#-#-#-#-#-#-#-#-#- ULINES CONFIGURATION #-#-#-#-#-#-#-#-#-#-#-#-#
 # This tag defines a ulined server. A U-Lined server has special      #
@@ -545,7 +678,11 @@
 # not generate quit and connect notices, which can cut down on noise  #
 # to opers on the network.                                            #
 #                                                                     #
-<uline server="services.efnet-ru.net" silent="yes">
+uline {
+	server "services.antartic.com";
+	silent "yes";
+};
+
 
 
 #-#-#-#-#-#-#-#-#-#-  MISCELLANEOUS CONFIGURATION  -#-#-#-#-#-#-#-#-#-#
@@ -554,9 +691,16 @@
 #   files. If these are relative paths, they are relative to the      #
 #   configurtion directory.                                           #
 #                                                                     #
+#   The 'opermotd' variable requires m_opermotd.so to be loaded.      #
+#   The 'botmotd' variable requires m_botmode.so to be loaded.        #
+files {
+	motd "inspircd.motd.example";
+	rules "inspircd.rules.example";
+	opermotd "oper.motd";
+	botmotd "bot.motd";
+};
 
-<files motd="sakura.motd.example"
-       rules="sakura.rules.example">
+
 
 #-#-#-#-#-#-#-#-#-#-#-# MAXIMUM CHANNELS -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -565,9 +709,13 @@
 # the default is 20 for user and 60 for opers if this tag is not      #
 # defined. Remote users are not restricted in any manner.             #
 #                                                                     #
+channels {
+	users 20;
+	opers 60;
+};
 
-<channels users="20"
-          opers="60">
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-# DNS SERVER -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -580,6 +728,12 @@
 # first active network interface, if one exists.                      #
 # If a DNS server cannot be determined from these checks, the default #
 # value '127.0.0.1' is used instead. The timeout value is in seconds. #
+#                                                                     #
+#    ____                _   _____ _     _       ____  _ _   _        #
+#   |  _ \ ___  __ _  __| | |_   _| |__ (_)___  | __ )(_) |_| |       #
+#   | |_) / _ \/ _` |/ _` |   | | | '_ \| / __| |  _ \| | __| |       #
+#   |    {  __/ (_| | (_| |   | | | | | | \__ \ | |_) | | |_|_|       #
+#   |_| \_\___|\__,_|\__,_|   |_| |_| |_|_|___/ |____/|_|\__(_)       #
 #                                                                     #
 # When choosing a server, be sure to choose one which will do a       #
 # RECURSIVE LOOKUP. InspIRCd's resolver does not currently do these   #
@@ -597,11 +751,14 @@
 # resolv.conf file. Remember that an ipv4 dns server can still        #
 # resolve ipv6 addresses, and vice versa.                             #
 #                                                                     #
-
-<dns server="127.0.0.1" timeout="5">
+dns {
+	server "127.0.0.1";
+	timeout 5;
+};
 
 # An example of using an IPV6 nameserver
-#<dns server="::1" timeout="5">
+# dns { server "::1";  timeout "5"; };
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#  PID FILE  -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -612,8 +769,9 @@
 # relative to the configuration directory, and if it is not defined,  #
 # the default of 'inspircd.pid' is used.                              #
 #                                                                     #
+#pid { file "/path/to/inspircd.pid";  };
 
-#<pid file="/path/to/inspircd.pid">
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#- BANLIST LIMITS #-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -624,9 +782,20 @@
 # bottom of the list. If none are specified or no maxbans tag is      #
 # matched, the banlist size defaults to 64 entries.                   #
 #                                                                     #
+banlist "#morons" {
+	limit 128;
+};
+banlist {
+	chan "*";
+	limit 69;
+};
+#
+# Note that you can do either:
+# banlist "#channel" { ... };
+# OR
+# banlist { chan "#channel"; ... };
 
-<banlist chan="#morons" limit="128">
-<banlist chan="*" limit="69">
+
 
 #-#-#-#-#-#-#-#-#-#-#-  DISABLED COMMANDS  -#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -637,16 +806,18 @@
 # 'registered' (e.g. after the initial USER/NICK/PASS on connection)  #
 # so for example disabling NICK will not cripple your network.        #
 #                                                                     #
+#disabled { commands "TOPIC MODE";  };
 
-#<disabled commands="TOPIC MODE">
+
 
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-  RTFM LINE  -#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 #   Just remove this... Its here to make you read ALL of the config   #
 #   file options ;)                                                   #
-
-<die value="You should probably edit your config *PROPERLY* and try again.">
+die {
+	value "You should probably edit your config *PROPERLY* and try again.";
+};
 
 
 
@@ -863,42 +1034,43 @@
 #                  is totally freeform, you may place any text here   #
 #                  you wish.                                          #
 #                                                                     #
+options {
+	prefixquit "Quit: ";
+	loglevel "default";
+	netbuffersize "10240";
+	maxwho "128";
+	noservices "no";
+	qaprefixes "yes";
+	deprotectself "yes";
+	deprotectothers "yes";
+	somaxconn "128";
+	softlimit "12800";
+	userstats "Pu";
+	operspywhois "yes";
+	customversion "";
+	maxtargets "20";
+	hidesplits "no";
+	hidebans "no";
+	hidewhois "";
+	flatlinks "no";
+	hideulines "no";
+	nouserdns "no";
+	syntaxhints "no";
+	cyclehosts "yes";
+	ircumsgprefix "no";
+	announcets "yes";
+	disablehmac "no";
+	hostintopic "yes";
+	hidemodes "eI";
+	quietbursts "yes";
+	pingwarning "15";
+	allowhalfop "yes";
+	defaultmodes "";
+	moronbanner "You're banned! Email haha@abuse.com with the ERROR line below for help.";
+	exemptchanops "";  
+};
 
-<options prefixquit="Quit: "
-         loglevel="default"
-         netbuffersize="10240"
-         maxwho="128"
-         noservices="no"
-         qaprefixes="yes"
-         deprotectself="yes"
-         deprotectothers="yes"
-         somaxconn="128"
-         softlimit="12800"
-         userstats="P"
-         operspywhois="yes"
-         customversion=""
-         maxtargets="20"
-         hidesplits="yes"
-         hidebans="yes"
-         hidewhois="*.efnet-ru.net"
-         flatlinks="yes"
-         hideulines="yes"
-         nouserdns="no"
-         syntaxhints="no"
-         cyclehosts="yes"
-         ircumsgprefix="no"
-         announcets="no"
-         disablehmac="no"
-         hostintopic="yes"
-         hidemodes="eI"
-         quietbursts="yes"
-         pingwarning="15"
-         allowhalfop="yes"
-		 defaultmodes="nt"
-		 announceinvites="yes"
-		 hidekills="no"
-		 moronbanner="IRC is not right, it's a privilege! You're banned! Email abuse@efnet-ru.net with the ERROR line below for help."
-		 exemptchanops="yes">
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#- TIME SYNC OPTIONS -#-#-#-#-#-#-#-#-#-#-#-#
 # Time sychronization options for m_spanningtree linking.             #
@@ -920,7 +1092,12 @@
 #                  only one server should have the master value set   #
 #                  to 'yes'.                                          #
 #                                                                     #
-<timesync enable="yes" master="no">
+timesync {
+	enable "no";
+	master "no";
+};
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-  WHOWAS OPTIONS   -#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -936,7 +1113,7 @@
 #                  be deleted first like a FIFO. A groupsize of 3 and #
 #                  a maxgroups of 5000 will allow for 5000 nicks to   #
 #                  be stored with a history of 3, thus giving a total #
-#                  of 3 * 5000 = 15000 entries. A setting of 0 dis-   #
+#                  of 3 * 5000   15000 entries. A setting of 0 dis-   #
 #                  ables whowas completely.                           #
 #                                                                     #
 # maxkeep        - The maximum time a nick is kept in the whowas list #
@@ -947,9 +1124,11 @@
 #                  are optional. Minimum is 1 hour, if less InspIRCd  #
 #                  will default back to 1 hour.                       #
 #                                                                     #
-<whowas groupsize="10"                                               
-        maxgroups="100000"                                           
-        maxkeep="3d">                                                
+#whowas { groupsize "10";                                             #
+#        maxgroups "100000";                                          #
+#        maxkeep "3d";  };"                                           #
+
+
 
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-  MODULE OPTIONS   -#-#-#-#-#-#-#-#-#-#-#-#-#
@@ -962,24 +1141,41 @@
 #  If you attempt to load a module outside of this location, either   #
 #  in the config, or via /LOADMODULE, you will receive an error.      #
 #                                                                     #
-#  You may use wildcards in a <module> tag to load all modules which  #
+#  By default, ALL modules are commented out. You must uncomment them #
+#  or add lines to your config to load modules. Please refer to       #
+#  http://www.inspircd.org/wiki/Modules_List for a list of modules and#
+#  each modules link for any additional conf tags they require.       #
+#                                                                     #
+#  You may use wildcards in a module{};  tag to load all modules which#
 #  match a glob pattern (e.g. m_sa????.so would load m_sajoin,        #
 #  m_sapart, m_saquit and m_sanick)                                   #
 #                                                                     #
-# To link servers to Sakura, you MUST load the m_spanningtree         #
+#    ____                _   _____ _     _       ____  _ _   _        #
+#   |  _ \ ___  __ _  __| | |_   _| |__ (_)___  | __ )(_) |_| |       #
+#   | |_) / _ \/ _` |/ _` |   | | | '_ \| / __| |  _ \| | __| |       #
+#   |  _  {  __/ (_| | (_| |   | | | | | | \__ \ | |_) | | |_|_|      #
+#   |_| \_\___|\__,_|\__,_|   |_| |_| |_|_|___/ |____/|_|\__(_)       #
+#                                                                     #
+# To link servers to InspIRCd, you MUST load the m_spanningtree       #
 # module, as shown below. If you DO NOT do this, server links will    #
 # NOT work at all. ie. The ports will NOT bind, and /connect will not #
 # work properly. This is by design, to allow for the implementation   #
 # of other linking protocols in modules in the future.                #
 
+
+
+
+#######################################################################
+#######################################################################
+#####################Unrealircd default Modules########################
+
+
+
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Spanning Tree module - allows linking of servers using the spanning
-# tree protocol (see the READ THIS BIT section above).
-#
-# eFNet note:
-#  You cannot link to the network without it
-#
-<module name="m_spanningtree.so">
+# Spanning Tree module - allows linking of servers using the spanning #
+# tree protocol (see the READ THIS BIT section above).		      #
+loadmodule "m_spanningtree.so";
+
 
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
@@ -989,9 +1185,10 @@
 # IMPORTANT:
 # Other modules such as m_cloaking.so and m_opermd5.so may rely on
 # this module being loaded to function.
-#
-<module name="m_md5.so">
-#
+loadmodule "m_md5.so";
+
+
+
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # SHA256 Module - Allows other modules to generate SHA256 hashes,
 # usually for cryptographic uses and security.
@@ -999,17 +1196,16 @@
 # IMPORTANT:
 # Other modules such as m_opermd5.so may rely on this module being
 # loaded to function.
-#
-#<module name="m_sha256.so">
+loadmodule "m_sha256.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Alias module: Allows you to define server-side command aliases
-# 
-# eFNet note:
-#  You need this
-#
-<module name="m_alias.so">
-#
+loadmodule "m_alias.so";
+
+
+
 #-#-#-#-#-#-#-#-#-#-#-  ALIAS DEFINITIONS  -#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 # If you have the m_alias.so module loaded, you may also define       #
@@ -1020,7 +1216,7 @@
 # text        -      The text to detect as the actual command line,   #
 #                    Cant contain spaces, but case insensitive.       #
 #                    You may have multiple aliases with the same      #
-#                    command name (text="" value), however the first  #
+#                    command name (text ""; value), however the first #
 #                    found will be executed if its format value is    #
 #                    matched, or it has no format value. Aliases are  #
 #                    read from the top of the file to the bottom.     #
@@ -1028,22 +1224,22 @@
 # format      -      If this is defined, the parameters of the alias  #
 #                    must match this glob pattern. For example if you #
 #                    want the first parameter to start with a # for   #
-#                    the alias to be executed, set format="#*" in the #
+#                    the alias to be executed, set format "#*"; in the#
 #                    alias definition. Note that the :'s which are    #
 #                    part of IRC formatted lines will be preserved    #
 #                    for matching of this text. This value is         #
 #                    optional.                                        #
 #                                                                     #
 # replace     -      The text to replace 'text' with. Usually this    #
-#                    will be "PRIVMSG ServiceName :$2-" or similar.   #
+#                    will be "PRIVMSG ServiceName :$2-"; or similar.  #
 #                    You may use the variables $1 through $9 in the   #
 #                    replace string, which refer to the first through #
 #                    ninth word in the original string typed by the   #
 #                    user. You may also use $1- through $9- which     #
 #                    refer to the first word onwards, through to the  #
 #                    ninth word onwards, e.g. if the user types the   #
-#                    command "foo bar baz qux quz" then $3- will hold #
-#                    "baz qux quz" and $2 will contain "bar". You may #
+#                    command "foo bar baz qux quz"; then $3- will hold#
+#                    "baz qux quz"; and $2 will contain "bar". You may#
 #                    also use the special variables: $nick, $ident,   #
 #                    $host and $vhost, and you may seperate multiple  #
 #                    commands with \n. If you wish to use the ACTUAL  #
@@ -1068,66 +1264,75 @@
 #                    oper attempts to use the alias, it will appear   #
 #                    to not exist.                                    #
 #                                                                     #
-# eFNet note:                                                         #
-#  You need this                                                      #
-#                                                                     #
-<alias text="NICKSERV" replace="PRIVMSG NickServ :$2-" requires="NickServ" uline="yes">
-<alias text="CHANSERV" replace="PRIVMSG ChanServ :$2-" requires="ChanServ" uline="yes">
-<alias text="OPERSERV" replace="PRIVMSG OperServ :$2-" requires="OperServ" uline="yes" operonly="yes">
-<alias text="NS" replace="PRIVMSG NickServ :$2-" requires="NickServ" uline="yes">
-<alias text="CS" replace="PRIVMSG ChanServ :$2-" requires="ChanServ" uline="yes">
-<alias text="OS" replace="PRIVMSG OperServ :$2-" requires="OperServ" uline="yes" operonly="yes">
-#
+alias {
+	text "ID";
+	replace "PRIVMSG NickServ :IDENTIFY $2";
+	requires "NickServ";
+	uline "yes";
+};
+alias {
+	text "NICKSERV";
+	replace "PRIVMSG NickServ :$2-";
+	requires "NickServ";
+	uline "yes";
+};
+alias {
+	text "CHANSERV";
+	replace "PRIVMSG ChanServ :$2-";
+	requires "ChanServ";
+	uline "yes";
+};
+alias {
+	text "OPERSERV";
+	replace "PRIVMSG OperServ :$2-";
+	requires "OperServ";
+	uline "yes";
+	operonly "yes";
+};
+alias {
+	text "NS";
+	replace "PRIVMSG NickServ :$2-";
+	requires "NickServ";
+	uline "yes";
+};
+alias {
+	text "CS";
+	replace "PRIVMSG ChanServ :$2-";
+	requires "ChanServ";
+	uline "yes";
+};
+alias {
+	text "OS";
+	replace "PRIVMSG OperServ :$2-";
+	requires "OperServ";
+	uline "yes";
+	operonly "yes";
+};
 # An example of using the format value to create an alias with two
 # different behaviours depending on the format of the parameters.
 #
-#<alias text="ID" format="#*" replace="PRIVMSG ChanServ :IDENTIFY $2 $3"
-#  requires="ChanServ" uline="yes">
-#
-#<alias text="ID" replace="PRIVMSG NickServ :IDENTIFY $2"
-#  requires="NickServ" uline="yes">
-#
-# This alias fixes a glitch in xchat 2.6.x and above and the way it
-# assumes IDENTIFY must be prefixed by a colon (:) character. It should
-# be placed ABOVE the default NICKSERV alias (the first example) listed
-# above.
-#
-#<alias text="NICKSERV" format=":IDENTIFY *" replace="PRIVMSG NickServ :IDENTIFY $3-"
-#  requires="NickServ" uline="yes">
+#alias { text "ID"; format "#*";replace "PRIVMSG ChanServ :IDENTIFY $2 $3"
+#  requires "ChanServ"; uline "yes"; };
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Alltime module: Shows time on all connected servers at once
-#<module name="m_alltime.so">
+#
+#alias { text "NICKSERV"; format ":IDENTIFY *"; replace "PRIVMSG NickServ :IDENTIFY $3-"
+#  requires "NickServ"; uline "yes"; };
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Antibear security module: Prevents 'bear.txt' based trojans from
-# connecting to your network by sending them a numeric they can't handle.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_antibear.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Antibottler module: Labels bottler leech bots
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_antibottler.so">
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Auditorium module: Adds channel mode +u which makes everyone else
 # except you in the channel invisible, used for large meetings etc.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_auditorium.so">
+
+loadmodule "m_auditorium.so";
+
 #
 # Auditorium settings:
 #
-<auditorium showops="yes">
+auditorium {
+	showops "yes";
+};
 #
 # Setting this value to yes makes m_auditorium behave like unrealircd
 # +u channel mode, e.g. ops see users joining, parting, etc, and users
@@ -1136,35 +1341,680 @@
 # names list, and not even showing the ops in the list, or showing the
 # ops that the user has joined.
 
+
+
+
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Ban except module: Adds support for channel ban exceptions (+e)
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_banexception.so">
+loadmodule "m_banexception.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Ban redirection module: Allows bans which redirect to a specified
 # channel. e.g. +b nick!ident@host#channelbanneduserissentto
+loadmodule "m_banredirect.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Block colour module: Blocking colour-coded messages with cmode +c
+loadmodule "m_blockcolor.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Botmode module: Adds the user mode +B
+loadmodule "m_botmode.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Censor module: Adds the channel mode +G
+loadmodule "m_censor.so";
 #
-# eFNet note:
-#  You need this
+#-#-#-#-#-#-#-#-#-#-#-  CENSOR  CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# Optional - If you specify to use the m_censor module, then you must #
+# specify some censor tags. See also:                                 #
+# http://www.inspircd.org/wiki/Censor_Module                          #
 #
-<module name="m_banredirect.so">
+#include { file "censor.conf";  };
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Channel filter module: Allows channel-op defined message
+# filtering using simple string matches (channel mode +g)
+loadmodule "m_chanfilter.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Chanprotect module: gives +q and +a channel modes
+loadmodule "m_chanprotect.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# CHGHOST module: Adds the /CHGHOST command
+loadmodule "m_chghost.so";
+#
+#-#-#-#-#-#-#-#-# /CHGHOST - /SETHOST  CONFIGURATION #-#-#-#-#-#-#-#-#
+# Optional - If you want to use special chars for hostnames you can  #
+# specify your own custom list of chars with the hostname{};  tag:     #
+#                                                                    #
+# charmap        - A list of chars accepted as valid by the /CHGHOST #
+#                  and /SETHOST commands. Also note that the list is # 
+#                  case-sensitive.                                   #
+#hostname { charmap "abcdefghijklmnopqrstuvwxyz.-_/0123456789";  };
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# CHGIDENT module: Adds the /CHGIDENT command
+loadmodule "m_chgident.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# CHGNAME module: Adds the /CHGNAME command
+loadmodule "m_chgname.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Cloaking module: Adds usermode +x and cloaking support.
+# Relies on the module m_md5.so being loaded before m_cloaking.so in
+# the configuration file.
+loadmodule "m_cloaking.so";
+#
+#-#-#-#-#-#-#-#-#-#-#- CLOAKING  CONFIGURATION -#-#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# Optional - If you specify the m_cloaking.so module as above, you    #
+# must define cloak keys, and optionally a cloak prefix as shown      #
+# below. When using cloaking, the cloak keys are MANDITORY and must   #
+# be included. However, if prefix is not included, it will default    #
+# to your networks name from the server{};  tag.                      #
+#                                                                     #
+# cloak { key1 "0x2AF39F40";                                          #
+#        key2 "0x78E10B32";                                           #
+#        key3 "0x4F2D2E82";                                           #
+#        key4 "0x043A4C81";                                           #
+#        prefix "mynet";  };                                          #
+#                                                                     #
+# Please note that the key values will accept any number, and should  #
+# be large numbers. Using small numbers such as "7"; or "1924";will   #
+# seriously weaken the security of your cloak. It is recommended you  #
+# use hexdecimal numbers prefixed by "0x", as shown in this example,  #
+# with each key eight hex digits long.                                #
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Conn-Join: Allows you to force users to join one or more channels
+# automatically upon connecting to the server.
+loadmodule "m_conn_join.so";
+#
+#-#-#-#-#-#-#-#-#-#-#-#- CONNJOIN CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
+#
+# If you have m_conn_join.so loaded, you can configure it using the
+# follow values:
+#
+#autojoin { channel "#one,#two,#three";  };
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Conn-Usermodes: Set modes on users when they connect
+# When this module is loaded connect:allow{};  tags may have an optional
+# modes ""; value, which contains modes to add or remove from users
+# when they connect to the server.
+loadmodule "m_conn_umodes.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Conn-Wait-for-Pong: Don't let a user connect until they PONG
+loadmodule "m_conn_waitpong.so";
+#
+#-#-#-#-#-#-#-#-#-#-#-   WAITPONG CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# If you have the m_conn_waitpong.so module loaded, configure it with #
+# the waitpong{};  tag:                                               #
+#                                                                     #
+# sendsnotice    -   Whether to send a snotice on connect, like other #
+#                    older ircds                                      #
+#                                                                     #
+# killonbadreply -   Whether to kill the user if they send the wrong  #
+#                    PONG reply.                                      #
+#                                                                     #
+waitpong {
+	sendsnotice "yes";
+	killonbadreply "yes";
+};
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Channel cycle module. Server side /hop, with +ilk etc bypass.
+loadmodule "m_cycle.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Connection throttle module. Configuration:
+loadmodule "m_connflood.so";
+#
+#-#-#-#-#-#-#-#-#-#-#- CONTHROTTLE CONFIGURATION -#-#-#-#-#-#-#-#-#-#-#
+#  seconds, maxconns -  Amount of connections per <seconds};.
+#
+#  timeout           -  Time to wait after the throttle was activated
+#                       before deactivating it. Be aware that the time
+#                       is seconds + timeout.
+#
+#  quitmsg           -  The message that users get if they attempt to
+#                       connect while the throttle is active.
+#
+#  bootwait          -  Amount of time to wait before enforcing the
+#                       throttling when the server just booted.
+#
+connflood {
+	seconds 30;
+	maxconns 3;
+	timeout 30;
+	quitmsg "Throttled";
+	bootwait 10;
+};
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Deaf module: adds support for ircu style usermode +d - deaf to
+# channel messages and channel notices.
+loadmodule "m_deaf.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Deny Channels: Deny Channels from being used by users
+loadmodule "m_denychans.so";
+#
+#-#-#-#-#-#-#-#-#-#-#-   DENYCHAN DEFINITIONS  -#-#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# If you have the m_denychans.so module loaded, you need to specify   #
+# the channels to deny:                                               #
+#                                                                     #
+# name        -      The channel name to deny.                        #
+#                                                                     #
+# allowopers  -      If operators are allowed to override the deny.   #
+#                                                                     #
+# reason      -      Reason given for the deny.                       #
+#                                                                     #
+badchan {
+	name "#gods";
+	allowopers "yes";
+	reason "Tortoises!";
+};
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Filter module: Provides glob-based message filtering
+loadmodule "m_filter.so";
+# OR
+# PCRE filter module: Filters messages using regular expressions
+#loadmodule "m_filter_pcre.so";
+#
+# You may only use one or the other with these modules, network-wide.
+#
+#-#-#-#-#-#-#-#-#-#-#-  FILTER  CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# Optional - If you specify to use the m_filter or m_filter_pcre      #
+# modules, then specfiy below the path to the filter.conf file,       #
+# or define some filter{};  tags.                                       #
+#                                                                     #
+#include { file "filter.conf";  };
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Globops module: gives /GLOBOPS and usermode +g
+loadmodule "m_globops.so";
+
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# HELPOP module: Provides the /HELPOP command
+#loadmodule "m_helpop.so";
+#
+#-#-#-#-#-#-#-#-#-#-#-#-  HELPOP  CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# Optional - If you specify to use the m_helpop.so module, then       #
+# specify below the path to the helpop.conf file, or if you like to   #
+# make a mess, define your helpop tags in this conf.                  #
+#                                                                     #
+#include { file "helpop.conf";  };
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# HIDECHANS module: Allows opers to hide their channels list from non-
+# opers by setting user mode +I on themselves.
+loadmodule "m_hidechans.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# HIDEOPER module: Allows opers to hide their oper status from non-
+# opers by setting user mode +H on themselves.
+loadmodule "m_hideoper.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Ident: Provides RFC 1413 ident lookup support
+loadmodule "m_ident.so";
+#
+#-#-#-#-#-#-#-#-#-#-#-#-   IDENT CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# Optional - If you are using the m_ident.so module, then you can     #
+# specify the timeout for ident lookups here. If not defined, it will #
+# default to one second. This is a non-blocking timeout which holds   #
+# the user in a 'connecting' state until the lookup is complete.      #
+# The bind value indicates which IP to bind outbound requests to.     #
+#                  
+ident {
+	timeout 5;
+	bind "";
+};
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Join flood module: Adds support for join flood protection (+j)
+loadmodule "m_joinflood.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Knock module: adds the /KNOCK command and +K channel mode
+loadmodule "m_knock.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Msg flood module: Adds message/notice flood protection (+f)
+loadmodule "m_messageflood.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# NAMESX module: Provides support for the NAMESX extension which allows
+# clients to see all the prefixes set on a user without getting confused.
+# This is supported by mIRC, x-chat, klient, and maybe more.
+loadmodule "m_namesx.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# No ctcp module: Adds the channel mode +C to block CTCPs
+loadmodule "m_noctcp.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# No kicks module: Adds the +Q channel mode
+loadmodule "m_nokicks.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# No nicks module: Adds the +N channel mode
+loadmodule "m_nonicks.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# No Notice module: adds the channel mode +T
+loadmodule "m_nonotice.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Oper channels mode: Adds the +O channel mode
+loadmodule "m_operchans.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Oper hash module: Allows hashed oper passwords
+# Relies on the module m_md5.so and/or m_sha256.so being loaded before
+# m_oper_hash.so in the configuration file.
+loadmodule "m_oper_hash.so";
+#
+#-#-#-#-#-#-#-#-#-#-# OPER HASH CONFIGURATION #-#-#-#-#-#-#-#-#-#-#-#-#
+#
+# To use this module, you must define a hash type for each oper's
+# password you want to hash. For example:
+#
+#     oper { name "Brain"
+#           host "ident@dialup15.isp.com"
+#           hash "sha256"
+#           password "a41d730937a53b79f788c0ab13e9e1d5"
+#           type "NetAdmin";  };
+# 
+# The types of hashing available vary depending on which hashing modules
+# you load, but usually if you load m_sha256.so and m_md5.so, both md5
+# and sha256 type hashing will be available (the most secure of which
+# is SHA256).
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Oper Join module: Forces opers to join a channel on oper-up
+loadmodule "m_operjoin.so";
+#
+#-#-#-#-#-#-#-#-#-#-#   OPERJOIN CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# If you are using the m_operjoin.so module, specify the channel here #
+#                            
+operjoin { 
+	channel "#opers";  
+};
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Oper MOTD module: Provides support for seperate message of the day
+# on oper-up
+loadmodule "m_opermotd.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Override module: Adds support for oper override
+loadmodule "m_override.so";
+#
+#-#-#-#-#-#-#-#-#-#-#   OVERRIDE CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# m_override.so is too complex it describe here, see the wiki:        #
+# http://www.inspircd.org/wiki/Oper_Override_Module                   #
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Oper modes module: Allows you to specify modes to add/remove on oper
+# Specify the modes as the 'modes' parameter of the type{};  tag
+loadmodule "m_opermodes.so";
+
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Redirect module: Adds channel redirection (mode +L)
+#loadmodule "m_redirect.so";
+
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Registered users only channel creation
+# Allows only registered users and opers to create new channels.
+#loadmodule "m_regonlycreate.so";
+
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Remove module: Adds the /REMOVE command which is a peaceful
+# alternative to /KICK
+#loadmodule "m_remove.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Restrict banned users module:
+# Disallows banned users on a channel from messaging the channel,
+# changing nick, or changing the topic, if loaded.
+loadmodule "m_restrictbanned.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SAJOIN module: Adds the /SAJOIN command
+loadmodule "m_sajoin.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SAMODE module: Adds the oper /SAMODE command
+loadmodule "m_samode.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SANICK module: Allows opers to change user's nicks
+loadmodule "m_sanick.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SAPART module: Adds the oper /SAPART command
+loadmodule "m_sapart.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SAQUIT module: Adds the oper /SAQUIT command (abusable!!!)
+loadmodule "m_saquit.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# See nicks module: Allow for SNOMASK +N which shows nick changes.
+loadmodule "m_seenicks.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Services support module: Adds several usermodes such as +R and +M
+# this module implements the 'identified' state via user mode +r, which
+# is similar to the DALnet and dreamforge systems.
+#loadmodule "m_services.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Services support module: Adds several usermodes such as +R and +M
+# this module implements the 'identified' state via account names (AC)
+# and is similar in operation to the way asuka and ircu handle services.
+# it cannot be used at the same time as m_services, above.
+#loadmodule "m_services_account.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Sethost module: Adds the /SETHOST command
+# See m_chghost for how to customise valid chars for hostnames
+loadmodule "m_sethost.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Setident module: Adds the /SETIDENT command
+loadmodule "m_setident.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SETNAME module: Adds the /SETNAME command
+loadmodule "m_setname.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Show Whois module: Adds the +W usermode which allows opers
+# to see when they are whois'ed (can be annoying).
+loadmodule "m_showwhois.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Dummy ssl module: If you have other servers on your network which
+# have SSL, but your server does not have ssl enabled, you should load
+# this module, which will handle SSL metadata (e.g. the "Is using ssl"
+# field in the WHOIS information).
+#loadmodule "m_ssl_dummy.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# GnuTLS ssl module: Adds support for client-server SSL using GnuTLS,
+# if enabled. You must copy the source for this module from the directory
+# src/modules/extra, or answer 'yes' in ./configure when asked if you
+# want to enable this, or it will not load.
+loadmodule "m_ssl_gnutls.so";
+#
+#-#-#-#-#-#-#-#-#-#-#-  GNUTLS CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# m_ssl_gnutls.so is too complex it describe here, see the wiki:      #
+# http://www.inspircd.org/wiki/GnuTLS_SSL_Module                      #
+#                                                                     #
+# NOTE: If you want to use this module to encrypt and sign your       #
+# server to server traffic, you MUST load it before m_spanningtree in #
+# your configuration file!                                            #
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Strip colour module: Adds the channel mode +S
+loadmodule "m_stripcolor.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SILENCE module: Adds support for /SILENCE
+loadmodule "m_silence.so";
+#
+# Configuration tags:
+#
+silence { 
+	maxentries 32;
+};
+#
+# Sets the maximum number of entries on a users silence list.
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Extended SILENCE module: Adds support for /SILENCE with additional
+# features to silence based on invites, channel messages, etc.
+#loadmodule "m_silence_ext.so";
+#
+# The configuration tags for this module are identical to those of
+# m_silence, shown above.
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SVSHold module: Implements SVSHOLD. Like Q:Lines, but can only be   #
+# added/removed by Services.                                          #
+loadmodule "m_svshold.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SWHOIS module: Allows you to add arbitary lines to user WHOIS.
+loadmodule "m_swhois.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# UHNAMES support module: Adds support for the IRCX style UHNAMES
+# extension, which displays ident and hostname in the names list for
+# each user, saving clients from doing a WHO on the channel. Note that
+# this module is not widely supported yet. If a client does not support
+# UHNAMES it will not enable it, this will not break incompatible
+# clients.
+loadmodule "m_uhnames.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Invite except module: Adds support for channel invite exceptions (+I)
+#loadmodule "m_inviteexception.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Uninvite module: Adds the /UNINVITE command which lets users remove
+# pending invites from channels without waiting for the user to join.
+loadmodule "m_uninvite.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Userip module: Adds the /USERIP command
+loadmodule "m_userip.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Vhost module: Adds the VHOST command which allows for adding virtual
+# hosts which are accessible using a username and password in the config.
+#loadmodule "m_vhost.so";
+#
+#-#-#-#-#-#-#-#-#-#-#- VHOST CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# user       - Username for the vhost.                                #
+#                                                                     #
+# pass       - Password for the vhost.                                #
+#                                                                     #
+# host       - Vhost to set.                                          #
+#
+#vhost { user "some_username"; pass "some_password";host "some.host"; };
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# ZipLinks module: Adds support for zlib deflate on server to server
+# connections. Both ends of the connection must load this module.
+#
+#loadmodule "m_ziplink.so";
+#
+# To use this module, you must enable it as a transport type in your
+# link{};  tags or bind{};  tags using the transport name 'zip'.
+# See the documentation of link{};  and bind};, { respectively.
+#
+
+
+
+#######################################################################
+#######################################################################
+########################Optional Modules###############################
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Alltime module: Shows time on all connected servers at once
+#loadmodule "m_alltime.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Antibear security module: Prevents 'bear.txt' based trojans from
+# connecting to your network by sending them a numeric they can't handle.
+#loadmodule "m_antibear.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Block amsg module: Attempt to block all usage of /amsg and /ame
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_blockamsg.so">
+#loadmodule "m_blockamsg.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-  BLOCKAMSG CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 # If you have the m_blockamsg.so module loaded, you can configure it  #
-# with the <blockamsg> tag:                                           #
+# with the blockamsg{};  tag:                                           #
 #                                                                     #
 # delay          -   How many seconds between two messages to force   #
 #                    them to be recognised as unrelated.              #
@@ -1172,15 +2022,19 @@
 #                    or 'killopers'. Define how to take action when   #
 #                    a user uses /amsg or /ame.                       #
 #
-<blockamsg delay="3" action="notice">
+#blockamsg { delay "3"; action "killopers"; };
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Antibottler module: Labels bottler leech bots
+#loadmodule "m_antibottler.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Block CAPS module: Blocking all-CAPS messages with cmode +P
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_blockcaps.so">
+#loadmodule "m_blockcaps.so";
 #                                                                     #
 #-#-#-#-#-#-#-#-#-#-#-  BLOCKCAPS CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -1194,62 +2048,41 @@
 #                  you can add CAPS for your language. Also you can   #
 #                  add things like ! and space to further lock down   #
 #                  on caps usage.                                     #
-<blockcaps percent="50"
-           minlen="5"
-           capsmap="ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÜÛÚÝÞß! ">
+#blockcaps { percent "50"
+#           minlen "5"
+#           capsmap "ABCDEFGHIJKLMNOPQRSTUVWXYZ! ";  };
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Block colour module: Blocking colour-coded messages with cmode +c
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_blockcolor.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Botmode module: Adds the user mode +B
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_botmode.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # CBAN module: Lets you disallow channels from being used at runtime.
-#<module name="m_cban.so">
+#loadmodule "m_cban.so";
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Censor module: Adds the channel mode +G
-#<module name="m_censor.so">
-#
-#-#-#-#-#-#-#-#-#-#-#-  CENSOR  CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# Optional - If you specify to use the m_censor module, then you must #
-# specify some censor tags.                                           #
-#<include file="censor.conf">
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # CGI:IRC module: Adds support for automatic host changing in CGI:IRC
 # (http://cgiirc.sourceforge.net).
-#<module name="m_cgiirc.so">
+#loadmodule "m_cgiirc.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-# CGIIRC  CONFIGURATION #-#-#-#-#-#-#-#-#-#-#-#-#
 #
 # Optional - If you specify to use m_cgiirc, then you must specify one
 # or more cgihost tags which indicate authorized CGI:IRC servers which
 # will be connecting to your network, and an optional cgiirc tag.
+# For more information see: http://www.inspircd.org/wiki/CGI-IRC_Module
 #
 # Set to yes if you want to notice opers when CGI clients connect
-# <cgiirc opernotice="no">
+# cgiirc { opernotice "no";  };
 #
 # The type field indicates where the module should get the real
 # client's IP address from, for further information, please see the
 # CGI:IRC documentation.
 #
-# <cgihost type="pass" mask="www.mysite.com">       # Get IP from PASS
-# <cgihost type="webirc" mask="somebox.mysite.com"> # Get IP from WEBIRC
-# <cgihost type="ident" mask="otherbox.mysite.com"> # Get IP from ident
-# <cgihost type="passfirst" mask="www.mysite.com">  # See the docs
+# cgihost { type "pass"; mask "www.mysite.com"; };"       # Get IP from PASS
+# cgihost { type "webirc"; mask "somebox.mysite.com"; };" # Get IP from WEBIRC
+# cgihost { type "ident"; mask "otherbox.mysite.com"; };" # Get IP from ident
+# cgihost { type "passfirst"; mask "www.mysite.com"; };"  # See the docs
 #
 # IMPORTANT NOTE:
 # ---------------
@@ -1266,208 +2099,33 @@
 #
 
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Channel create module: Adds snomask +j, which will notify opers of
-# any new channels that are created
-#<module name="m_chancreate.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Channel filter module: Allows channel-op defined message
-# filtering using simple string matches (channel mode +g)
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_chanfilter.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Chanprotect module: gives +q and +a channel modes
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_chanprotect.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Check module: gives /check
 # Check is useful for looking up information on channels,
 # users, IP addresses and hosts.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_check.so">
+#loadmodule "m_check.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# CHGHOST module: Adds the /CHGHOST command
-#
-# eFNet note:
-#  You don't need this!!!
-#
-#<module name="m_chghost.so">
-#
-#-#-#-#-#-#-#-#-# /CHGHOST - /SETHOST  CONFIGURATION #-#-#-#-#-#-#-#-#
-# Optional - If you want to use special chars for hostnames you can  #
-# specify your own custom list of chars with the <hostname> tag:     #
-#                                                                    #
-# charmap        - A list of chars accepted as valid by the /CHGHOST #
-#                  and /SETHOST commands. Also note that the list is # 
-#                  case-sensitive.                                   #
-#<hostname charmap="abcdefghijklmnopqrstuvwxyz.-_/0123456789">
+# Channel create module: Adds snomask +j, which will notify opers of
+# any new channels that are created
+#loadmodule "m_chancreate.so";
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# CHGIDENT module: Adds the /CHGIDENT command
-#<module name="m_chgident.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# CHGNAME module: Adds the /CHGNAME command
-#<module name="m_chgname.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Cloaking module: Adds usermode +x and cloaking support.
-# Relies on the module m_md5.so being loaded before m_cloaking.so in
-# the configuration file.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_cloaking.so">
-#
-#-#-#-#-#-#-#-#-#-#-#- CLOAKING  CONFIGURATION -#-#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# Optional - If you specify the m_cloaking.so module as above, you    #
-# must define cloak keys, and optionally a cloak prefix as shown      #
-# below. When using cloaking, the cloak keys are MANDITORY and must   #
-# be included. However, if prefix is not included, it will default    #
-# to your networks name from the <server> tag.                        #
-#                                                                     #
-# <cloak key1="0x2AF39F40"                                            #
-#        key2="0x78E10B32"                                            #
-#        key3="0x4F2D2E82"                                            #
-#        key4="0x043A4C81"                                            #
-#        prefix="mynet">                                              #
-#                                                                     #
-# Please note that the key values will accept any number, and should  #
-# be large numbers. Using small numbers such as "7" or "1924" will    #
-# seriously weaken the security of your cloak. It is recommended you  #
-# use hexdecimal numbers prefixed by "0x", as shown in this example,  #
-# with each key eight hex digits long.                                #
-#
-# eFNet note:
-#  Don't change this!!! Or you will be permamently delinked!
-#
- <cloak key1="0x30A9B10C"                                            
-        key2="0x62AF422"                                            
-        key3="0x2EF1B00A"                                            
-        key4="0x1BC5F41D"                                            
-        prefix="eFNet">                                              
-
-#-#-#-#-#-#-#-#-#-#-#-#- CLOSE MODULE #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Close module: Allows an oper to close all unregistered connections.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_close.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Clones module: Adds an oper command /CLONES for detecting cloned
 # users. Warning: This module may be resource intensive when its
 # command is issued, use with care.
-#<module name="m_clones.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Conn-Join: Allows you to force users to join one or more channels
-# automatically upon connecting to the server.
-#
-# eFNet note:
-#  It isn't compatiable with CGI:IRC!!! Use with care!!!
-#
-#<module name="m_conn_join.so">
-#
-#-#-#-#-#-#-#-#-#-#-#-#- CONNJOIN CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
-#
-# If you have m_conn_join.so loaded, you can configure it using the
-# follow values:
-#
-#<autojoin channel="#help,#chat">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Conn-Usermodes: Set modes on users when they connect
-# When this module is loaded <connect:allow> tags may have an optional
-# modes="" value, which contains modes to add or remove from users
-# when they connect to the server.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_conn_umodes.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Conn-Wait-for-Pong: Don't let a user connect until they PONG
-#<module name="m_conn_waitpong.so">
-#
-#-#-#-#-#-#-#-#-#-#-#-   WAITPONG CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# If you have the m_conn_waitpong.so module loaded, configure it with #
-# the <waitpong> tag:                                                 #
-#                                                                     #
-# sendsnotice    -   Whether to send a snotice on connect, like other #
-#                    older ircds                                      #
-#                                                                     #
-# killonbadreply -   Whether to kill the user if they send the wrong  #
-#                    PONG reply.                                      #
-#                                                                     #
-#<waitpong sendsnotice="yes" killonbadreply="yes">
+#loadmodule "m_clones.so";
 
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Channel cycle module. Server side /hop, with +ilk etc bypass.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_cycle.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Connection throttle module. Configuration:
-#<module name="m_connflood.so">
-#
-#-#-#-#-#-#-#-#-#-#-#- CONTHROTTLE CONFIGURATION -#-#-#-#-#-#-#-#-#-#-#
-#  seconds, maxconns -  Amount of connections per <seconds>.
-#
-#  timeout           -  Time to wait after the throttle was activated
-#                       before deactivating it. Be aware that the time
-#                       is seconds + timeout.
-#
-#  quitmsg           -  The message that users get if they attempt to
-#                       connect while the throttle is active.
-#
-#  bootwait          -  Amount of time to wait before enforcing the
-#                       throttling when the server just booted.
-#
-#<connflood seconds="30" maxconns="3" timeout="30"
-#   quitmsg="Throttled" bootwait="10">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Custom title module: Adds the /TITLE command which allows for trusted
-#                      users to gain a custom whois line and a optional
-#                      vhost can be specified.
-#<module name="m_customtitle.so">
-#
-#-#-#-#-#-#-#-#-#-#-  CUSTOM TITLE CONFIGURATION   -#-#-#-#-#-#-#-#-#-#
-#  name              - The username used to identify 
-#  password          - The password used to identify
-#  host              - Allowed hostmask [optional]
-#  title             - Title shown in whois
-#  vhost             - Displayed host [optional]
-#
-#<title name="foo" password="bar" title="Official Chat Helper">
-#<title name="bar" password="foo" host="ident@host.name" title="Official Chat Helper" vhost="helper.network.chat">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # DCCALLOW module: Adds the /DCCALLOW command
-#<module name="m_dccallow.so">
+#loadmodule "m_dccallow.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-  DCCALLOW CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#
 #  blockchat         - Whether to block DCC CHAT as well as DCC SEND
@@ -1480,187 +2138,83 @@
 #  action            - Action to take if a user attempts to send a file
 #                      that matches this pattern, can be 'block' or 'allow'
 #
-#<dccallow blockchat="yes" length="5m" action="block">
-#<banfile pattern="*.exe" action="block">
-#<banfile pattern="*.txt" action="allow">
+#dccallow { blockchat "yes"; length "5m";action "block"; };
+#banfile { pattern "*.exe"; action "block"; };
+#banfile { pattern "*.txt"; action "allow"; };
 #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Deaf module: adds support for ircu style usermode +d - deaf to
-# channel messages and channel notices.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_deaf.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Deny Channels: Deny Channels from being used by users
-#<module name="m_denychans.so"> 
-#
-#-#-#-#-#-#-#-#-#-#-#-   DENYCHAN DEFINITIONS  -#-#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# If you have the m_denychans.so module loaded, you need to specify   #
-# the channels to deny:                                               #
-#                                                                     #
-# name        -      The channel name to deny.                        #
-#                                                                     #
-# allowopers  -      If operators are allowed to override the deny.   #
-#                                                                     #
-# reason      -      Reason given for the deny.                       #
-#                                                                     #
-#<badchan name="#gods" allowopers="yes" reason="Tortoises!">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Devoice Module: Let users devoice themselves.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_devoice.so">
+#loadmodule "m_devoice.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # DNS Blacklist Module: Provides support for looking up IPs on one or #
 # more blacklists.                                                    #
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_dnsbl.so">
-
-<dnsbl name="Tor sectoor.de"
-       domain="tor.dnsbl.sectoor.de"
-       action="GLINE"
-       reason="Tor exit server detected. Please visit http://www.sectoor.de/tor.php?ip=%ip% for more information."
-       duration="1h"
-       bitmask="1">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Filter module: Provides glob-based message filtering
-#<module name="m_filter.so">
-# OR
-# PCRE filter module: Filters messages using regular expressions
-#<module name="m_filter_pcre.so">
-#
-# You may only use one or the other with these modules, network-wide.
-#
-#-#-#-#-#-#-#-#-#-#-#-  FILTER  CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#-#
+#loadmodule "m_dnsbl.so";"                                            #
 #                                                                     #
-# Optional - If you specify to use the m_filter or m_filter_pcre      #
-# modules, then specfiy below the path to the filter.conf file,       #
-# or define some <filter> tags.                                       #
-#                                                                     #
-#<include file="filter.conf">
+# For configuration options please see the wiki page for m_dnsbl at   #
+# http://inspircd.org/wiki/DNS_Blacklist_Module                       #
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Foobar module: does nothing - historical relic
-#<module name="m_foobar.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Globops module: gives /GLOBOPS and usermode +g
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_globops.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Global load module: Allows loading and unloading of modules network-
 # wide (USE WITH EXTREME CAUTION!)
-#<module name="m_globalload.so">
+#loadmodule "m_globalload.so";
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# HELPOP module: Provides the /HELPOP command
-#<module name="m_helpop.so">
-#
-#-#-#-#-#-#-#-#-#-#-#-#-  HELPOP  CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# Optional - If you specify to use the m_helpop.so module, then       #
-# specify below the path to the helpop.conf file, or if you like to   #
-# make a mess, define your helpop tags in this conf.                  #
-#                                                                     #
-#<include file="helpop.conf">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# HIDECHANS module: Allows opers to hide their channels list from non-
-# opers by setting user mode +I on themselves.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_hidechans.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# HIDEOPER module: Allows opers to hide their oper status from non-
-# opers by setting user mode +H on themselves.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_hideoper.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Hostchange module: Allows a different style of cloaking
-#<module name="m_hostchange.so">
+#loadmodule "m_hostchange.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-  HOSTCHANGE  CONFIGURATION  -#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 # Optional - If you choose to use the m_hostchange.so module.         #
+# Config Help -  See http://www.inspircd.org/wiki/Host_Changer_Module #
 #                                                                     #
-#<host suffix="polarbears.org" separator="." prefix="">
-#<hostchange mask="*@fbi.gov" action="addnick">
-#<hostchange mask="*r00t@*" action="suffix">
-#<hostchange mask="a@b.com" action="set" value="blah.blah.blah">
+#host { suffix "polarbears.org"; separator ".";prefix ""; };
+#hostchange { mask "*@fbi.gov"; action "addnick"; };
+#hostchange { mask "*r00t@*"; action "suffix"; };
+#hostchange { mask "a@b.com"; action "set";value "blah.blah.blah"; };
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # httpd module: Provides http server support for InspIRCd
-#<module name="m_httpd.so">
+#loadmodule "m_httpd.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-#-  HTTPD   CONFIGURATION  -#-#-#-#-#-#-#-#-#-#-#
 #
 # Optional - If you choose to use the m_httpd.so module,  then you must
 # specify the port number and other details of your http server:
 #
-#<http ip="192.168.1.10" host="brainwave" port="32006"
-#      index="/home/brain/inspircd/http/index.html">
+#http { ip "192.168.1.10"; host "brainwave";port "32006"
+#      index "/home/brain/inspircd/http/index.html";  };
 #
 # You may have as many of these tags as you wish, each with a different
 # IP, port, host or index file. Each one will act as an independent
 # HTTP server.
 #
 
+
+
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # http stats module: Provides basic stats pages over HTTP
 # Requires m_httpd.so to be loaded for it to function.
-#<module name="m_httpd_stats.so">
+#loadmodule "m_httpd_stats.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-#- HTTPD STATS CONFIGURATION -#-#-#-#-#-#-#-#-#-#
 #
-#<httpstats stylesheet="http://remote.style/sheet.css">
+#httpstats { stylesheet "http://remote.style/sheet.css";  };
 #
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Ident: Provides RFC 1413 ident lookup support
-#<module name="m_ident.so">
-#
-#-#-#-#-#-#-#-#-#-#-#-#-   IDENT CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# Optional - If you are using the m_ident.so module, then you can     #
-# specify the timeout for ident lookups here. If not defined, it will #
-# default to one second. This is a non-blocking timeout which holds   #
-# the user in a 'connecting' state until the lookup is complete.      #
-# The bind value indicates which IP to bind outbound requests to.     #
-#                                                                     #
-#<ident timeout="5" bind="">                                          #
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Invite except module: Adds support for channel invite exceptions (+I)
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_inviteexception.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Invisible module - Adds support for usermode +Q (quiet) which lets an
@@ -1669,283 +2223,150 @@
 # deopers, they will become visible. 
 # 
 # IMPORTANT NOTE: To allow this mode to be used by a type of oper, you
-# must first add the value canquiet="yes" to that oper's type tag.
+# must first add the value canquiet "yes"; to that oper's type tag.
 #
-# eFNet note:
-#  You don't need this!!!
-#
-#<module name="m_invisible.so">
+#loadmodule "m_invisible.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Join flood module: Adds support for join flood protection (+j)
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_joinflood.so">
+# SSL Cert Oper module: Allows opers to oper up using the key fingerprint
+# stored within their SSL certificate and key pair.
+# When using this module, one of m_ssl_gnutls.so or m_ssl_openssl.so must
+# be loaded. An extra value should be added to enabled opers, which
+# is in the following format: fingerprint "hash};". { For more information,
+# see the example in the oper blocks.
+loadmodule "m_ssl_oper_cert.so";
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Jump Server module: Adds support for the RPL_REDIR numeric
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_jumpserver.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Anti-Auto-Rejoin: Adds support for prevention of auto-rejoin (+J)
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_kicknorejoin.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Knock module: adds the /KNOCK command and +K channel mode
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_knock.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Lock server module: Adds /LOCKSERV and /UNLOCKSERV commands that is #
 # used to temporarily close/open for new connections to the server.   #
 # These commands require OPER status and that the LOCKSERV UNLOCKSERV #
-# are specified in a <class> tag that the oper is part of. This is so #
+# are specified in a class {}; tag that the oper is part of. This is so #
 # you can control who has access to this possible dangerous command.  #
 # If your server is locked and you got disconnected, do a REHASH from #
 # shell to open up again.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_lockserv.so">
+#loadmodule "m_lockserv.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Msg flood module: Adds message/notice flood protection (+f)
+# Jump Server module: Adds support for the RPL_REDIR numeric
+#loadmodule "m_jumpserver.so";
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Anti-Auto-Rejoin: Adds support for prevention of auto-rejoin (+J)
+#loadmodule "m_kicknorejoin.so";
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Watch module: Adds the WATCH command, which is used by clients to 
+# maintain notify lists.
+#loadmodule "m_watch.so";
 #
-# eFNet note:
-#  You need this
+# Configuration tags:
 #
-<module name="m_messageflood.so">
+#watch { maxentries "32";  };
+#
+# Sets the maximum number of entries on a user's watch list.
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# XMLSocket module: Adds support for connections using the shockwave
+# flash XMLSocket. Note that this does not work if the client you are
+# using has retarded ideas of the IRC protocol. Your client must still
+# send RFC-correct lines to the server, this module only changes the
+# line ending from newlines to null terminators.
+#
+#loadmodule "m_xmlsocket.so";
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # MySQL module: Allows other SQL modules to access MySQL databases
 # through a unified API. You must copy the source for this module
 # from the directory src/modules/extra, plus the file m_sqlv2.h
-#<module name="m_mysql.so">
+#loadmodule "m_mysql.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-#- SQL CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#-#
-#<database name="mydb" username="myuser" password="mypass" hostname="localhost" id="my_database2">
+#                                                                     #
+# m_mysql.so is more complex than described here, see the wiki for    #
+# more: http://www.inspircd.org/wiki/SQL_Service_Provider_Module      #
+#
+#database { name "mydb"; username "myuser";password "mypass";hostname "localhost";id "my_database2"; };
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# NAMESX module: Provides support for the NAMESX extension which allows
-# clients to see all the prefixes set on a user without getting confused.
-# This is supported by mIRC, x-chat, klient, and maybe more.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_namesx.so">
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Nicklock module: Let opers change a user's nick and then stop that
 # user from changing their nick again.
-#<module name="m_nicklock.so">
+#loadmodule "m_nicklock.so";
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# No ctcp module: Adds the channel mode +C to block CTCPs
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_noctcp.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Noinvite module: Gives channel mode +V
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_noinvite.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# No kicks module: Adds the +Q channel mode
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_nokicks.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# No nicks module: Adds the +N channel mode
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_nonicks.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# No Notice module: adds the channel mode +T
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_nonotice.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Oper channels mode: Adds the +O channel mode
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_operchans.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Oper hash module: Allows hashed oper passwords
-# Relies on the module m_md5.so and/or m_sha256.so being loaded before
-# m_oper_hash.so in the configuration file.
-#<module name="m_oper_hash.so">
-#
-#-#-#-#-#-#-#-#-#-#-# OPER HASH CONFIGURATION #-#-#-#-#-#-#-#-#-#-#-#-#
-#
-# To use this module, you must define a hash type for each oper's
-# password you want to hash. For example:
-#
-#     <oper name="Brain"
-#           host="ident@dialup15.isp.com"
-#           hash="sha256"
-#           password="a41d730937a53b79f788c0ab13e9e1d5"
-#           type="NetAdmin">
-# 
-# The types of hashing available vary depending on which hashing modules
-# you load, but usually if you load m_sha256.so and m_md5.so, both md5
-# and sha256 type hashing will be available (the most secure of which
-# is SHA256).
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Oper Join module: Forces opers to join a channel on oper-up
-#<module name="m_operjoin.so">
-#
-#-#-#-#-#-#-#-#-#-#-#   OPERJOIN CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# If you are using the m_operjoin.so module, specify the channel here #
-#                                                                     #
-#<operjoin channel="#channel">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Oper MOTD module: Provides support for seperate message of the day
-# on oper-up
-#<module name="m_opermotd.so">
-#
-#-#-#-#-#-#-#-#-#-#-#   OPERMOTD CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# If you are using the m_opermotd.so module, specify the motd here    #
-#                                                                     #
-#<opermotd file="oper.motd">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Override module: Adds support for oper override
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_override.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Oper levels module: Gives each oper a level and prevents
 # actions being taken against higher level opers
-# Specify the level as the 'level' parameter of the <type> tag
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_operlevels.so">
+# Specify the level as the 'level' parameter of the type{};  tag
+#loadmodule "m_operlevels.so";
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Oper perms module: This module adds the /operperms command, 
-# which lists all the commands an oper has access to. 
-# It also shows oper levels as used by m_operlevels, if they are configured.
-#
-#<module name="m_operperms.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Oper modes module: Allows you to specify modes to add/remove on oper
-# Specify the modes as the 'modes' parameter of the <type> tag
-<module name="m_opermodes.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # PostgreSQL module: Allows other SQL modules to access PgSQL databases
 # through a unified API. You must copy the source for this module
 # from the directory src/modules/extra, plus the file m_sqlv2.h
-#<module name="m_pgsql.so">
+#loadmodule "m_pgsql.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-#- SQL CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 # m_pgsql.so is more complex than described here, see the wiki for    #
 # more: http://www.inspircd.org/wiki/SQL_Service_Provider_Module      #
 #
-#<database name="mydb" username="myuser" password="mypass" hostname="localhost" id="my_database" ssl="no">
+#database { name "mydb"; username "myuser"; password "mypass";hostname "localhost";id "my_database";ssl "no"; };
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Random Quote module: provides a random quote on connect.
 # NOTE: Some of these may mimic fatal errors and confuse users and 
 # opers alike! - BEWARE!
-#<module name="m_randquote.so">
+#loadmodule "m_randquote.so";
 #
 #-#-#-#-#-#-#-#-#-#-  RANDOMQUOTES CONFIGURATION -#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 # Optional - If you specify to use the m_randquote.so module, then    #
 # specify below the path to the randquotes.conf file.                 #
 #                                                                     #
-#<randquote file="randquotes.conf">
+#randquote { file "randquotes.conf";  };
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Redirect module: Adds channel redirection (mode +L)
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_redirect.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Registered users only channel creation
-# Allows only registered users and opers to create new channels.
-#<module name="m_regonlycreate.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Remove module: Adds the /REMOVE command which is a peaceful
-# alternative to /KICK
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_remove.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Restrict banned users module:
-# Disallows banned users on a channel from messaging the channel,
-# changing nick, or changing the topic, if loaded.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_restrictbanned.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Restricted channels module: Allows only opers to create channels
-#<module name="m_restrictchans.so">
+#loadmodule "m_restrictchans.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Restrict message module: Allows users to only message opers
-#<module name="m_restrictmsg.so">
+#loadmodule "m_restrictmsg.so";
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# SSL Info module: Allows users to retrieve information about other
+# user's peer SSL certificates and keys. This can be used by client
+# scripts to validate users. For this to work, one of m_ssl_gnutls.so
+# or m_ssl_openssl.so must be loaded. You must symlink the source for
+# this module from the directory src/modules/extra.
+#loadmodule "m_sslinfo.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Provide /LIST throttling (to prevent flooding) and /LIST safety to
 # prevent excess flood when the list is large.
-#
-#<module name="m_safelist.so">
+#loadmodule "m_safelist.so";
 #
 #-#-#-#-#-#-#-#-#-#-# SAFELIST CONFIGURATION -#-#-#-#-#-#-#-#-#-#-#-#-#
 #
@@ -1961,229 +2382,94 @@
 # this value, as increasing it too high can make your network vulnerable
 # to floodbots which waste your bandwidth and CPU time with LIST requests.
 #
-#<safelist throttle="60" maxlisters="50">
+#safelist { throttle "60"; maxlisters "50"; };
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SAJOIN module: Adds the /SAJOIN command
-#<module name="m_sajoin.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SAMODE module: Adds the oper /SAMODE command
-#<module name="m_samode.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SANICK module: Allows opers to change user's nicks
-#<module name="m_sanick.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SAPART module: Adds the oper /SAPART command
-#<module name="m_sapart.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SAQUIT module: Adds the oper /SAQUIT command (abusable!!!)
-#<module name="m_saquit.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Secure list module: Prevent /LIST in the first minute of connection,
 # crippling most spambots and trojan spreader bots.
-#<module name="m_securelist.so">
+#loadmodule "m_securelist.so";
 #
 #-#-#-#-#-#-#-#-#-# SECURELIST CONFIGURATION -#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 # Securelist can be harmful to some irc search engines such as        #
 # netsplit.de and searchirc.com. To prevent securelist blocking these #
 # sites from listing, define exception tags as shown below:           #
-<securehost exception="*@*.searchirc.org">
-<securehost exception="*@*.netsplit.de">
-<securehost exception="*@echo940.server4you.de">
+securehost {
+	exception "*@*.searchirc.org";
+};
+securehost {
+	exception "*@*.netsplit.de";
+};
+securehost {
+	exception "*@echo940.server4you.de";
+};
 #                                                                     #
 # Define the following variable to change how long a user must wait   #
 # before issuing a LIST. If not defined, defaults to 60 seconds.      #
 #                                                                     #
-#<securelist waittime="60">                                           #
+#securelist { waittime "60";  };" 
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# See nicks module: Allow for SNOMASK +N which shows nick changes.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_seenicks.so">
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Set Idle module: Adds a command for opers to change their
 # idle time (mainly a toy)
-#<module name="m_setidle.so">
+#loadmodule "m_setidle.so";
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Services support module: Adds several usermodes such as +R and +M
-# this module implements the 'identified' state via user mode +r, which
-# is similar to the DALnet and dreamforge systems.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_services.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Services support module: Adds several usermodes such as +R and +M
-# this module implements the 'identified' state via account names (AC)
-# and is similar in operation to the way asuka and ircu handle services.
-# it cannot be used at the same time as m_services, above.
-#<module name="m_services_account.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Sethost module: Adds the /SETHOST command
-# See m_chghost for how to customise valid chars for hostnames
-#<module name="m_sethost.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Setident module: Adds the /SETIDENT command
-#<module name="m_setident.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SETNAME module: Adds the /SETNAME command
-#<module name="m_setname.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Show Whois module: Adds the +W usermode which allows opers
-# to see when they are whois'ed (can be annoying).
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_showwhois.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Shun module: This helps make users quiet with /shun, they could
-# only execute PING PONG.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_shun.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Spy module: Adds the commands SPYLIST and SPYNAMES that let opers
 # see who is in a +s channel, and list +s channels, show keys of keyed
 # channels the oper is not a member of etc. (standard 'abusive' features
 # of many other ircds, modulized here in InspIRCd).
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_spy.so">
+#loadmodule "m_spy.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # SSL channel mode module: Adds support for SSL-only channels (+z).
 # does not do anything useful without a working SSL module (see below)
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_sslmodes.so">
+#loadmodule "m_sslmodes.so";
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Dummy ssl module: If you have other servers on your network which
-# have SSL, but your server does not have ssl enabled, you should load
-# this module, which will handle SSL metadata (e.g. the "Is using ssl"
-# field in the WHOIS information).
-#
-# eFNet note:
-#  You need this if you have not got SSL enabled!!!
-#  So on, disable sslinfo & openssl
-#
-#<module name="m_ssl_dummy.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# GnuTLS ssl module: Adds support for client-server SSL using GnuTLS,
-# if enabled. You must copy the source for this module from the directory
-# src/modules/extra, or answer 'yes' in ./configure when asked if you
-# want to enable this, or it will not load.
-#<module name="m_ssl_gnutls.so">
-#
-#-#-#-#-#-#-#-#-#-#-#-  GNUTLS CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# NOTE: If you want to use this module to encrypt and sign your       #
-# server to server traffic, you MUST load it before m_spanningtree in #
-# your configuration file!                                            #
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SSL Info module: Allows users to retrieve information about other
-# user's peer SSL certificates and keys. This can be used by client
-# scripts to validate users. For this to work, one of m_ssl_gnutls.so
-# or m_ssl_openssl.so must be loaded. You must symlink the source for
-# this module from the directory src/modules/extra.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_sslinfo.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # OpenSSL ssl module: Adds support for client-server SSL using OpenSSL,
 # if enabled. You must copy the source for this module from the directory
 # src/modules/extra, or answer 'yes' in ./configure when asked if you
 # want to enable this, or it will not load.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_ssl_openssl.so">
+#loadmodule "m_ssl_openssl.so";
 #
 #-#-#-#-#-#-#-#-#-#-#- OPENSSL CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# m_ssl_openssl.so is too complex it describe here, see the wiki:     #
+# http://www.inspircd.org/wiki/OpenSSL_SSL_Module                     #
 #                                                                     #
 # NOTE: If you want to use this module to encrypt and sign your       #
 # server to server traffic, you MUST load it before m_spanningtree in #
 # your configuration file!                                            #
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SSL Cert Oper module: Allows opers to oper up using the key fingerprint
-# stored within their SSL certificate and key pair.
-# When using this module, one of m_ssl_gnutls.so or m_ssl_openssl.so must
-# be loaded. An extra value should be added to enabled opers, which
-# is in the following format: fingerprint="<hash>". For more information,
-# see the example in the oper blocks.
-#<module name="m_ssl_oper_cert.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Strip colour module: Adds the channel mode +S
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_stripcolor.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SILENCE module: Adds support for /SILENCE
-#
-#<module name="m_silence.so">
-#
-# Configuration tags:
-#
-#<silence maxentries="32">
-#
-# Sets the maximum number of entries on a users silence list.
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Extended SILENCE module: Adds support for /SILENCE with additional
-# features to silence based on invites, channel messages, etc.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_silence_ext.so">
-<silence maxentries="32">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # SQLite3 module: Allows other SQL modules to access SQLite3          #
 # databases through a unified API. You must link the source for this  #
 # module from the directory src/modules/extra to src/modules, plus    #
 # the file m_sqlv2.h                                                  #
-#<module name="m_sqlite3.so">
+#loadmodule "m_sqlite3.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-#- SQL CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#-#
-#<database hostname="/full/path/to/database.db" id="anytext">
+#                                                                     #
+# m_sqlite.so is more complex than described here, see the wiki for   #
+# more: http://www.inspircd.org/wiki/SQLite3_Service_Provider_Module  #
+#
+#database { hostname "/full/path/to/database.db"; id "anytext"; };
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # SQLutils module: Provides some utilities to SQL client modules, such
@@ -2191,162 +2477,74 @@
 # for this module from the directory src/modules/extra/m_sqlutils.cpp
 # and src/modules/extra/m_sqlutils.h into /src/modules
 # Needed for, and loaded before: SQLauth and SQLoper
-#<module name="m_sqlutils.so">
+#loadmodule "m_sqlutils.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # SQL authentication module: Allows IRCd connections to be tied into
 # a database table (for example a forum). You must copy the source for
 # this module from the directory src/modules/extra
 # Depends on the SQLutils module being loaded first.
-#<module name="m_sqlauth.so">
+#loadmodule "m_sqlauth.so";
 #
 #-#-#-#-#-#-#-#-#-#-#- SQLAUTH CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#
+#                                                                     #
+# m_sqlauth.so is too complex it describe here, see the wiki:         #
+# http://www.inspircd.org/wiki/SQL_Authentication_Module              #
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # SQL logging module: Allows you to log network-wide data for your
 # network in a fully normalized set of SQL tables. You must copy the
 # source for this module from the directory src/modules/extra
-#<module name="m_sqllog.so">
+#loadmodule "m_sqllog.so";
 #
 #-#-#-#-#-#-#-#-#-#-#-  SQLLOG CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 # dbid       - Database ID to use (see m_sql)                         #
 #                                                                     #
-#<sqllog dbid="1">
+# See also: http://www.inspircd.org/wiki/SQL_Logging_Module           #
+#                                                                     #
+#sqllog { dbid "1";  };
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # SQL oper module: Allows you to store oper credentials in an SQL table
 # You must copy the source for this module from the directory src/modules/extra
 # Depends on the SQLutils module being loaded first.
-#<module name="m_sqloper.so">
+#loadmodule "m_sqloper.so";
 #
 #-#-#-#-#-#-#-#-#-#-#- SQLOPER CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 # dbid       - Database ID to use (see m_sql)                         #
 #                                                                     #
-#<sqloper dbid="1">
+# See also: http://www.inspircd.org/wiki/SQL_Oper_Storage_Module      #
+#                                                                     #
+#sqloper { dbid "1";  };
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SVSHold module: Implements SVSHOLD. Like Q:Lines, but can only be   #
-# added/removed by Services.                                          #
-<module name="m_svshold.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# SWHOIS module: Allows you to add arbitary lines to user WHOIS.
-<module name="m_swhois.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Taxonomy module: Adds the /TAXONOMY command, used to view all
-#                  metadata attached to a user.
-#<module name="m_taxonomy.so">
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Test command module: Does nothing significant. Read: pointless.
-#<module name="m_testcommand.so">
+#loadmodule "m_testcommand.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Timed bans module: Adds timed bans and the /TBAN command
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_timedbans.so">
+#loadmodule "m_timedbans.so";
+
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # Test line module: Adds the /TLINE command, used to test how many
 # users a /GLINE or /ZLINE etc would match.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_tline.so">
+#loadmodule "m_tline.so";
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# UHNAMES support module: Adds support for the IRCX style UHNAMES
-# extension, which displays ident and hostname in the names list for
-# each user, saving clients from doing a WHO on the channel. Note that
-# this module is not widely supported yet. If a client does not support
-# UHNAMES it will not enable it, this will not break incompatible
-# clients.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_uhnames.so">
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Uninvite module: Adds the /UNINVITE command which lets users remove
-# pending invites from channels without waiting for the user to join.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_uninvite.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Userip module: Adds the /USERIP command
-#<module name="m_userip.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Vhost module: Adds the VHOST command which allows for adding virtual
-# hosts which are accessible using a username and password in the config.
-#<module name="m_vhost.so">
-#
-#-#-#-#-#-#-#-#-#-#-#- VHOST CONFIGURATION   -#-#-#-#-#-#-#-#-#-#-#-#-#
-#                                                                     #
-# user       - Username for the vhost.                                #
-#                                                                     #
-# pass       - Password for the vhost.                                #
-#                                                                     #
-# host       - Vhost to set.                                          #
-#
-#<vhost user="some_username" pass="some_password" host="some.host">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Watch module: Adds the WATCH command, which is used by clients to 
-# maintain notify lists.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_watch.so">
-#
-# Configuration tags:
-#
-<watch maxentries="32">
-#
-# Sets the maximum number of entries on a user's watch list.
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# WhoisModes module: Allows ircop to see usermodes
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_whoismodes.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# XMLSocket module: Adds support for connections using the shockwave
-# flash XMLSocket. Note that this does not work if the client you are
-# using has retarded ideas of the IRC protocol. Your client must still
-# send RFC-correct lines to the server, this module only changes the
-# line ending from newlines to null terminators.
-#
-#<module name="m_xmlsocket.so">
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# ZipLinks module: Adds support for zlib deflate on server to server
-# connections. Both ends of the connection must load this module.
-#
-# eFNet note:
-#  You need this
-#
-<module name="m_ziplink.so">
-#
-# To use this module, you must enable it as a transport type in your
-# <link> tags or <bind> tags using the transport name 'zip'.
-# See the documentation of <link> and <bind>, respectively.
-#
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-  BAN OPTIONS  -#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
@@ -2378,29 +2576,50 @@
 #                         If you specify an IP, CIDR is supported.    #
 # reason       -          Reason, shown only in /stats e              #
 #                                                                     #
+badip {
+	ipmask "69.69.69.69";
+	reason "No porn here thanks.";
+};
+badnick {
+	nick "ChanServ";
+	reason "Reserved For Services";
+};
+badnick {
+	nick "NickServ";
+	reason "Reserved For Services";
+};
+badnick {
+	nick "OperServ";
+	reason "Reserved For Services";
+};
+badnick {
+	nick "MemoServ";
+	reason "Reserved For Services";
+};
+badhost {
+	host "*@hundredz.n.hundredz.o.1337.kiddies.com";
+	reason "Too manny 1337 kiddiots";
+};
+badhost {
+	host "*@172.30.0.0/16";
+	reason "This subnet is bad.";
+};
+exception {
+	host "*@ircop.host.com";
+	reason "Opers hostname";
+};
 
-<badip ipmask="69.69.69.69" reason="No porn here thanks.">
 
-<badnick nick="ChanServ" reason="Reserved For Services">
-<badnick nick="NickServ" reason="Reserved For Services">
-<badnick nick="OperServ" reason="Reserved For Services">
-<badnick nick="MemoServ" reason="Reserved For Services">
-
-<badhost host="*@hundredz.n.hundredz.o.1337.kiddies.com" reason="Too many 1337 kiddiots">
-<badhost host="*@localhost" reason="No irc from localhost!">
-<badhost host="*@172.32.0.0/16" reason="This subnet is bad.">
-
-<exception host="*@ircop.host.com" reason="Opers hostname">
 
 #-#-#-#-#-#-#-#-#-#-#- INSANE BAN OPTIONS  -#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 # This optional tag allows you to specify how wide a gline, eline,    #
 # kline, zline or qline can be before it is forbidden from being      #
-# set. By setting hostmasks="yes", you can allow all G, K, E lines,   #
+# set. By setting hostmasks "yes", you can allow all G, K, E lines,   #
 # no matter how many users the ban would cover. This is not           #
-# recommended! By setting ipmasks="yes", you can allow all Z lines,   #
+# recommended! By setting ipmasks "yes", you can allow all Z lines,   #
 # no matter how many users these cover too. Needless to say we        #
-# don't recommend you do this, or, set nickmasks="yes", which will    #
+# don't recommend you do this, or, set nickmasks "yes", which will    #
 # allow any qline.                                                    #
 #                                                                     #
 # The trigger value indicates how wide any mask will be before it is  #
@@ -2413,11 +2632,28 @@
 # these restrictions and expected to enforce their own policies       #
 # locally!                                                            #
 #                                                                     #
+insane {
+	hostmasks "no";
+	ipmasks "no";
+	nickmasks "no";
+	trigger "95.5";
+};
 
-<insane hostmasks="no" ipmasks="no" nickmasks="no" trigger="95.5">
+
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#- YAWN  -#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #                                                                     #
 #   You should already know what to do here :)                        #
+die {
+	value "User error. Insert new user and press any key. (you didn't edit your config properly.)";
+};
 
-<die value="User error. Insert new user and press any key. (you didn't edit your config properly.)">
+
+
+#########################################################################
+#                                                                       #
+#                    - UnrealIRCd Development Team -                    #
+#                       http://www.unrealircd.org                       #
+#	   Based off the InspIRCd inspircd.conf.example document	#
+#                                                                       #
+#########################################################################

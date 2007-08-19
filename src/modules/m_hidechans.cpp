@@ -23,7 +23,7 @@
 class HideChans : public ModeHandler
 {
  public:
-	HideChans(InspIRCd* Instance) : ModeHandler(Instance, 'I', 0, 0, false, MODETYPE_USER, false) { }
+	HideChans(InspIRCd* Instance) : ModeHandler(Instance, 'p', 0, 0, false, MODETYPE_USER, false) { }
 
 	ModeAction OnModeChange(userrec* source, userrec* dest, chanrec* channel, std::string &parameter, bool adding)
 	{
@@ -33,17 +33,17 @@ class HideChans : public ModeHandler
 
 		if (adding)
 		{
-			if (!dest->IsModeSet('I'))
+			if (!dest->IsModeSet('p'))
 			{
-				dest->SetMode('I',true);
+				dest->SetMode('p',true);
 				return MODEACTION_ALLOW;
 			}
 		}
 		else
 		{
-			if (dest->IsModeSet('I'))
+			if (dest->IsModeSet('p'))
 			{
-				dest->SetMode('I',false);
+				dest->SetMode('p',false);
 				return MODEACTION_ALLOW;
 			}
 		}
@@ -62,7 +62,7 @@ class ModuleHideChans : public Module
 	{
 		
 		hm = new HideChans(ServerInstance);
-		if (!ServerInstance->AddMode(hm, 'I'))
+		if (!ServerInstance->AddMode(hm, 'p'))
 			throw ModuleException("Could not add new modes!");
 	}
 
@@ -87,7 +87,7 @@ class ModuleHideChans : public Module
 		/* Dont display channels if they have +I set and the
 		 * person doing the WHOIS is not an oper
 		 */
-		return ((user != dest) && (!IS_OPER(user)) && (numeric == 319) && dest->IsModeSet('I'));
+		return ((user != dest) && (!IS_OPER(user)) && (numeric == 319) && dest->IsModeSet('p'));
 	}
 };
 

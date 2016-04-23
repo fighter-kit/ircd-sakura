@@ -1,0 +1,1 @@
+Sakura Internet Relay Chat Daemon is a fork of InspIRCd, developed especially for eFNet(RU) IRC Network.
